@@ -99,14 +99,14 @@ const translations = {
     'process.eyebrow': '03 // proceso',
     'process.title': 'Cómo trabajamos',
     'process.step1.title': 'Contacto',
-    'process.step1.desc': 'Nos escribís por WhatsApp o correo y nos contás qué necesita tu negocio.',
+    'process.step1.desc': 'Nos escribes por WhatsApp o correo y nos cuentas qué necesita tu negocio: un sitio nuevo, un rediseño o algo puntual. Te respondemos en menos de 24 horas.',
     'process.step2.title': 'Propuesta',
-    'process.step2.desc': 'Te armamos una propuesta clara: qué incluye, cuánto tarda y cuánto cuesta.',
+    'process.step2.desc': 'Te armamos una propuesta clara acorde a tus necesidades, tiempo de entrega y costo del proyecto, para que sepas exactamente qué esperar antes de arrancar.',
     'process.step3.title': 'Entrega',
-    'process.step3.desc': 'Diseñamos, desarrollamos y lanzamos tu sitio, con ajustes incluidos hasta que quede como lo imaginaste.',
+    'process.step3.desc': 'Diseñamos y desarrollamos tu sitio, lo probamos tanto en escritorio como en móvil, y lo lanzamos con ajustes incluidos hasta que quede exactamente como lo imaginaste.',
     'contact.eyebrow': '04 // contacto',
     'contact.title': 'Hablemos de tu proyecto',
-    'contact.sub': 'Cuentanos qué necesitas, ya sea empezar de cero, renovar tu sitio actual, o sumarle algo que le falta, y te respondemos en menos de 24 horas. Sin compromisos: primero entendemos tu proyecto, después te decimos cómo lo resolvemos.',
+    'contact.sub': 'Cuéntanos qué necesitas, ya sea empezar de cero, renovar tu sitio actual, o sumarle algo que le falta, y te respondemos en menos de 24 horas. Sin compromisos: primero entendemos tu proyecto, después te decimos cómo lo resolvemos.',
     'contact.writeUs': 'Escríbenos directo por:',
     'contact.email': 'Correo',
     'contact.whatsapp': 'WhatsApp',
@@ -165,11 +165,11 @@ const translations = {
     'process.eyebrow': '03 // process',
     'process.title': 'How we work',
     'process.step1.title': 'Contact',
-    'process.step1.desc': "You reach out on WhatsApp or email and tell us what your business needs.",
+    'process.step1.desc': "You reach out on WhatsApp or email and tell us what your business needs: a new site, a redesign, or something specific. We reply within 24 hours.",
     'process.step2.title': 'Proposal',
-    'process.step2.desc': "We put together a clear proposal: what's included, how long it takes, and how much it costs.",
+    'process.step2.desc': "We put together a clear proposal based on your needs, delivery timeline, and project cost, so you know exactly what to expect before we start.",
     'process.step3.title': 'Launch',
-    'process.step3.desc': "We design, build, and launch your site, with revisions included until it's exactly what you pictured.",
+    'process.step3.desc': "We design and build your site, test it on both desktop and mobile, and launch it with revisions included until it's exactly what you pictured.",
     'contact.eyebrow': '04 // contact',
     'contact.title': "Let's talk about your project",
     'contact.sub': "Tell us what you need, whether it's starting from scratch, refreshing your current site, or adding something it's missing, and we'll get back to you in under 24 hours. No strings attached: we start by understanding your project, then tell you how we'll solve it.",
@@ -264,7 +264,7 @@ function validateForm() {
 
   const name = form.name.value.trim();
   if (name.length < 2) {
-    showError('name', 'Ingresá al menos 2 caracteres');
+    showError('name', 'Ingresa al menos 2 caracteres');
     isValid = false;
   } else {
     clearError('name');
@@ -277,27 +277,27 @@ function validateForm() {
   const phoneOk = phone === '' || phoneRegex.test(phone);
 
   if (!emailOk) {
-    showError('email', 'Ingresá un email válido');
+    showError('email', 'Ingresa un email válido');
     isValid = false;
   } else {
     clearError('email');
   }
 
   if (!phoneOk) {
-    showError('phone', 'Ingresá un teléfono válido');
+    showError('phone', 'Ingresa un teléfono válido');
     isValid = false;
   } else {
     clearError('phone');
   }
 
   if (email === '' && phone === '') {
-    showError('email', 'Dejanos un email o un teléfono');
+    showError('email', 'Déjanos un email o un teléfono');
     isValid = false;
   }
 
   const service = form.service.value;
   if (!service) {
-    showError('service', 'Seleccioná una opción');
+    showError('service', 'Selecciona una opción');
     isValid = false;
   } else {
     clearError('service');
@@ -305,7 +305,7 @@ function validateForm() {
 
   const message = form.message.value.trim();
   if (message.length < 10) {
-    showError('message', 'Contanos un poco más (mínimo 10 caracteres)');
+    showError('message', 'Cuéntanos un poco más (mínimo 10 caracteres)');
     isValid = false;
   } else {
     clearError('message');
@@ -324,7 +324,7 @@ form.addEventListener('submit', async (e) => {
   e.preventDefault();
 
   if (!validateForm()) {
-    statusEl.textContent = 'Revisá los campos marcados en rojo.';
+    statusEl.textContent = 'Revisa los campos marcados en rojo.';
     statusEl.dataset.state = 'error';
     return;
   }

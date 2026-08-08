@@ -15,7 +15,7 @@ portfolio/
 
 ## 1. Correr el frontend
 
-Es HTML/CSS/JS puro, no necesita build. Podés:
+Es HTML/CSS/JS puro, no necesita build. Puedes:
 - Abrir `index.html` directo en el navegador, o
 - Usar la extensión "Live Server" de VS Code (recomendado, evita problemas de CORS)
 
@@ -30,7 +30,7 @@ cp .env.example .env
 Editá `.env` con tus datos reales:
 - `SMTP_USER` / `SMTP_PASS`: si usás Gmail, generá una "contraseña de aplicación" en
   https://myaccount.google.com/apppasswords (necesitás verificación en 2 pasos activada)
-- `NOTIFY_EMAIL`: a dónde querés que lleguen los mensajes del formulario
+- `NOTIFY_EMAIL`: a dónde quieres que lleguen los mensajes del formulario
 - `FRONTEND_ORIGIN`: la URL donde corre tu frontend (para que CORS lo permita)
 
 Luego:
