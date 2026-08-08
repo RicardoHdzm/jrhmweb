@@ -1,0 +1,7 @@
+.claude/
+Originals/
+photothumb.db
+Thumbs.db
+.DS_Store
+backend/node_modules/
+backend/.env
