@@ -56,68 +56,77 @@
     <span class="nav__logo-caption">JRHM Web Studio</span>
   </a>
   <ul class="nav__links">
-    <li><a href="#servicios">Servicios</a></li>
-    <li><a href="#proyectos">Proyectos</a></li>
-    <li><a href="#contacto">Contacto</a></li>
+    <li><a href="#servicios" data-i18n="nav.servicios">Servicios</a></li>
+    <li><a href="#proyectos" data-i18n="nav.proyectos">Proyectos</a></li>
+    <li><a href="#contacto" data-i18n="nav.contacto">Contacto</a></li>
   </ul>
+  <div class="lang-switch" role="group" aria-label="Idioma / Language">
+    <button type="button" class="lang-switch__btn is-active" data-lang="es">ES</button>
+    <button type="button" class="lang-switch__btn" data-lang="en">EN</button>
+  </div>
 </nav>
 
 <!-- HERO -->
 <header class="hero" id="top">
   <div class="hero__text">
-    <p class="eyebrow">00 // estudio de diseño &amp; desarrollo web</p>
-    <h1>Diseñando sitios web que <span class="highlight">hacen crecer tu negocio</span></h1>
-    <p class="hero__sub">En JRHM Web Studio creamos sitios web claros y fáciles de usar para tu negocio, desde una página sencilla hasta un sitio completo con varias secciones y formulario de contacto.</p>
+    <p class="eyebrow" data-i18n="hero.eyebrow">00 // estudio de diseño &amp; desarrollo web</p>
+    <h1><span data-i18n="hero.titlePre">Diseñando sitios web que</span> <span class="highlight" data-i18n="hero.titleHighlight">hacen crecer tu negocio</span></h1>
+    <p class="hero__sub" data-i18n="hero.sub">En JRHM Web Studio creamos sitios web claros y fáciles de usar para tu negocio, desde una página sencilla hasta un sitio completo con varias secciones y formulario de contacto.</p>
     <div class="hero__actions">
-      <a href="#proyectos" class="btn btn--primary">Ver proyectos</a>
-      <a href="#contacto" class="btn btn--ghost">Contactar</a>
+      <a href="#proyectos" class="btn btn--primary" data-i18n="hero.btnProjects">Ver proyectos</a>
+      <a href="#contacto" class="btn btn--ghost" data-i18n="hero.btnContact">Contactar</a>
     </div>
+  </div>
+
+  <div class="hero__scroll">
+    <span data-i18n="hero.scroll">Explorar</span>
+    <span class="hero__scroll-line"></span>
   </div>
 </header>
 
 <!-- SERVICIOS -->
 <section class="section" id="servicios">
-  <p class="section__eyebrow">01 // servicios</p>
-  <h2 class="section__title">¿En qué podemos ayudar?</h2>
+  <p class="section__eyebrow" data-i18n="services.eyebrow">01 // servicios</p>
+  <h2 class="section__title" data-i18n="services.title">¿En qué podemos ayudar?</h2>
 
   <div class="services">
     <article class="service">
       <span class="service__icon"><i class="fa-solid fa-palette"></i></span>
-      <span class="service__mark">Diseño 100% Personalizado</span>
-      <p>Cada sitio se diseña desde cero para tu marca, sin plantillas genéricas ni soluciones prefabricadas.</p>
+      <span class="service__mark" data-i18n="service.design.mark">Diseño 100% Personalizado</span>
+      <p data-i18n="service.design.desc">Cada sitio se diseña desde cero para tu marca, sin plantillas genéricas ni soluciones prefabricadas.</p>
     </article>
     <article class="service">
       <span class="service__icon"><i class="fa-solid fa-layer-group"></i></span>
-      <span class="service__mark">Sitios Multi-página</span>
-      <p>Desde una landing de una sola sección hasta sitios con varias páginas conectadas entre sí.</p>
+      <span class="service__mark" data-i18n="service.multipage.mark">Sitios Multi-página</span>
+      <p data-i18n="service.multipage.desc">Desde una landing de una sola sección hasta sitios con varias páginas conectadas entre sí.</p>
     </article>
     <article class="service">
       <span class="service__icon"><i class="fa-brands fa-shopify"></i></span>
-      <span class="service__mark">E-commerce en Shopify</span>
-      <p>Tiendas en línea completas (catálogo, pagos y envíos) para que empieces a vender sin complicaciones.</p>
+      <span class="service__mark" data-i18n="service.ecommerce.mark">E-commerce en Shopify</span>
+      <p data-i18n="service.ecommerce.desc">Tiendas en línea completas (catálogo, pagos y envíos) para que empieces a vender sin complicaciones.</p>
     </article>
     <article class="service">
       <span class="service__icon"><i class="fa-solid fa-clipboard-list"></i></span>
-      <span class="service__mark">Formularios &amp; Integraciones</span>
-      <p>Formularios de contacto que llegan directo a tu email, más integración con WhatsApp.</p>
+      <span class="service__mark" data-i18n="service.forms.mark">Formularios &amp; Integraciones</span>
+      <p data-i18n="service.forms.desc">Formularios de contacto que llegan directo a tu email, más integración con WhatsApp.</p>
     </article>
     <article class="service">
       <span class="service__icon"><i class="fa-solid fa-magnifying-glass"></i></span>
-      <span class="service__mark">Optimización SEO</span>
-      <p>Buenas prácticas técnicas (velocidad, metadatos y estructura) para que te encuentren en Google.</p>
+      <span class="service__mark" data-i18n="service.seo.mark">Optimización SEO</span>
+      <p data-i18n="service.seo.desc">Buenas prácticas técnicas (velocidad, metadatos y estructura) para que te encuentren en Google.</p>
     </article>
     <article class="service">
       <span class="service__icon"><i class="fa-solid fa-wrench"></i></span>
-      <span class="service__mark">Mantenimiento &amp; Soporte</span>
-      <p>Actualizaciones, mejoras continuas y acompañamiento después del lanzamiento.</p>
+      <span class="service__mark" data-i18n="service.maintenance.mark">Mantenimiento &amp; Soporte</span>
+      <p data-i18n="service.maintenance.desc">Actualizaciones, mejoras continuas y acompañamiento después del lanzamiento.</p>
     </article>
   </div>
 </section>
 
 <!-- PROYECTOS -->
 <section class="section" id="proyectos">
-  <p class="section__eyebrow">02 // proyectos</p>
-  <h2 class="section__title">Clientes que confiaron en nosotros</h2>
+  <p class="section__eyebrow" data-i18n="projects.eyebrow">02 // proyectos</p>
+  <h2 class="section__title" data-i18n="projects.title">Clientes que confiaron en nosotros</h2>
 
 
 
@@ -128,10 +137,10 @@
           <img src="assets/projects/altogroup.png" alt="Sitio web de Alto Group">
         </div>
         <h3>Alto Group</h3>
-        <p class="project__category">Grupo restaurantero en Minnesota</p>
-        <p>Grupo restaurantero dueño de las marcas Mito, Zoukmaya y Los Grandes.</p>
+        <p class="project__category" data-i18n="project.altogroup.category">Grupo restaurantero en Minnesota</p>
+        <p data-i18n="project.altogroup.desc">Grupo restaurantero dueño de las marcas Mito, Zoukmaya y Los Grandes.</p>
         <div class="project__links">
-          <a href="https://altogroupmn.com/" target="_blank" rel="noopener">Visitar sitio →</a>
+          <a href="https://altogroupmn.com/" target="_blank" rel="noopener" data-i18n="project.link">Visitar sitio →</a>
         </div>
       </article>
 
@@ -140,10 +149,10 @@
           <img src="assets/projects/mito.png" alt="Sitio web de Mito Latin Cuisine">
         </div>
         <h3>Mito</h3>
-        <p class="project__category">Restaurante de cocina latinoamericana</p>
-        <p>Restaurante dedicado a la tradición, el sabor y el entretenimiento, en tributo a la gastronomía latinoamericana.</p>
+        <p class="project__category" data-i18n="project.mito.category">Restaurante de cocina latinoamericana</p>
+        <p data-i18n="project.mito.desc">Restaurante dedicado a la tradición, el sabor y el entretenimiento, en tributo a la gastronomía latinoamericana.</p>
         <div class="project__links">
-          <a href="https://mitolatincuisine.com/" target="_blank" rel="noopener">Visitar sitio →</a>
+          <a href="https://mitolatincuisine.com/" target="_blank" rel="noopener" data-i18n="project.link">Visitar sitio →</a>
         </div>
       </article>
 
@@ -152,10 +161,10 @@
           <img src="assets/projects/zoukmaya.png" alt="Sitio web de Zoukmaya">
         </div>
         <h3>Zoukmaya</h3>
-        <p class="project__category">Restaurante latinoamericano en Forest Lake, MN</p>
-        <p>Restaurante latinoamericano en Forest Lake, Minnesota, con ambiente vibrante y sabores auténticos.</p>
+        <p class="project__category" data-i18n="project.zoukmaya.category">Restaurante latinoamericano en Forest Lake, MN</p>
+        <p data-i18n="project.zoukmaya.desc">Restaurante latinoamericano en Forest Lake, Minnesota, con ambiente vibrante y sabores auténticos.</p>
         <div class="project__links">
-          <a href="https://zoukmaya.com/" target="_blank" rel="noopener">Visitar sitio →</a>
+          <a href="https://zoukmaya.com/" target="_blank" rel="noopener" data-i18n="project.link">Visitar sitio →</a>
         </div>
       </article>
 
@@ -164,10 +173,10 @@
           <img src="assets/projects/losgrandes.png" alt="Sitio web de Los Grandes">
         </div>
         <h3>Los Grandes</h3>
-        <p class="project__category">Restaurante & bar mexicano en Burnsville, MN</p>
-        <p>Restaurante y bar que celebra la cocina mexicana con mariscos, música en vivo y gran ambiente en Burnsville, Minnesota.</p>
+        <p class="project__category" data-i18n="project.losgrandes.category">Restaurante & bar mexicano en Burnsville, MN</p>
+        <p data-i18n="project.losgrandes.desc">Restaurante y bar que celebra la cocina mexicana con mariscos, música en vivo y gran ambiente en Burnsville, Minnesota.</p>
         <div class="project__links">
-          <a href="https://losgrandesrestaurants.com/" target="_blank" rel="noopener">Visitar sitio →</a>
+          <a href="https://losgrandesrestaurants.com/" target="_blank" rel="noopener" data-i18n="project.link">Visitar sitio →</a>
         </div>
       </article>
 
@@ -176,10 +185,10 @@
           <img src="assets/projects/bionutrients.png" alt="Sitio web de BioNutrients Global">
         </div>
         <h3>BioNutrients Global®</h3>
-        <p class="project__category">Distribuidora de ingredientes activos para suplementos</p>
-        <p>Distribuidora de ingredientes activos y funcionales para la industria de suplementos.</p>
+        <p class="project__category" data-i18n="project.bionutrients.category">Distribuidora de ingredientes activos para suplementos</p>
+        <p data-i18n="project.bionutrients.desc">Distribuidora de ingredientes activos y funcionales para la industria de suplementos.</p>
         <div class="project__links">
-          <a href="https://bionutrients.com.mx/" target="_blank" rel="noopener">Visitar sitio →</a>
+          <a href="https://bionutrients.com.mx/" target="_blank" rel="noopener" data-i18n="project.link">Visitar sitio →</a>
         </div>
       </article>
 
@@ -188,10 +197,10 @@
           <img src="assets/projects/patron.png" alt="Sitio web de Grupo Patrón">
         </div>
         <h3>Grupo Patrón</h3>
-        <p class="project__category">Comercialización y almacenamiento de granos desde 1989</p>
-        <p>Empresa líder en comercialización y almacenamiento de granos en México desde 1989.</p>
+        <p class="project__category" data-i18n="project.patron.category">Comercialización y almacenamiento de granos desde 1989</p>
+        <p data-i18n="project.patron.desc">Empresa líder en comercialización y almacenamiento de granos en México desde 1989.</p>
         <div class="project__links">
-          <a href="https://ricardohdzm.github.io/patron/" target="_blank" rel="noopener">Visitar sitio →</a>
+          <a href="https://ricardohdzm.github.io/patron/" target="_blank" rel="noopener" data-i18n="project.link">Visitar sitio →</a>
         </div>
       </article>
 
@@ -200,10 +209,10 @@
         <img src="assets/projects/mangos-patron.png" alt="Sitio web de Mangos Patrón">
         </div>
         <h3>Mangos Patrón</h3>
-        <p class="project__category">Producción y distribución de mango, marca de Grupo Patrón</p>
-        <p>Empresa dedicada al cultivo, empaque y distribución de mango en Sinaloa.</p>
+        <p class="project__category" data-i18n="project.mangos.category">Producción y distribución de mango, marca de Grupo Patrón</p>
+        <p data-i18n="project.mangos.desc">Empresa dedicada al cultivo, empaque y distribución de mango en Sinaloa.</p>
         <div class="project__links">
-          <a href="https://ricardohdzm.github.io/patron/mangos" target="_blank" rel="noopener">Visitar sitio →</a>
+          <a href="https://ricardohdzm.github.io/patron/mangos" target="_blank" rel="noopener" data-i18n="project.link">Visitar sitio →</a>
         </div>
       </article>
 
@@ -212,10 +221,10 @@
           <img src="assets/projects/limman.png" alt="Sitio web de LIM-MAN">
         </div>
         <h3>LIM-MAN</h3>
-        <p class="project__category">Servicios de limpieza comercial y residencial en Culiacán</p>
-        <p>Empresa de limpieza con más de 50 años de experiencia en Culiacán, Sinaloa, atendiendo clientes comerciales, gubernamentales y residenciales.</p>
+        <p class="project__category" data-i18n="project.limman.category">Servicios de limpieza comercial y residencial en Culiacán</p>
+        <p data-i18n="project.limman.desc">Empresa de limpieza con más de 50 años de experiencia en Culiacán, Sinaloa, atendiendo clientes comerciales, gubernamentales y residenciales.</p>
         <div class="project__links">
-          <a href="https://ricardohdzm.github.io/limman/index.html" target="_blank" rel="noopener">Visitar sitio →</a>
+          <a href="https://ricardohdzm.github.io/limman/index.html" target="_blank" rel="noopener" data-i18n="project.link">Visitar sitio →</a>
         </div>
       </article>
 
@@ -224,10 +233,10 @@
           <img src="assets/projects/qabu.jpg" alt="Sitio web de QABU Boutique Living">
         </div>
         <h3>QABU Boutique Living</h3>
-        <p class="project__category">Desarrollo residencial boutique en Mazatlán</p>
-        <p>Desarrollo residencial boutique en Mazatlán, con departamentos y planes de financiamiento a medida.</p>
+        <p class="project__category" data-i18n="project.qabu.category">Desarrollo residencial boutique en Mazatlán</p>
+        <p data-i18n="project.qabu.desc">Desarrollo residencial boutique en Mazatlán, con departamentos y planes de financiamiento a medida.</p>
         <div class="project__links">
-          <a href="https://qabuboutiqueliving.com/" target="_blank" rel="noopener">Visitar sitio →</a>
+          <a href="https://qabuboutiqueliving.com/" target="_blank" rel="noopener" data-i18n="project.link">Visitar sitio →</a>
         </div>
       </article>
 
@@ -236,10 +245,10 @@
           <img src="assets/projects/caeti.png" alt="Sitio web de CAE-Ti">
         </div>
         <h3>CAE-Ti</h3>
-        <p class="project__category">Soluciones de gestión de datos y transformación digital</p>
-        <p>Empresa mexicana de tecnología especializada en gestión de datos, ciberseguridad e inteligencia analítica para clientes de gobierno y sector privado.</p>
+        <p class="project__category" data-i18n="project.caeti.category">Soluciones de gestión de datos y transformación digital</p>
+        <p data-i18n="project.caeti.desc">Empresa mexicana de tecnología especializada en gestión de datos, ciberseguridad e inteligencia analítica para clientes de gobierno y sector privado.</p>
         <div class="project__links">
-          <a href="https://ricardohdzm.github.io/caeti/" target="_blank" rel="noopener">Visitar sitio →</a>
+          <a href="https://ricardohdzm.github.io/caeti/" target="_blank" rel="noopener" data-i18n="project.link">Visitar sitio →</a>
         </div>
       </article>
 
@@ -247,7 +256,7 @@
 
   <div class="projects-toggle-wrap">
     <button type="button" id="projects-toggle" class="btn btn--primary" aria-expanded="false">
-      <span>Mostrar más</span>
+      <span data-i18n="projects.showMore">Mostrar más</span>
     </button>
   </div>
 </section>
@@ -256,20 +265,20 @@
 <section class="section section--contact" id="contacto">
 <div class="contact__grid">
   <div class="contact__intro">
-    <p class="section__eyebrow">03 // contacto</p>
-    <h2 class="section__title">Hablemos de tu proyecto</h2>
-    <p class="contact__sub">Cuentanos qué necesitas, ya sea empezar de cero, renovar tu sitio actual, o sumarle algo que le falta, y te respondemos en menos de 24 horas. Sin compromisos: primero entendemos tu proyecto, después te decimos cómo lo resolvemos.</p>
+    <p class="section__eyebrow" data-i18n="contact.eyebrow">03 // contacto</p>
+    <h2 class="section__title" data-i18n="contact.title">Hablemos de tu proyecto</h2>
+    <p class="contact__sub" data-i18n="contact.sub">Cuentanos qué necesitas, ya sea empezar de cero, renovar tu sitio actual, o sumarle algo que le falta, y te respondemos en menos de 24 horas. Sin compromisos: primero entendemos tu proyecto, después te decimos cómo lo resolvemos.</p>
 
     <div class="contact__social">
-      <p>Escríbenos directo por:</p>
+      <p data-i18n="contact.writeUs">Escríbenos directo por:</p>
       <div class="social">
         <a href="mailto:jrhm95@gmail.com" class="social__link" aria-label="Email">
           <i class="fa-solid fa-envelope"></i>
-          <span>Correo</span>
+          <span data-i18n="contact.email">Correo</span>
         </a>
         <a href="https://wa.me/526673255323" target="_blank" rel="noopener" class="social__link" aria-label="WhatsApp">
           <i class="fa-brands fa-whatsapp"></i>
-          <span>WhatsApp</span>
+          <span data-i18n="contact.whatsapp">WhatsApp</span>
         </a>
       </div>
     </div>
