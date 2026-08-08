@@ -1,6 +1,29 @@
 // ===== Año en footer =====
 document.getElementById('year').textContent = new Date().getFullYear();
 
+// ===== Link activo del nav según la sección visible =====
+const navLinks = document.querySelectorAll('.nav__links a[href^="#"]');
+const navSections = Array.from(navLinks)
+  .map((link) => document.querySelector(link.getAttribute('href')))
+  .filter(Boolean);
+
+if (navSections.length) {
+  const sectionObserver = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        const activeHref = `#${entry.target.id}`;
+        navLinks.forEach((link) => {
+          link.classList.toggle('is-active', link.getAttribute('href') === activeHref);
+        });
+      });
+    },
+    { rootMargin: '-50% 0px -50% 0px' }
+  );
+
+  navSections.forEach((section) => sectionObserver.observe(section));
+}
+
 // ===== Modo claro/oscuro =====
 const themeToggle = document.getElementById('theme-toggle');
 const themeLabels = { dark: 'Cambiar a modo claro', light: 'Cambiar a modo oscuro' };
@@ -25,6 +48,7 @@ const translations = {
   es: {
     'nav.servicios': 'Servicios',
     'nav.proyectos': 'Proyectos',
+    'nav.proceso': 'Proceso',
     'nav.contacto': 'Contacto',
     'hero.eyebrow': '00 // estudio de diseño & desarrollo web',
     'hero.titlePre': 'Diseñando sitios web que',
@@ -72,7 +96,15 @@ const translations = {
     'project.qabu.desc': 'Desarrollo residencial boutique en Mazatlán, con departamentos y planes de financiamiento a medida.',
     'project.caeti.category': 'Soluciones de gestión de datos y transformación digital',
     'project.caeti.desc': 'Empresa mexicana de tecnología especializada en gestión de datos, ciberseguridad e inteligencia analítica para clientes de gobierno y sector privado.',
-    'contact.eyebrow': '03 // contacto',
+    'process.eyebrow': '03 // proceso',
+    'process.title': 'Cómo trabajamos',
+    'process.step1.title': 'Contacto',
+    'process.step1.desc': 'Nos escribís por WhatsApp o correo y nos contás qué necesita tu negocio.',
+    'process.step2.title': 'Propuesta',
+    'process.step2.desc': 'Te armamos una propuesta clara: qué incluye, cuánto tarda y cuánto cuesta.',
+    'process.step3.title': 'Entrega',
+    'process.step3.desc': 'Diseñamos, desarrollamos y lanzamos tu sitio, con ajustes incluidos hasta que quede como lo imaginaste.',
+    'contact.eyebrow': '04 // contacto',
     'contact.title': 'Hablemos de tu proyecto',
     'contact.sub': 'Cuentanos qué necesitas, ya sea empezar de cero, renovar tu sitio actual, o sumarle algo que le falta, y te respondemos en menos de 24 horas. Sin compromisos: primero entendemos tu proyecto, después te decimos cómo lo resolvemos.',
     'contact.writeUs': 'Escríbenos directo por:',
@@ -82,6 +114,7 @@ const translations = {
   en: {
     'nav.servicios': 'Services',
     'nav.proyectos': 'Projects',
+    'nav.proceso': 'Process',
     'nav.contacto': 'Contact',
     'hero.eyebrow': '00 // design & web development studio',
     'hero.titlePre': 'Designing websites that',
@@ -129,7 +162,15 @@ const translations = {
     'project.qabu.desc': 'A boutique residential development in Mazatlán, with units and financing plans tailored to fit.',
     'project.caeti.category': 'Data management and digital transformation solutions',
     'project.caeti.desc': 'A Mexican technology company specializing in data management, cybersecurity, and analytical intelligence for government and private-sector clients.',
-    'contact.eyebrow': '03 // contact',
+    'process.eyebrow': '03 // process',
+    'process.title': 'How we work',
+    'process.step1.title': 'Contact',
+    'process.step1.desc': "You reach out on WhatsApp or email and tell us what your business needs.",
+    'process.step2.title': 'Proposal',
+    'process.step2.desc': "We put together a clear proposal: what's included, how long it takes, and how much it costs.",
+    'process.step3.title': 'Launch',
+    'process.step3.desc': "We design, build, and launch your site, with revisions included until it's exactly what you pictured.",
+    'contact.eyebrow': '04 // contact',
     'contact.title': "Let's talk about your project",
     'contact.sub': "Tell us what you need, whether it's starting from scratch, refreshing your current site, or adding something it's missing, and we'll get back to you in under 24 hours. No strings attached: we start by understanding your project, then tell you how we'll solve it.",
     'contact.writeUs': 'Write to us directly at:',

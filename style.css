@@ -201,6 +201,14 @@ button {
   transform: scaleX(1);
   transform-origin: left;
 }
+.nav__links a.is-active {
+  color: var(--text);
+}
+.nav__links a.is-active::after {
+  transform: scaleX(1);
+  transform-origin: left;
+  background: var(--accent);
+}
 
 .nav__cta {
   font-size: 14px;
@@ -429,6 +437,41 @@ button {
 }
 
 .service p {
+  color: var(--text-muted);
+  font-size: 14px;
+}
+
+/* ===== Proceso ===== */
+.process {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 20px;
+}
+
+.process__step {
+  position: relative;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 32px 28px;
+  transition: border-color 0.2s;
+}
+.process__step:hover { border-color: var(--accent); }
+
+.process__number {
+  position: absolute;
+  top: 20px;
+  right: 24px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--border);
+}
+
+.process__step .service__icon {
+  margin-bottom: 22px;
+}
+
+.process__step p {
   color: var(--text-muted);
   font-size: 14px;
 }
