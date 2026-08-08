@@ -60,9 +60,15 @@
     <li><a href="#proyectos" data-i18n="nav.proyectos">Proyectos</a></li>
     <li><a href="#contacto" data-i18n="nav.contacto">Contacto</a></li>
   </ul>
-  <div class="lang-switch" role="group" aria-label="Idioma / Language">
-    <button type="button" class="lang-switch__btn is-active" data-lang="es">ES</button>
-    <button type="button" class="lang-switch__btn" data-lang="en">EN</button>
+  <div class="nav__controls">
+    <button type="button" id="theme-toggle" class="theme-toggle" aria-label="Cambiar a modo claro">
+      <i class="fa-solid fa-sun theme-toggle__icon theme-toggle__icon--light"></i>
+      <i class="fa-solid fa-moon theme-toggle__icon theme-toggle__icon--dark"></i>
+    </button>
+    <div class="lang-switch" role="group" aria-label="Idioma / Language">
+      <button type="button" class="lang-switch__btn is-active" data-lang="es">ES</button>
+      <button type="button" class="lang-switch__btn" data-lang="en">EN</button>
+    </div>
   </div>
 </nav>
 

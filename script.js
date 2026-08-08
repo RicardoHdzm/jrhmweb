@@ -1,6 +1,25 @@
 // ===== Año en footer =====
 document.getElementById('year').textContent = new Date().getFullYear();
 
+// ===== Modo claro/oscuro =====
+const themeToggle = document.getElementById('theme-toggle');
+const themeLabels = { dark: 'Cambiar a modo claro', light: 'Cambiar a modo oscuro' };
+
+function applyTheme(theme) {
+  document.documentElement.setAttribute('data-theme', theme);
+  if (themeToggle) themeToggle.setAttribute('aria-label', themeLabels[theme]);
+  localStorage.setItem('theme', theme);
+}
+
+applyTheme(localStorage.getItem('theme') || 'dark');
+
+if (themeToggle) {
+  themeToggle.addEventListener('click', () => {
+    const current = document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark';
+    applyTheme(current === 'light' ? 'dark' : 'light');
+  });
+}
+
 // ===== Idioma (ES/EN) =====
 const translations = {
   es: {
