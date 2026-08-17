@@ -164,7 +164,7 @@ button {
 .nav__logo-caption {
   font-family: var(--font-mono);
   font-size: 10px;
-  letter-spacing: 0.18em;
+  letter-spacing: 0.5em;
   text-transform: uppercase;
   color: var(--text-muted);
 }
