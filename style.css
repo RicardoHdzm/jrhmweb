@@ -259,7 +259,7 @@ button {
   height: 32px;
   border: 1px solid var(--border);
   border-radius: 999px;
-  color: var(--text-muted);
+  color: var(--accent);
   transition: border-color 0.2s, color 0.2s;
 }
 .theme-toggle:hover {
