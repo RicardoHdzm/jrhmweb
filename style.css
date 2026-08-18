@@ -486,7 +486,7 @@ button {
   right: 24px;
   font-family: var(--font-mono);
   font-size: 13px;
-  color: var(--border);
+  color: var(--accent);
 }
 
 :root[data-theme="light"] .process__number{
