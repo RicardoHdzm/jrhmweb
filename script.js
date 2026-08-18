@@ -4,8 +4,8 @@ document.getElementById('year').textContent = new Date().getFullYear();
 // ===== Link activo del nav según la sección visible =====
 const navLinks = document.querySelectorAll('.nav__links a[href^="#"]');
 const navSections = Array.from(navLinks)
-  .map((link) => document.querySelector(link.getAttribute('href')))
-  .filter(Boolean);
+.map((link) => document.querySelector(link.getAttribute('href')))
+.filter(Boolean);
 
 if (navSections.length) {
   const sectionObserver = new IntersectionObserver(
@@ -19,7 +19,7 @@ if (navSections.length) {
       });
     },
     { rootMargin: '-50% 0px -50% 0px' }
-  );
+    );
 
   navSections.forEach((section) => sectionObserver.observe(section));
 }
@@ -112,6 +112,21 @@ const translations = {
     'contact.writeUs': 'Escríbenos directo por:',
     'contact.email': 'Correo',
     'contact.whatsapp': 'WhatsApp',
+    'form.name': 'Nombre',
+    'form.phone': 'Teléfono',
+    'form.message': 'Mensaje',
+    'form.hint': 'Necesitamos al menos un dato de contacto (email o teléfono)',
+    'form.help': '¿En qué te podemos ayudar?',
+    'form.option': '¿En qué te podemos ayudar?',
+    'form.option1': 'Necesito un sitio web',
+    'form.option2': 'Rediseño de mi sito actual',
+    'form.option3': '¿E-commerce en Shopify',
+    'form.option4': 'Formularios & Integraciones',
+    'form.option5': 'Optimización SEO',
+    'form.option6': 'Mantenimiento & Soporte',
+    'form.option7': 'Otro',
+    'form.button': 'Enviar mensaje',
+
   },
   en: {
     'nav.servicios': 'Services',
@@ -180,6 +195,21 @@ const translations = {
     'contact.writeUs': 'Write to us directly at:',
     'contact.email': 'Email',
     'contact.whatsapp': 'WhatsApp',
+    'form.name': 'Name',
+    'form.phone': 'Phone',
+    'form.name': 'Name',
+    'form.message': 'Message',
+    'form.hint': 'We need at least one contact detail (email or phone number)',
+    'form.help': 'How can we help you?',
+    'form.option': 'Select an option',
+    'form.option1': 'I need a website',
+    'form.option2': 'Redesign my current website',
+    'form.option3': 'Shopify E-commerce',
+    'form.option4': 'Forms & Integrations',
+    'form.option5': 'SEO Optimization',
+    'form.option6': 'Maintenance & Support',
+    'form.option7': 'Other',
+    'form.button': 'Send message',
   },
 };
 
@@ -203,8 +233,8 @@ function applyLanguage(lang) {
   if (projectsToggle) {
     const expanded = projectsToggle.getAttribute('aria-expanded') === 'true';
     projectsToggle.querySelector('span').textContent = expanded
-      ? translations[lang]['projects.showLess']
-      : translations[lang]['projects.showMore'];
+    ? translations[lang]['projects.showLess']
+    : translations[lang]['projects.showMore'];
   }
 
   localStorage.setItem('lang', lang);
@@ -224,8 +254,8 @@ if (projectsToggle) {
     extraProjects.forEach((project) => project.classList.toggle('is-visible', !expanded));
     projectsToggle.setAttribute('aria-expanded', String(!expanded));
     projectsToggle.querySelector('span').textContent = expanded
-      ? translations[currentLang]['projects.showMore']
-      : translations[currentLang]['projects.showLess'];
+    ? translations[currentLang]['projects.showMore']
+    : translations[currentLang]['projects.showLess'];
 
     if (expanded) {
       document.getElementById('proyectos').scrollIntoView({ behavior: 'smooth' });
@@ -363,8 +393,8 @@ form.addEventListener('submit', async (e) => {
     form.reset();
   } catch (err) {
     statusEl.textContent = err.message.includes('fetch')
-      ? 'No pudimos conectarnos al servidor. ¿Está corriendo el backend?'
-      : err.message;
+    ? 'No pudimos conectarnos al servidor. ¿Está corriendo el backend?'
+    : err.message;
     statusEl.dataset.state = 'error';
   } finally {
     submitBtn.disabled = false;

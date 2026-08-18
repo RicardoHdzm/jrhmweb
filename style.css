@@ -638,6 +638,14 @@ button {
 
 /* Formulario oculto por el momento — dejamos solo la intro de contacto */
 .contact__form-wrap {
+  display: none;
+}
+
+.contact__grid {
+  grid-template-columns: 1fr;
+  max-width: 640px;
+  margin: 0 auto;
+  text-align: center;
 }
 
 .social {

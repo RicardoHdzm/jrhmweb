@@ -339,7 +339,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <div class="contact__form-wrap">
   <form class="form" id="contact-form" novalidate>
     <div class="form__row">
-      <label for="name">Nombre</label>
+      <label for="name" data-i18n="form.name">Nombre</label>
       <input type="text" id="name" name="name" required minlength="2">
       <span class="form__error" data-for="name"></span>
     </div>
@@ -352,36 +352,36 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       </div>
 
       <div class="form__row">
-        <label for="phone">Teléfono</label>
+        <label for="phone" data-i18n="form.phone">Teléfono</label>
         <input type="tel" id="phone" name="phone">
         <span class="form__error" data-for="phone"></span>
       </div>
     </div>
-    <p class="form__hint">Necesitamos al menos un dato de contacto (email o teléfono).</p>
+    <p class="form__hint" data-i18n="form.hint">Necesitamos al menos un dato de contacto (email o teléfono)</p>
 
     <div class="form__row">
-      <label for="service">¿En qué te podemos ayudar?</label>
+      <label for="service" data-i18n="form.help">¿En qué te podemos ayudar?</label>
       <select id="service" name="service" required>
-        <option value="" disabled selected>Selecciona una opción</option>
-        <option value="Diseño 100% Personalizado">Necesito un sitio web</option>
-        <option value="Sitios Multi-página">Rediseño de mi sito actual</option>
-        <option value="E-commerce en Shopify">E-commerce en Shopify</option>
-        <option value="Formularios & Integraciones">Formularios &amp; Integraciones</option>
-        <option value="Optimización SEO">Optimización SEO</option>
-        <option value="Mantenimiento & Soporte">Mantenimiento &amp; Soporte</option>
-        <option value="Otro">Otro</option>
+        <option value="" disabled selected data-i18n="form.option">Selecciona una opción</option>
+        <option value="Diseño 100% Personalizado" data-i18n="form.option1">Necesito un sitio web</option>
+        <option value="Sitios Multi-página" data-i18n="form.option2">Rediseño de mi sito actual</option>
+        <option value="E-commerce en Shopify" data-i18n="form.option3">E-commerce en Shopify</option>
+        <option value="Formularios & Integraciones" data-i18n="form.option4">Formularios &amp; Integraciones</option>
+        <option value="Optimización SEO" data-i18n="form.option5">Optimización SEO</option>
+        <option value="Mantenimiento & Soporte" data-i18n="form.option6">Mantenimiento &amp; Soporte</option>
+        <option value="Otro" data-i18n="form.option7">Otro</option>
       </select>
       <span class="form__error" data-for="service"></span>
     </div>
 
     <div class="form__row">
-      <label for="message">Mensaje</label>
+      <label for="message" data-i18n="form.message">Mensaje</label>
       <textarea id="message" name="message" rows="8" required minlength="10"></textarea>
       <span class="form__error" data-for="message"></span>
     </div>
 
     <button type="submit" class="btn btn--primary" id="submit-btn">
-      <span class="btn__label">Enviar mensaje</span>
+      <span class="btn__label" data-i18n="form.button">Enviar mensaje</span>
     </button>
 
     <p class="form__status" id="form-status" role="status" aria-live="polite"></p>
