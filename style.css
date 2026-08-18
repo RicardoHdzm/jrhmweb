@@ -388,8 +388,11 @@ button {
 /* ===== Servicios ===== */
 .services {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 20px;
+  grid-template-columns: 1fr;
+}
+
+.services > * {
+  margin: 10px;
 }
 
 .service {
@@ -442,10 +445,24 @@ button {
 }
 
 /* ===== Proceso ===== */
+
 .process {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
-  gap: 20px;
+  grid-template-columns: 1fr; /
+}
+
+.process > * {
+  margin: 10px;
+}
+
+@media (min-width: 768px) {
+  .process {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .services{
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
 .process__step {
@@ -773,20 +790,20 @@ button {
    Cada scroll lleva directo al inicio de la siguiente sección,
    con una animación suave (no un salto brusco).
    ============================================================ */
-@media (min-width: 901px) {
-  html {
-    scroll-snap-type: y mandatory;
-  }
+   @media (min-width: 901px) {
+    html {
+      scroll-snap-type: y mandatory;
+    }
 
-  .hero,
-  .section {
-    min-height: calc(100vh - var(--nav-height));
-    scroll-snap-align: start;
-    scroll-snap-stop: always;
-  }
+    .hero,
+    .section {
+      min-height: calc(100vh - var(--nav-height));
+      scroll-snap-align: start;
+      scroll-snap-stop: always;
+    }
 
-  .footer {
-    scroll-snap-align: end;
+    .footer {
+      scroll-snap-align: end;
+    }
   }
-}
 
