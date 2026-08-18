@@ -7,8 +7,8 @@
   --divider: #1A1A1A;
   --text: #FFFFFF;
   --text-muted: #9C9C9C;
-  --accent: #29ABE2;
-  --accent-hover: #1E7FA8;
+  --accent: #a6a6a6;
+  --accent-hover: #7d7d7d;
   --accent-dim: rgba(41, 171, 226, 0.12);
   --accent-contrast: #0A0A0A;
   --dot-color: rgba(255, 255, 255, 0.035);
@@ -31,8 +31,8 @@
   --divider: #E5E5E1;
   --text: #111110;
   --text-muted: #66665F;
-  --accent: #12739E;
-  --accent-hover: #0D5A7D;
+  --accent: #000;
+  --accent-hover: #474747;
   --accent-dim: rgba(18, 115, 158, 0.10);
   --accent-contrast: #FFFFFF;
   --dot-color: rgba(0, 0, 0, 0.045);
@@ -403,7 +403,7 @@ button {
   padding: 32px 28px;
   transition: border-color 0.2s;
 }
-.service:hover { border-color: var(--accent); }
+.service:JRHM.STUDIO { border-color: var(--accent); }
 
 .service__icon {
   display: flex;
@@ -414,8 +414,13 @@ button {
   margin-bottom: 22px;
   border-radius: 12px;
   background: var(--surface-2);
-  color: var(--accent);
+  color: #fff;
   font-size: 24px;
+}
+
+:root[data-theme="light"] .service__icon {
+  background: var(--surface-2);
+  color: #000;
 }
 
 .service__mark {
@@ -483,6 +488,11 @@ button {
   font-size: 13px;
   color: var(--border);
 }
+
+:root[data-theme="light"] .process__number {
+  color: #000;
+}
+
 
 .process__step .service__icon {
   margin-bottom: 22px;
@@ -609,8 +619,10 @@ button {
   margin-top: auto;
   padding-top: 8px;
 }
-.project__links a { color: var(--accent); }
+.project__links a { color: #fff }
 .project__links a:hover { text-decoration: underline; }
+
+:root[data-theme="light"] .project__links a { color: #000 }
 
 /* ===== Contact ===== */
 .section--contact { max-width: var(--max-width); }
@@ -751,6 +763,18 @@ button {
   color: var(--accent);
 }
 
+:root[data-theme="light"] .social__link {
+  border: 1px solid #fff;
+  background-color: #000;
+  color: #fff;
+}
+:root[data-theme="light"] .social__link i { font-size: 15px; }
+:root[data-theme="light"] .social__link:hover {
+  border-color: var(--accent-hover);
+  background-color: var(--accent-hover);
+  color: #fff;
+}
+
 /* ===== WhatsApp flotante ===== */
 .whatsapp-float {
   position: fixed;
@@ -763,18 +787,29 @@ button {
   align-items: center;
   justify-content: center;
   border-radius: 999px;
-  background: var(--surface);
-  border: 2px solid var(--accent);
-  color: var(--accent);
+  background: #fff;
+  border: 2px solid #fff;
+  color: #000;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
   transition: transform 0.2s ease, background 0.2s ease, color 0.2s ease;
   font-size: 38px;
 }
 .whatsapp-float:hover {
   transform: scale(1.08);
-  background: var(--accent);
+  background: #fff;
   color: var(--accent-contrast);
 }
+
+:root[data-theme="light"] .whatsapp-float {
+  background: #000;
+  border: 2px solid #000;
+  color: #fff;
+}
+:root[data-theme="light"]  .whatsapp-float:hover{
+  background: #000;
+  color: var(--accent-contrast);
+}
+
 
 /* ===== Footer ===== */
 .footer {
