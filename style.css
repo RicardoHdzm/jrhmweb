@@ -7,8 +7,8 @@
   --divider: #1A1A1A;
   --text: #FFFFFF;
   --text-muted: #9C9C9C;
-  --accent: #a6a6a6;
-  --accent-hover: #7d7d7d;
+  --accent: #38B6FF;
+  --accent-hover: #1E90FF;
   --accent-dim: rgba(41, 171, 226, 0.12);
   --accent-contrast: #0A0A0A;
   --dot-color: rgba(255, 255, 255, 0.035);
@@ -166,7 +166,7 @@ button {
   font-size: 10px;
   letter-spacing: 0.5em;
   text-transform: uppercase;
-  color: var(--text-muted);
+  color: var(--accent);
 }
 
 .nav__links {
@@ -414,7 +414,7 @@ button {
   margin-bottom: 22px;
   border-radius: 12px;
   background: var(--surface-2);
-  color: #fff;
+  color: var(--accent);
   font-size: 24px;
 }
 
@@ -487,6 +487,10 @@ button {
   font-family: var(--font-mono);
   font-size: 13px;
   color: var(--border);
+}
+
+:root[data-theme="light"] .process__number{
+  color: var(--accent);
 }
 
 .process__step .service__icon {
@@ -769,15 +773,15 @@ button {
   justify-content: center;
   border-radius: 999px;
   background: var(--surface);
-  border: 2px solid #fff;
-  color: #fff;
+  border: 2px solid var(--accent);
+  color: var(--accent);
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
   transition: transform 0.2s ease, background 0.2s ease, color 0.2s ease;
   font-size: 38px;
 }
 .whatsapp-float:hover {
   transform: scale(1.08);
-  background: #fff;
+  background: var(--accent);
   color: var(--accent-contrast);
 }
 
