@@ -31,8 +31,8 @@
   --divider: #E5E5E1;
   --text: #111110;
   --text-muted: #66665F;
-  --accent: #000;
-  --accent-hover: #474747;
+  --accent: #cf4444;
+  --accent-hover: #b53a3a;
   --accent-dim: rgba(18, 115, 158, 0.10);
   --accent-contrast: #FFFFFF;
   --dot-color: rgba(0, 0, 0, 0.045);
@@ -419,8 +419,8 @@ button {
 }
 
 :root[data-theme="light"] .service__icon {
-  background: var(--surface-2);
-  color: #000;
+  background: var(--accent);
+  color: var(--accent-contrast);
 }
 
 .service__mark {
@@ -783,11 +783,11 @@ button {
 
 :root[data-theme="light"] .whatsapp-float {
   background: var(--surface);
-  border: 2px solid #000;
-  color: #000;
+  border: 2px solid var(--accent);
+  color: var(--accent);
 }
 :root[data-theme="light"]  .whatsapp-float:hover{
-  background: #000;
+  background: var(--accent);
   color: var(--accent-contrast);
 }
 
