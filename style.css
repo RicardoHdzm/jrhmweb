@@ -638,14 +638,8 @@ button {
 
 /* Formulario oculto por el momento — dejamos solo la intro de contacto */
 .contact__form-wrap {
-  display: none;
 }
-.contact__grid {
-  grid-template-columns: 1fr;
-  max-width: 640px;
-  margin: 0 auto;
-  text-align: center;
-}
+
 .social {
   justify-content: center;
 }
@@ -654,6 +648,7 @@ button {
 .contact__sub {
   color: var(--text-muted);
   font-size: 15.5px;
+  text-align: center;
 }
 
 .form__row {
@@ -738,6 +733,7 @@ button {
   margin-top: 36px;
   padding-top: 28px;
   border-top: 1px solid var(--border);
+  text-align: center;
 }
 .contact__social p {
   color: var(--text-muted);
