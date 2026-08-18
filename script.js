@@ -119,7 +119,7 @@ const translations = {
     'hero.eyebrow': '00 // design & web development studio',
     'hero.titlePre': 'Designing websites that',
     'hero.titleHighlight': 'grow your business',
-    'hero.sub': 'At JRHM.STUDIO, we design and develop custom websites tailored to your brand. We create clear, functional solutions, ranging from a simple landing page to more comprehensive sites adapted precisely to what your business needs.',
+    'hero.sub': 'At JRHM.STUDIO we design and develop custom websites tailored to your brand. We create clear, functional solutions, ranging from a simple landing page to more comprehensive sites adapted precisely to what your business needs.',
     'hero.btnProjects': 'View projects',
     'hero.btnContact': 'Get in touch',
     'hero.scroll': 'Scroll',
