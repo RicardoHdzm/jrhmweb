@@ -113,9 +113,7 @@ async function handleContact(request, env) {
   const faltantes = ['RESEND_API_KEY', 'NOTIFY_EMAIL', 'FROM_EMAIL'].filter((v) => !env[v]);
   if (faltantes.length > 0) {
     console.error('Faltan variables de entorno en el Worker: ' + faltantes.join(', '));
-    // TEMPORAL: devolver los nombres que faltan para diagnosticar desde fuera.
-    // Solo nombres, nunca valores. Quitar en cuanto el formulario funcione.
-    return json({ error: m.sendFailed, faltan: faltantes }, 500);
+    return json({ error: m.sendFailed }, 500);
   }
 
   try {
