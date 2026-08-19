@@ -10,6 +10,16 @@
     "directory": "./public",
     "binding": "ASSETS"
   },
+  "vars": {
+    // Estas dos viven aquí y no en el dashboard: son configuración, no
+    // secretos, y así un despliegue no puede dejarlas vacías.
+    //
+    // NOTIFY_EMAIL apunta al buzón del propio dominio en vez de a una
+    // dirección personal, para no meter un correo privado en un repo público.
+    // Cloudflare Email Routing ya reenvía hello@jrhm.studio al destino real.
+    "NOTIFY_EMAIL": "hello@jrhm.studio",
+    "FROM_EMAIL": "JRHM Web Studio <hello@jrhm.studio>"
+  },
   // Por defecto, "wrangler deploy" borra del Worker toda variable de texto
   // plano que no esté declarada aquí. Con esto respeta las que estén puestas
   // en el dashboard, que es donde viven RESEND_API_KEY, NOTIFY_EMAIL y
