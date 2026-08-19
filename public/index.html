@@ -15,7 +15,6 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <meta name="description" content="Diseño y desarrollo de sitios web a medida: landing pages, sitios multi-página y e-commerce en Shopify. Creamos sitios web que hacen crecer tu negocio.">
 <meta name="robots" content="index, follow">
 <meta name="theme-color" content="#0A0A0A">
-<!-- TODO: reemplazar por la URL final del sitio -->
 <link rel="canonical" href="https://jrhm.studio/">
 
 <!-- Open Graph -->
@@ -24,7 +23,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <meta property="og:title" content="JRHM.STUDIO | Diseño & Desarrollo Web">
 <meta property="og:description" content="Diseño y desarrollo de sitios web a medida: landing pages, sitios multi-página y e-commerce en Shopify. Creamos sitios web que hacen crecer tu negocio.">
 <meta property="og:url" content="https://jrhm.studio/">
-<meta property="og:image" content="https://ricardohdzm.github.io/jrhmweb/assets/thumbnail.png">
+<meta property="og:image" content="https://jrhm.studio/assets/thumbnail.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:locale" content="es_MX">
@@ -33,7 +32,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="JRHM.STUDIO | Diseño & Desarrollo Web">
 <meta name="twitter:description" content="Diseño y desarrollo de sitios web a medida: landing pages, sitios multi-página y e-commerce en Shopify.">
-<meta name="twitter:image" content="https://ricardohdzm.github.io/jrhmweb/assets/thumbnail.png">
+<meta name="twitter:image" content="https://jrhm.studio/assets/thumbnail.png">
 
 <link rel="icon" href="favicon.gif" type="image/gif">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -320,20 +319,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <p class="section__eyebrow" data-i18n="contact.eyebrow">04 // contacto</p>
     <h2 class="section__title" data-i18n="contact.title">Hablemos de tu proyecto</h2>
     <p class="contact__sub" data-i18n="contact.sub">Cuéntanos qué necesitas, ya sea empezar de cero, renovar tu sitio actual, o sumarle algo que le falta, y te respondemos en menos de 24 horas. Sin compromisos: primero entendemos tu proyecto, después te decimos cómo lo resolvemos.</p>
-
-    <div class="contact__social">
-      <p data-i18n="contact.writeUs">Escríbenos directo por:</p>
-      <div class="social">
-        <a href="mailto:hello@jrhm.studio" class="social__link" aria-label="Email">
-          <i class="fa-solid fa-envelope"></i>
-          <span data-i18n="contact.email">Correo</span>
-        </a>
-        <a href="https://wa.me/526673255323" target="_blank" rel="noopener" class="social__link" aria-label="WhatsApp">
-          <i class="fa-brands fa-whatsapp"></i>
-          <span data-i18n="contact.whatsapp">WhatsApp</span>
-        </a>
-      </div>
-    </div>
   </div>
 
   <div class="contact__form-wrap">
@@ -357,14 +342,13 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <span class="form__error" data-for="phone"></span>
       </div>
     </div>
-    <p class="form__hint" data-i18n="form.hint">Necesitamos al menos un dato de contacto (email o teléfono)</p>
 
     <div class="form__row">
       <label for="service" data-i18n="form.help">¿En qué te podemos ayudar?</label>
       <select id="service" name="service" required>
         <option value="" disabled selected data-i18n="form.option">Selecciona una opción</option>
         <option value="Diseño 100% Personalizado" data-i18n="form.option1">Necesito un sitio web</option>
-        <option value="Sitios Multi-página" data-i18n="form.option2">Rediseño de mi sito actual</option>
+        <option value="Sitios Multi-página" data-i18n="form.option2">Rediseño de mi sitio actual</option>
         <option value="E-commerce en Shopify" data-i18n="form.option3">E-commerce en Shopify</option>
         <option value="Formularios & Integraciones" data-i18n="form.option4">Formularios &amp; Integraciones</option>
         <option value="Optimización SEO" data-i18n="form.option5">Optimización SEO</option>
@@ -387,6 +371,20 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <p class="form__status" id="form-status" role="status" aria-live="polite"></p>
   </form>
   </div>
+
+    <div class="contact__social">
+      <p data-i18n="contact.writeUs">O escríbenos directo por:</p>
+      <div class="social">
+        <a href="mailto:hello@jrhm.studio" class="social__link" aria-label="Email">
+          <i class="fa-solid fa-envelope"></i>
+          <span data-i18n="contact.email">Correo</span>
+        </a>
+        <a href="https://wa.me/526673255323" target="_blank" rel="noopener" class="social__link" aria-label="WhatsApp">
+          <i class="fa-brands fa-whatsapp"></i>
+          <span data-i18n="contact.whatsapp">WhatsApp</span>
+        </a>
+      </div>
+    </div>
 </div>
 </section>
 
@@ -397,6 +395,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <footer class="footer">
   <p>JRHM.STUDIO · <span id="year"></span></p>
 </footer>
+
+<!-- Cursor personalizado. Vacíos a propósito: el JS solo los mueve. -->
+<div class="cursor__ring" aria-hidden="true"></div>
+<div class="cursor__dot" aria-hidden="true"></div>
 
 <script src="script.js"></script>
 </body>

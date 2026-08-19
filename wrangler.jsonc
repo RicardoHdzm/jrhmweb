@@ -1,0 +1,19 @@
+{
+  // Worker que sirve el sitio estático y expone el endpoint del formulario.
+  // Este archivo manda sobre la configuración del dashboard.
+  "name": "jrhmweb",
+  "main": "src/worker.js",
+  "compatibility_date": "2026-08-19",
+  "assets": {
+    // Solo se publica lo que esté en public/. Todo lo demás (código del Worker,
+    // README, backend legado y sobre todo .git) queda fuera de la web.
+    "directory": "./public",
+    "binding": "ASSETS"
+  },
+  // Por defecto, "wrangler deploy" borra del Worker toda variable de texto
+  // plano que no esté declarada aquí. Con esto respeta las que estén puestas
+  // en el dashboard, que es donde viven RESEND_API_KEY, NOTIFY_EMAIL y
+  // FROM_EMAIL. Sin esta línea, un despliegue dejaría al formulario sin
+  // configuración y devolviendo 500.
+  "keep_vars": true
+}

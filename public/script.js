@@ -26,12 +26,18 @@ if (navSections.length) {
 
 // ===== Modo claro/oscuro =====
 const themeToggle = document.getElementById('theme-toggle');
-const themeLabels = { dark: 'Cambiar a modo claro', light: 'Cambiar a modo oscuro' };
 
 function applyTheme(theme) {
   document.documentElement.setAttribute('data-theme', theme);
-  if (themeToggle) themeToggle.setAttribute('aria-label', themeLabels[theme]);
   localStorage.setItem('theme', theme);
+}
+
+// El aria-label depende del idioma. Va aparte de applyTheme porque esa corre
+// al cargar la página, cuando el diccionario de traducciones todavía no existe.
+function updateThemeLabel() {
+  if (!themeToggle) return;
+  const isDark = document.documentElement.getAttribute('data-theme') !== 'light';
+  themeToggle.setAttribute('aria-label', t(isDark ? 'theme.toLight' : 'theme.toDark'));
 }
 
 applyTheme(localStorage.getItem('theme') || 'dark');
@@ -40,6 +46,7 @@ if (themeToggle) {
   themeToggle.addEventListener('click', () => {
     const current = document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark';
     applyTheme(current === 'light' ? 'dark' : 'light');
+    updateThemeLabel();
   });
 }
 
@@ -102,30 +109,44 @@ const translations = {
     'process.step1.desc': 'Nos escribes por WhatsApp o correo y nos cuentas qué necesita tu negocio: un sitio nuevo, un rediseño o algo puntual. Te respondemos en menos de 24 horas.',
     'process.step2.title': 'Propuesta',
     'process.step2.desc': 'Te armamos una propuesta clara acorde a tus necesidades, tiempo de entrega y costo del proyecto, para que sepas exactamente qué esperar antes de arrancar.',
-    'process.step3.title': 'Diseño & Desarollo',
+    'process.step3.title': 'Diseño & Desarrollo',
     'process.step3.desc': 'Diseñamos y desarrollamos tu sitio, lo probamos tanto en escritorio como en móvil, asegurando que la estructura y la experiencia queden impecables.',
     'process.step4.title': 'Revisión & Entrega',
     'process.step4.desc': 'Te presentamos el resultado final para que lo pruebes, aplicamos los ajustes necesarios y lanzamos el sitio oficialmente para que empiece a funcionar.',
     'contact.eyebrow': '04 // contacto',
     'contact.title': 'Hablemos de tu proyecto',
     'contact.sub': 'Cuéntanos qué necesitas, ya sea empezar de cero, renovar tu sitio actual, o sumarle algo que le falta, y te respondemos en menos de 24 horas. Sin compromisos: primero entendemos tu proyecto, después te decimos cómo lo resolvemos.',
-    'contact.writeUs': 'Escríbenos directo por:',
+    'contact.writeUs': 'O escríbenos directo por:',
     'contact.email': 'Correo',
     'contact.whatsapp': 'WhatsApp',
     'form.name': 'Nombre',
     'form.phone': 'Teléfono',
     'form.message': 'Mensaje',
-    'form.hint': 'Necesitamos al menos un dato de contacto (email o teléfono)',
     'form.help': '¿En qué te podemos ayudar?',
-    'form.option': '¿En qué te podemos ayudar?',
+    'form.option': 'Selecciona una opción',
     'form.option1': 'Necesito un sitio web',
-    'form.option2': 'Rediseño de mi sito actual',
-    'form.option3': '¿E-commerce en Shopify',
+    'form.option2': 'Rediseño de mi sitio actual',
+    'form.option3': 'E-commerce en Shopify',
     'form.option4': 'Formularios & Integraciones',
     'form.option5': 'Optimización SEO',
     'form.option6': 'Mantenimiento & Soporte',
     'form.option7': 'Otro',
     'form.button': 'Enviar mensaje',
+    'form.sending': 'Enviando...',
+    'form.err.name': 'Ingresa al menos 2 caracteres',
+    'form.err.email': 'Ingresa un email válido',
+    'form.err.phone': 'Ingresa un teléfono válido',
+    'form.err.contact': 'Déjanos un email o un teléfono',
+    'form.err.service': 'Selecciona una opción',
+    'form.err.message': 'Cuéntanos un poco más (mínimo 10 caracteres)',
+    'form.status.invalid': 'Revisa los campos marcados en rojo.',
+    'form.status.success': '¡Mensaje enviado! Te vamos a responder pronto.',
+    'form.status.network': 'No pudimos conectarnos. Revisa tu conexión e intenta de nuevo.',
+    'form.status.generic': 'Algo salió mal. Intenta de nuevo en un momento.',
+    'theme.toLight': 'Cambiar a modo claro',
+    'theme.toDark': 'Cambiar a modo oscuro',
+    'meta.title': 'JRHM.STUDIO | Diseño & Desarrollo Web',
+    'meta.description': 'Diseño y desarrollo de sitios web a medida: landing pages, sitios multi-página y e-commerce en Shopify. Creamos sitios web que hacen crecer tu negocio.',
 
   },
   en: {
@@ -192,14 +213,12 @@ const translations = {
     'contact.eyebrow': '04 // contact',
     'contact.title': "Let's talk about your project",
     'contact.sub': "Tell us what you need, whether it's starting from scratch, refreshing your current site, or adding something it's missing, and we'll get back to you in under 24 hours. No strings attached: we start by understanding your project, then tell you how we'll solve it.",
-    'contact.writeUs': 'Write to us directly at:',
+    'contact.writeUs': 'Or write to us directly at:',
     'contact.email': 'Email',
     'contact.whatsapp': 'WhatsApp',
     'form.name': 'Name',
     'form.phone': 'Phone',
-    'form.name': 'Name',
     'form.message': 'Message',
-    'form.hint': 'We need at least one contact detail (email or phone number)',
     'form.help': 'How can we help you?',
     'form.option': 'Select an option',
     'form.option1': 'I need a website',
@@ -210,12 +229,33 @@ const translations = {
     'form.option6': 'Maintenance & Support',
     'form.option7': 'Other',
     'form.button': 'Send message',
+    'form.sending': 'Sending...',
+    'form.err.name': 'Enter at least 2 characters',
+    'form.err.email': 'Enter a valid email address',
+    'form.err.phone': 'Enter a valid phone number',
+    'form.err.contact': 'Leave us an email or a phone number',
+    'form.err.service': 'Select an option',
+    'form.err.message': 'Tell us a bit more (10 characters minimum)',
+    'form.status.invalid': 'Check the fields marked in red.',
+    'form.status.success': "Message sent! We'll get back to you soon.",
+    'form.status.network': "We couldn't connect. Check your connection and try again.",
+    'form.status.generic': 'Something went wrong. Please try again in a moment.',
+    'theme.toLight': 'Switch to light mode',
+    'theme.toDark': 'Switch to dark mode',
+    'meta.title': 'JRHM.STUDIO | Web Design & Development',
+    'meta.description': 'Custom web design and development: landing pages, multi-page sites, and Shopify e-commerce. We build websites that grow your business.',
   },
 };
 
 const langButtons = document.querySelectorAll('.lang-switch__btn');
 const i18nEls = document.querySelectorAll('[data-i18n]');
 let currentLang = localStorage.getItem('lang') || 'es';
+
+// Busca una traducción; si falta la clave en el idioma activo cae al español
+// antes que dejar la interfaz en blanco.
+function t(key) {
+  return translations[currentLang][key] ?? translations.es[key] ?? key;
+}
 
 function applyLanguage(lang) {
   currentLang = lang;
@@ -236,6 +276,13 @@ function applyLanguage(lang) {
     ? translations[lang]['projects.showLess']
     : translations[lang]['projects.showMore'];
   }
+
+  document.title = t('meta.title');
+  const metaDesc = document.querySelector('meta[name="description"]');
+  if (metaDesc) metaDesc.setAttribute('content', t('meta.description'));
+
+  updateThemeLabel();
+  refreshFormMessages();
 
   localStorage.setItem('lang', lang);
 }
@@ -263,30 +310,57 @@ if (projectsToggle) {
   });
 }
 
-applyLanguage(currentLang);
 
 // ===== Formulario de contacto =====
 const form = document.getElementById('contact-form');
 const statusEl = document.getElementById('form-status');
 const submitBtn = document.getElementById('submit-btn');
 
-// Cambiá esto por la URL real de tu backend cuando lo despliegues
-const API_URL = 'http://localhost:3000/api/contact';
+// Pages Function servida en el mismo dominio (functions/api/contact.js)
+const API_URL = '/api/contact';
 
-function showError(field, message) {
+// Guardamos la CLAVE de cada mensaje visible, no el texto, para poder
+// re-pintarlos si el visitante cambia de idioma con el formulario a medio
+// llenar o con errores en pantalla.
+const fieldErrors = {};
+let statusKey = null;
+let isSubmitting = false;
+
+function showError(field, key) {
   const row = form.querySelector(`#${field}`).closest('.form__row');
   const errorEl = row.querySelector('.form__error');
-  if (message) {
+  if (key) {
+    fieldErrors[field] = key;
     row.classList.add('has-error');
-    errorEl.textContent = message;
+    errorEl.textContent = t(key);
   } else {
+    delete fieldErrors[field];
     row.classList.remove('has-error');
     errorEl.textContent = '';
   }
 }
 
 function clearError(field) {
-  showError(field, '');
+  showError(field, null);
+}
+
+// `literal` es para el texto que ya viene traducido del servidor: no tiene
+// clave, así que al cambiar de idioma se queda como está.
+function setStatus(key, state, literal) {
+  statusKey = key;
+  statusEl.textContent = key ? t(key) : (literal || '');
+  statusEl.dataset.state = state || '';
+}
+
+// La llama applyLanguage al cambiar de idioma.
+function refreshFormMessages() {
+  if (!form) return;
+  Object.entries(fieldErrors).forEach(([field, key]) => {
+    const row = form.querySelector(`#${field}`).closest('.form__row');
+    row.querySelector('.form__error').textContent = t(key);
+  });
+  if (statusKey) statusEl.textContent = t(statusKey);
+  if (!isSubmitting) submitBtn.querySelector('.btn__label').textContent = t('form.button');
 }
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -298,7 +372,7 @@ function validateForm() {
 
   const name = form.name.value.trim();
   if (name.length < 2) {
-    showError('name', 'Ingresa al menos 2 caracteres');
+    showError('name', 'form.err.name');
     isValid = false;
   } else {
     clearError('name');
@@ -311,27 +385,27 @@ function validateForm() {
   const phoneOk = phone === '' || phoneRegex.test(phone);
 
   if (!emailOk) {
-    showError('email', 'Ingresa un email válido');
+    showError('email', 'form.err.email');
     isValid = false;
   } else {
     clearError('email');
   }
 
   if (!phoneOk) {
-    showError('phone', 'Ingresa un teléfono válido');
+    showError('phone', 'form.err.phone');
     isValid = false;
   } else {
     clearError('phone');
   }
 
   if (email === '' && phone === '') {
-    showError('email', 'Déjanos un email o un teléfono');
+    showError('email', 'form.err.contact');
     isValid = false;
   }
 
   const service = form.service.value;
   if (!service) {
-    showError('service', 'Selecciona una opción');
+    showError('service', 'form.err.service');
     isValid = false;
   } else {
     clearError('service');
@@ -339,7 +413,7 @@ function validateForm() {
 
   const message = form.message.value.trim();
   if (message.length < 10) {
-    showError('message', 'Cuéntanos un poco más (mínimo 10 caracteres)');
+    showError('message', 'form.err.message');
     isValid = false;
   } else {
     clearError('message');
@@ -358,8 +432,7 @@ form.addEventListener('submit', async (e) => {
   e.preventDefault();
 
   if (!validateForm()) {
-    statusEl.textContent = 'Revisa los campos marcados en rojo.';
-    statusEl.dataset.state = 'error';
+    setStatus('form.status.invalid', 'error');
     return;
   }
 
@@ -369,12 +442,14 @@ form.addEventListener('submit', async (e) => {
     phone: form.phone.value.trim(),
     service: form.service.value,
     message: form.message.value.trim(),
+    // El servidor responde los errores en este idioma.
+    lang: currentLang,
   };
 
+  isSubmitting = true;
   submitBtn.disabled = true;
-  submitBtn.querySelector('.btn__label').textContent = 'Enviando...';
-  statusEl.textContent = '';
-  statusEl.dataset.state = '';
+  submitBtn.querySelector('.btn__label').textContent = t('form.sending');
+  setStatus(null, '');
 
   try {
     const response = await fetch(API_URL, {
@@ -385,19 +460,125 @@ form.addEventListener('submit', async (e) => {
 
     if (!response.ok) {
       const errData = await response.json().catch(() => ({}));
-      throw new Error(errData.error || 'Algo salió mal en el servidor.');
+      throw new Error(errData.error || '');
     }
 
-    statusEl.textContent = '¡Mensaje enviado! Te vamos a responder pronto.';
-    statusEl.dataset.state = 'success';
+    setStatus('form.status.success', 'success');
     form.reset();
+    Object.keys(fieldErrors).forEach(clearError);
   } catch (err) {
-    statusEl.textContent = err.message.includes('fetch')
-    ? 'No pudimos conectarnos al servidor. ¿Está corriendo el backend?'
-    : err.message;
-    statusEl.dataset.state = 'error';
+    if (err instanceof TypeError) {
+      // fetch() solo lanza TypeError cuando la petición ni siquiera salió.
+      setStatus('form.status.network', 'error');
+    } else if (err.message) {
+      setStatus(null, 'error', err.message);
+    } else {
+      setStatus('form.status.generic', 'error');
+    }
   } finally {
+    isSubmitting = false;
     submitBtn.disabled = false;
-    submitBtn.querySelector('.btn__label').textContent = 'Enviar mensaje';
+    submitBtn.querySelector('.btn__label').textContent = t('form.button');
   }
 });
+
+// ===== Cursor personalizado =====
+// Un punto que sigue al ratón exacto y un anillo que llega con retardo. Solo en
+// dispositivos con puntero fino: en táctil no hay cursor que reemplazar.
+if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+  const dot = document.querySelector('.cursor__dot');
+  const ring = document.querySelector('.cursor__ring');
+
+  if (dot && ring) {
+    // Qué hace crecer el anillo, y qué lo aparta.
+    const PULSABLE = 'a, button, select, summary, [role="button"]';
+    const CAMPO_DE_TEXTO = 'input, textarea';
+
+    // Quien pidió menos movimiento no recibe la inercia: el anillo va pegado.
+    const sinMovimiento = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const SEGUIMIENTO = sinMovimiento ? 1 : 0.18;
+
+    let ratonX = window.innerWidth / 2;
+    let ratonY = window.innerHeight / 2;
+    let anilloX = ratonX;
+    let anilloY = ratonY;
+    let visible = false;
+
+    document.addEventListener('pointermove', (e) => {
+      ratonX = e.clientX;
+      ratonY = e.clientY;
+
+      if (!visible) {
+        // Hasta el primer movimiento no sabemos dónde está el ratón: mostrarlo
+        // antes lo dejaría plantado en el centro de la pantalla.
+        visible = true;
+        anilloX = ratonX;
+        anilloY = ratonY;
+        dot.classList.add('is-ready');
+        ring.classList.add('is-ready');
+      }
+    });
+
+    document.addEventListener('pointerover', (e) => {
+      const destino = e.target;
+      if (!(destino instanceof Element)) return;
+      ring.classList.toggle('is-active', !!destino.closest(PULSABLE));
+      const enCampo = !!destino.closest(CAMPO_DE_TEXTO);
+      dot.classList.toggle('is-hidden', enCampo);
+      ring.classList.toggle('is-hidden', enCampo);
+    });
+
+    // Al salir de la ventana el cursor se queda congelado en el borde: mejor
+    // esconderlo y recuperarlo al volver.
+    document.addEventListener('mouseleave', () => {
+      dot.classList.add('is-hidden');
+      ring.classList.add('is-hidden');
+    });
+    document.addEventListener('mouseenter', () => {
+      dot.classList.remove('is-hidden');
+      ring.classList.remove('is-hidden');
+    });
+
+    // Clic: el anillo se encoge mientras se mantiene pulsado y sale una onda
+    // desde el punto exacto del clic.
+    const lanzarOnda = (x, y) => {
+      if (sinMovimiento) return;
+      const onda = document.createElement('div');
+      onda.className = 'cursor__ripple';
+      onda.style.setProperty('--x', `${x}px`);
+      onda.style.setProperty('--y', `${y}px`);
+      // La limpieza normal la hace animationend. El temporizador es la red de
+      // seguridad: si la animación no llega a correr (pestaña oculta, alguna
+      // extensión que las desactive), la onda se quedaría fija en pantalla.
+      const quitar = () => {
+        clearTimeout(plazo);
+        onda.remove();
+      };
+      const plazo = setTimeout(quitar, 800);
+      onda.addEventListener('animationend', quitar);
+      document.body.appendChild(onda);
+    };
+
+    document.addEventListener('pointerdown', (e) => {
+      ring.classList.add('is-pressed');
+      lanzarOnda(e.clientX, e.clientY);
+    });
+    // pointercancel también: si el navegador se queda el gesto, el anillo no
+    // puede quedarse encogido para siempre.
+    document.addEventListener('pointerup', () => ring.classList.remove('is-pressed'));
+    document.addEventListener('pointercancel', () => ring.classList.remove('is-pressed'));
+
+    const frame = () => {
+      anilloX += (ratonX - anilloX) * SEGUIMIENTO;
+      anilloY += (ratonY - anilloY) * SEGUIMIENTO;
+      dot.style.transform = `translate(${ratonX}px, ${ratonY}px)`;
+      ring.style.transform = `translate(${anilloX}px, ${anilloY}px)`;
+      requestAnimationFrame(frame);
+    };
+    requestAnimationFrame(frame);
+  }
+}
+
+// Al final del todo: applyLanguage toca el formulario y el selector de tema,
+// que se definen más arriba pero se inicializan en este punto.
+applyLanguage(currentLang);

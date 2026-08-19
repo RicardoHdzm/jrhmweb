@@ -632,27 +632,36 @@ button {
 .contact__grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 64px;
+  column-gap: 64px;
   align-items: center;
 }
 
-/* Formulario oculto por el momento — dejamos solo la intro de contacto */
+/* El formulario es bastante más alto que la columna de la izquierda. Esa columna
+   va en dos filas: el párrafo pegado al fondo de la primera y el contacto directo
+   pegado al techo de la segunda. Así los dos quedan juntos y el conjunto cae a
+   media altura del formulario, en vez de dejar un hueco muerto debajo. */
+.contact__intro {
+  grid-column: 1;
+  grid-row: 1;
+  align-self: end;
+}
+
+/* El encabezado vive dentro de la columna izquierda, no arriba abarcando la
+   sección como en el resto, así que solo le ajustamos el margen: el centrado
+   lo hereda de .section__eyebrow y .section__title. */
+.contact__intro .section__title {
+  margin: 0 0 16px;
+}
+.contact__social {
+  grid-column: 1;
+  grid-row: 2;
+  align-self: start;
+}
 .contact__form-wrap {
-  display: none;
+  grid-column: 2;
+  grid-row: 1 / span 2;
 }
 
-.contact__grid {
-  grid-template-columns: 1fr;
-  max-width: 640px;
-  margin: 0 auto;
-  text-align: center;
-}
-
-.social {
-  justify-content: center;
-}
-
-.contact__intro .section__title { margin-bottom: 16px; }
 .contact__sub {
   color: var(--text-muted);
   font-size: 15.5px;
@@ -671,9 +680,6 @@ button {
   gap: 16px;
 }
 
-@media (max-width: 900px) {
-  .contact__grid { grid-template-columns: 1fr; gap: 40px; }
-}
 @media (max-width: 560px) {
   .form__row-group { grid-template-columns: 1fr; }
 }
@@ -703,6 +709,70 @@ button {
   background-position: right 14px center;
   padding-right: 40px;
 }
+/* El menú desplegado lo dibuja el navegador y casi no acepta CSS. Esto es lo
+   único que respetan Chrome y Edge en el modo clásico: que las opciones sigan
+   la paleta oscura en vez del gris del sistema. */
+.form__row select option {
+  background-color: var(--surface);
+  color: var(--text);
+}
+.form__row select option:disabled {
+  color: var(--text-muted);
+}
+
+/* Chrome 135+ permite estilar el desplegable de verdad. Donde no exista, se
+   queda con el bloque de arriba y el select clásico, sin romper nada. */
+@supports (appearance: base-select) {
+  .form__row select {
+    appearance: base-select;
+    /* La flecha ahora la pone ::picker-icon; sobra la del background-image. */
+    background-image: none;
+    padding-right: 14px;
+    /* base-select le mete un line-height propio que lo dejaba 6px más alto
+       que los inputs de al lado. */
+    line-height: normal;
+  }
+  .form__row select::picker-icon {
+    color: var(--text-muted);
+    transition: transform 0.2s ease;
+  }
+  .form__row select:open::picker-icon {
+    transform: rotate(180deg);
+  }
+
+  .form__row select::picker(select) {
+    appearance: base-select;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 6px;
+    margin-top: 6px;
+  }
+  .form__row select option {
+    padding: 9px 12px;
+    border-radius: 6px;
+  }
+  /* Resaltado al recorrer las opciones, con ratón o con teclado. */
+  .form__row select option:hover,
+  .form__row select option:focus {
+    background-color: var(--border);
+    color: var(--text);
+  }
+  .form__row select option:checked {
+    background-color: var(--accent);
+    color: var(--accent-contrast);
+  }
+  /* Va después de :checked a propósito: el placeholder está seleccionado de
+     inicio, y así se ve apagado como un placeholder en vez de resaltado. */
+  .form__row select option:disabled {
+    background-color: transparent;
+    color: var(--text-muted);
+  }
+  .form__row select option::checkmark {
+    display: none;
+  }
+}
+
 .form__row input:focus,
 .form__row textarea:focus,
 .form__row select:focus {
@@ -719,13 +789,12 @@ button {
   color: #F87171;
   min-height: 14px;
 }
-.form__hint {
-  font-size: 12.5px;
-  color: var(--text-muted);
-  margin-top: -8px;
-  margin-bottom: 18px;
-}
 
+/* Sin mensaje que mostrar no debe ocupar sitio: si no, deja 14px muertos bajo
+   el botón que separan de más el bloque de contacto directo. */
+.form__status:empty {
+  margin: 0;
+}
 .form__status {
   margin-top: 14px;
   font-size: 13.5px;
@@ -749,12 +818,21 @@ button {
   margin-bottom: 14px;
 }
 .social {
-  display: flex;
+  display: grid;
+  grid-auto-flow: column;
+  /* Las dos columnas quedan del ancho de la mayor. En grid con width fit-content,
+     las pistas 1fr se igualan al contenido más ancho en vez de estirarse a toda
+     la columna. Se ajusta solo si cambia el texto: "Correo" mide menos que
+     "Email", y en inglés el botón sigue igualando a WhatsApp. */
+  grid-auto-columns: 1fr;
   gap: 12px;
+  width: fit-content;
+  margin-inline: auto;
 }
 .social__link {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
   padding: 9px 16px;
   border: 1px solid var(--border);
@@ -766,6 +844,34 @@ button {
   color: var(--accent-contrast);
 }
 .social__link i { font-size: 15px; }
+
+/* Va aquí, después de las reglas base de .contact__social, y no más arriba:
+   @media no añade especificidad, así que un override colocado antes lo pisaría
+   la regla base posterior. */
+@media (max-width: 900px) {
+  .contact__grid { grid-template-columns: 1fr; gap: 40px; }
+  /* Se apila siguiendo el orden del HTML: texto, formulario y al final el
+     contacto directo. */
+  .contact__intro,
+  .contact__form-wrap,
+  .contact__social {
+    grid-column: 1;
+    grid-row: auto;
+    align-self: auto;
+  }
+  /* La separación con el formulario ya la da el row-gap del grid. */
+  .contact__social {
+    margin-top: 0;
+    padding-top: 22px;
+  }
+
+  /* Apilado a una columna, el botón se ve mejor centrado bajo el formulario. */
+  #submit-btn {
+    display: flex;
+    width: fit-content;
+    margin-inline: auto;
+  }
+}
 .social__link:hover {
   border-color: var(--accent-hover);
   background: var(--accent-hover);
@@ -839,3 +945,116 @@ button {
     }
   }
 
+/* ===== Cursor personalizado ===== */
+/* Oculto por defecto: en táctil no hay cursor que reemplazar, y si el JS no
+   llega a correr no queda un punto muerto flotando en la pantalla. */
+.cursor__dot,
+.cursor__ring {
+  display: none;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  /* El cursor del sistema se esconde en todo el documento; el nuestro ocupa su
+     lugar. Los campos de texto son la excepción: reinventar el I-beam solo
+     empeora la escritura. */
+  html,
+  body,
+  body * {
+    cursor: none;
+  }
+  .form__row input,
+  .form__row textarea {
+    cursor: text;
+  }
+
+  .cursor__dot,
+  .cursor__ring {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    border-radius: 999px;
+    pointer-events: none;
+    z-index: 9999;
+    /* El JS solo escribe transform, que no fuerza recálculo de layout. */
+    will-change: transform;
+    opacity: 0;
+    transition: opacity 0.25s ease;
+  }
+  .cursor__dot.is-ready,
+  .cursor__ring.is-ready {
+    opacity: 1;
+  }
+
+  .cursor__dot {
+    width: 6px;
+    height: 6px;
+    margin: -3px 0 0 -3px;
+    background: var(--accent);
+  }
+
+  .cursor__ring {
+    width: 32px;
+    height: 32px;
+    margin: -16px 0 0 -16px;
+    border: 1px solid var(--text-muted);
+    transition: width 0.2s ease, height 0.2s ease, margin 0.2s ease,
+                background-color 0.2s ease, border-color 0.2s ease, opacity 0.25s ease;
+  }
+  /* Sobre algo pulsable: crece y se tiñe del color de marca. */
+  .cursor__ring.is-active {
+    width: 52px;
+    height: 52px;
+    margin: -26px 0 0 -26px;
+    border-color: var(--accent);
+    background-color: color-mix(in srgb, var(--accent) 18%, transparent);
+  }
+  /* Sobre un campo de texto o fuera de la ventana: se aparta. */
+  .cursor__dot.is-hidden,
+  .cursor__ring.is-hidden {
+    opacity: 0;
+  }
+
+  /* Al pulsar, el anillo se encoge: el clic se siente en la mano. Más rápido
+     que el resto de sus transiciones para que responda al instante. */
+  .cursor__ring.is-pressed {
+    width: 22px;
+    height: 22px;
+    margin: -11px 0 0 -11px;
+    border-color: var(--accent);
+    transition-duration: 0.12s;
+  }
+  /* Si ya estaba crecido sobre algo pulsable, encoge menos: el salto de 52 a
+     22px se ve como un parpadeo. */
+  .cursor__ring.is-active.is-pressed {
+    width: 40px;
+    height: 40px;
+    margin: -20px 0 0 -20px;
+  }
+
+  /* Onda que sale del punto exacto del clic. La crea y la destruye el JS. */
+  .cursor__ripple {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 20px;
+    height: 20px;
+    margin: -10px 0 0 -10px;
+    border: 1px solid var(--accent);
+    border-radius: 999px;
+    pointer-events: none;
+    z-index: 9998;
+    animation: cursor-ripple 0.5s ease-out forwards;
+  }
+}
+
+@keyframes cursor-ripple {
+  from {
+    transform: translate(var(--x), var(--y)) scale(1);
+    opacity: 0.9;
+  }
+  to {
+    transform: translate(var(--x), var(--y)) scale(3.4);
+    opacity: 0;
+  }
+}
