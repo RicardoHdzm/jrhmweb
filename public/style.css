@@ -1015,6 +1015,18 @@ button {
     opacity: 0;
   }
 
+  /* Con el desplegable abierto, el navegador lo pinta en la capa superior, por
+     encima de cualquier z-index nuestro: nuestro cursor queda tapado y parece
+     que desaparece. Mientras dure, devolvemos el cursor del sistema. */
+  body:has(select:open),
+  body:has(select:open) * {
+    cursor: auto;
+  }
+  body:has(select:open) .cursor__dot,
+  body:has(select:open) .cursor__ring {
+    opacity: 0;
+  }
+
   /* Al pulsar, el anillo se encoge: el clic se siente en la mano. Más rápido
      que el resto de sus transiciones para que responda al instante. */
   .cursor__ring.is-pressed {

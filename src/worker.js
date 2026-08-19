@@ -108,8 +108,11 @@ async function handleContact(request, env) {
   const message = payload.message.trim();
   const contactLine = [email, phone].filter(Boolean).join(' · ');
 
-  if (!env.RESEND_API_KEY || !env.NOTIFY_EMAIL || !env.FROM_EMAIL) {
-    console.error('Faltan variables: RESEND_API_KEY / NOTIFY_EMAIL / FROM_EMAIL');
+  // Decir cuáles faltan, no solo que falta algo: si no, un 500 aquí obliga a
+  // adivinar. Solo los nombres — los valores no se registran nunca.
+  const faltantes = ['RESEND_API_KEY', 'NOTIFY_EMAIL', 'FROM_EMAIL'].filter((v) => !env[v]);
+  if (faltantes.length > 0) {
+    console.error('Faltan variables de entorno en el Worker: ' + faltantes.join(', '));
     return json({ error: m.sendFailed }, 500);
   }
 
