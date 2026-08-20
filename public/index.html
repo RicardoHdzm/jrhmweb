@@ -35,8 +35,15 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <meta name="twitter:image" content="https://jrhm.studio/assets/thumbnail.png">
 
 <link rel="icon" href="favicon.gif" type="image/gif">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<!-- Fuentes servidas desde el propio dominio: se acabaron las dos conexiones
+     externas a googleapis y gstatic. Se precargan las tres del alfabeto latino
+     porque las tres se usan por encima del pliegue; si no, el navegador no las
+     descubriría hasta haber descargado y parseado style.css. crossorigin es
+     obligatorio aunque sean del mismo origen: las fuentes se piden en modo
+     CORS anónimo. -->
+<link rel="preload" href="fonts/space-grotesk-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/jetbrains-mono-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="fontawesome/css/fontawesome.min.css">
 <link rel="stylesheet" href="fontawesome/css/brands.min.css">
 <link rel="stylesheet" href="fontawesome/css/solid.min.css">
