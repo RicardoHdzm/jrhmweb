@@ -406,7 +406,8 @@ button {
   border: 1px solid var(--border);
   border-radius: 14px;
   padding: 32px 28px;
-  transition: border-color 0.2s;
+  /* Misma duración que el borde para que la elevación y el azul lleguen juntos. */
+  transition: border-color 0.2s, transform 0.2s ease;
 }
 .service:hover { border-color: var(--accent); }
 
@@ -481,7 +482,8 @@ button {
   border: 1px solid var(--border);
   border-radius: 14px;
   padding: 32px 28px;
-  transition: border-color 0.2s;
+  /* Misma duración que el borde para que la elevación y el azul lleguen juntos. */
+  transition: border-color 0.2s, transform 0.2s ease;
 }
 .process__step:hover { border-color: var(--accent); }
 
@@ -543,7 +545,8 @@ button {
   border: 1px solid var(--border);
   border-radius: var(--radius);
   padding: 20px;
-  transition: border-color 0.2s;
+  /* Misma duración que el borde para que la elevación y el azul lleguen juntos. */
+  transition: border-color 0.2s, transform 0.2s ease;
 }
 .project:hover {
   border-color: var(--accent);
@@ -1068,5 +1071,16 @@ button {
   to {
     transform: translate(var(--x), var(--y)) scale(3.4);
     opacity: 0;
+  }
+}
+
+/* Elevación al pasar por encima de las tarjetas. Solo con puntero real: en
+   táctil el :hover se queda pegado tras tocar y la tarjeta se quedaría
+   levantada hasta que tocaras otra cosa. */
+@media (hover: hover) {
+  .service:hover,
+  .process__step:hover,
+  .project:hover {
+    transform: translateY(-4px);
   }
 }
