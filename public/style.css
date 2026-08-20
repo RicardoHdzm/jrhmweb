@@ -1212,22 +1212,8 @@ button {
   /* Filo iluminado en el borde de arriba, como cuando la luz pega en el canto
      de una lámina. Es el detalle que más vende el cristal en fondo plano. */
   box-shadow: inset 0 1px 0 var(--glass-filo);
-  -webkit-backdrop-filter: blur(14px) saturate(140%);
-  backdrop-filter: blur(14px) saturate(140%);
 }
 
-/* Sin desenfoque, un fondo al 4,5% deja la tarjeta casi invisible sobre el
-   fondo de la página. Ahí se vuelve al opaco de siempre. */
-@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-  .service,
-  .project,
-  .process__step {
-    background-image: none;
-    background-color: var(--surface);
-    border-color: var(--border);
-    box-shadow: none;
-  }
-}
 
 /* ===== Aparición por desvanecido ===== */
 /* La clase la pone el JS, nunca el HTML: si el JS no llega a correr, el
