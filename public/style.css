@@ -71,8 +71,21 @@
   --accent-hover: #1E90FF;
   --accent-dim: rgba(41, 171, 226, 0.12);
   --accent-contrast: #0A0A0A;
+  /* Segundo tono del degradado del titular: el mismo azul, más claro. */
+  --accent-2: #91D7FF;
   --dot-color: rgba(255, 255, 255, 0.035);
   --nav-bg: rgba(10, 10, 10, 0.85);
+  /* Cristal: un degradado en diagonal simula la luz sobre la superficie, que
+     es lo que hace que se lea. La transparencia sola, sobre un fondo plano,
+     compone justo el color opaco de antes y no se nota. */
+  --glass-alto: rgba(255, 255, 255, 0.10);
+  --glass-bajo: rgba(255, 255, 255, 0.025);
+  --glass-border: rgba(255, 255, 255, 0.12);
+  --glass-filo: rgba(255, 255, 255, 0.14);
+  /* Para lo que se apoya SOBRE el cristal, como el cuadro del icono: al ser
+     translúcido queda siempre más claro que lo que tenga debajo, en vez de
+     depender de un color fijo que el degradado puede alcanzar. */
+  --glass-encima: rgba(255, 255, 255, 0.08);
 
   --font-display: "Space Grotesk", sans-serif;
   --font-body: "Inter", sans-serif;
@@ -95,8 +108,17 @@
   --accent-hover: #b53a3a;
   --accent-dim: rgba(18, 115, 158, 0.10);
   --accent-contrast: #FFFFFF;
+  /* En claro el degradado va hacia el tono oscuro: aclarar sobre fondo claro
+     perdería contraste. */
+  --accent-2: #913030;
   --dot-color: rgba(0, 0, 0, 0.045);
   --nav-bg: rgba(243, 243, 241, 0.85);
+  /* En claro la luz va al revés: el cristal se aclara hacia el blanco puro
+     sobre un fondo que es gris, y el filo lo marca el borde oscuro. */
+  --glass-alto: rgba(255, 255, 255, 0.85);
+  --glass-bajo: rgba(255, 255, 255, 0.45);
+  --glass-border: rgba(0, 0, 0, 0.09);
+  --glass-filo: rgba(255, 255, 255, 0.9);
 }
 
 ::selection{
@@ -388,7 +410,18 @@ button {
   letter-spacing: -0.01em;
 }
 
+/* El color plano queda de respaldo: si el navegador no recorta el fondo a la
+   forma del texto, se ve el titular en color de marca en vez de invisible. */
 .highlight { color: var(--accent); }
+
+@supports ((-webkit-background-clip: text) or (background-clip: text)) {
+  .highlight {
+    background-image: linear-gradient(100deg, var(--accent) 15%, var(--accent-2) 85%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+}
 
 .hero__sub {
   margin: 22px auto 0;
@@ -496,7 +529,10 @@ button {
   height: 48px;
   margin-bottom: 22px;
   border-radius: 12px;
-  background: var(--surface-2);
+  /* Translúcido y no --surface-2: con el degradado de la tarjeta detrás, un
+     color fijo se igualaba con el fondo en la zona clara y el cuadro
+     desaparecía. Así siempre queda por encima de lo que tenga debajo. */
+  background: var(--glass-encima);
   color: var(--accent);
   font-size: 24px;
 }
@@ -1160,4 +1196,51 @@ button {
   .project:hover {
     transform: translateY(-4px);
   }
+}
+
+/* ===== Tarjetas de cristal ===== */
+/* Van al final a propósito: sobrescriben el fondo opaco de las reglas de
+   arriba sin tener que tocarlas. */
+.service,
+.project,
+.process__step {
+  /* El degradado en diagonal es lo que hace el efecto: sin él, el color
+     compuesto es idéntico al fondo opaco anterior. */
+  background-image: linear-gradient(150deg, var(--glass-alto), var(--glass-bajo));
+  background-color: transparent;
+  border-color: var(--glass-border);
+  /* Filo iluminado en el borde de arriba, como cuando la luz pega en el canto
+     de una lámina. Es el detalle que más vende el cristal en fondo plano. */
+  box-shadow: inset 0 1px 0 var(--glass-filo);
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
+  backdrop-filter: blur(14px) saturate(140%);
+}
+
+/* Sin desenfoque, un fondo al 4,5% deja la tarjeta casi invisible sobre el
+   fondo de la página. Ahí se vuelve al opaco de siempre. */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .service,
+  .project,
+  .process__step {
+    background-image: none;
+    background-color: var(--surface);
+    border-color: var(--border);
+    box-shadow: none;
+  }
+}
+
+/* ===== Aparición por desvanecido ===== */
+/* La clase la pone el JS, nunca el HTML: si el JS no llega a correr, el
+   contenido se ve con normalidad en vez de quedarse invisible.
+   Solo opacidad, sin desplazamiento: el contenido no se mueve de su sitio,
+   únicamente aparece. */
+.fundido {
+  opacity: 0;
+  /* --i lo pone el JS: la posición del elemento dentro de su sección. */
+  transition: opacity 0.9s ease;
+  transition-delay: calc(var(--i, 0) * 90ms);
+}
+
+.is-fundido .fundido {
+  opacity: 1;
 }

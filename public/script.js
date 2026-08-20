@@ -482,6 +482,60 @@ form.addEventListener('submit', async (e) => {
   }
 });
 
+// ===== Aparición por desvanecido =====
+// Cada sección desvanece sus elementos, escalonados, al entrar en pantalla.
+// Solo opacidad: nada se desplaza ni se mueve por su cuenta.
+if ('IntersectionObserver' in window && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+  const ANIMABLES = [
+    '.eyebrow', 'h1', '.hero__sub', '.hero__actions',
+    '.section__eyebrow', '.section__title',
+    '.service', '.project', '.process__step',
+    '.contact__intro', '.contact__form-wrap', '.contact__social',
+  ].join(', ');
+
+  // Con muchas tarjetas el escalonado se haría eterno, así que se corta.
+  const RETARDO_MAXIMO = 6;
+
+  const secciones = document.querySelectorAll('.hero, .section');
+
+  secciones.forEach((seccion) => {
+    seccion.querySelectorAll(ANIMABLES).forEach((el, i) => {
+      el.classList.add('fundido');
+      el.style.setProperty('--i', String(Math.min(i, RETARDO_MAXIMO)));
+    });
+  });
+
+  const observador = new IntersectionObserver(
+    (entradas) => {
+      entradas.forEach((entrada) => {
+        if (!entrada.isIntersecting) return;
+        entrada.target.classList.add('is-fundido');
+        // Ya apareció: no tiene sentido volver a montarla al subir.
+        observador.unobserve(entrada.target);
+      });
+    },
+    { threshold: 0.15 }
+  );
+
+  // Dos fotogramas antes de observar. El hero ya está en pantalla al cargar,
+  // así que el observador dispararía en el mismo fotograma en que se aplican
+  // las clases: el navegador no habría pintado el estado inicial y, sin punto
+  // de partida, no hay transición que interpolar.
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      secciones.forEach((seccion) => observador.observe(seccion));
+    });
+  });
+
+  // Red de seguridad. Si el observador no llegara a disparar, el contenido se
+  // quedaría invisible. Ante la duda, mejor sin efecto que sin sitio.
+  setTimeout(() => {
+    if (document.querySelector('.is-fundido')) return;
+    observador.disconnect();
+    document.querySelectorAll('.fundido').forEach((el) => el.classList.remove('fundido'));
+  }, 2500);
+}
+
 // ===== Cursor personalizado =====
 // Un punto que sigue al ratón exacto y un anillo que llega con retardo. Solo en
 // dispositivos con puntero fino: en táctil no hay cursor que reemplazar.
