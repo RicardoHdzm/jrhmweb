@@ -482,6 +482,97 @@ form.addEventListener('submit', async (e) => {
   }
 });
 
+// ===== Lente de acento bajo el cursor =====
+// Tiñe del color de marca las letras que quedan dentro del círculo del cursor.
+if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+  const TEXTOS = 'h1, h2, p, .service__mark, .eyebrow, .section__eyebrow';
+  // Hijos con color propio: no heredan el transparente del padre, así que el
+  // degradado no se vería a través de ellos si no los tratamos aparte.
+  const HIJOS = '.highlight';
+
+  let ancla = null;      // el elemento bajo el cursor, para detectar cambios
+  let activos = [];      // ese y sus hijos de color propio
+  let seleccionando = false;
+
+  // Las variables CSS llegan en hexadecimal y los colores calculados en rgb():
+  // hay que igualarlos para poder compararlos.
+  const aRgb = (hex) => {
+    const h = hex.trim().replace('#', '');
+    const largo = h.length === 3 ? h.split('').map((d) => d + d).join('') : h;
+    const n = parseInt(largo, 16);
+    return `rgb(${(n >> 16) & 255}, ${(n >> 8) & 255}, ${n & 255})`;
+  };
+
+  const soltar = () => {
+    for (const el of activos) {
+      el.classList.remove('lente');
+      el.style.removeProperty('--lente-base');
+      el.style.removeProperty('--lente-dentro');
+      el.style.removeProperty('--lente-x');
+      el.style.removeProperty('--lente-y');
+    }
+    activos = [];
+    ancla = null;
+  };
+
+  const tomar = (el) => {
+    if (!el) return;
+    ancla = el;
+    activos = [el, ...el.querySelectorAll(HIJOS)];
+
+    const raiz = getComputedStyle(document.documentElement);
+    const acento = aRgb(raiz.getPropertyValue('--accent'));
+    const textoDelTema = raiz.getPropertyValue('--text').trim();
+
+    // Primero se leen todos los colores y después se aplican las clases: leer
+    // el color de un hijo con el padre ya en transparente daría un valor malo.
+    const colores = activos.map((e) => getComputedStyle(e).color);
+
+    activos.forEach((e, i) => {
+      const base = colores[i];
+      e.style.setProperty('--lente-base', base);
+      // Si el texto ya es del color de marca, teñirlo de acento no se notaría.
+      // Dentro del círculo va el color de texto del tema: blanco en oscuro,
+      // casi negro en claro. Se lee al revés y el efecto se ve igual.
+      e.style.setProperty('--lente-dentro', base === acento ? textoDelTema : 'var(--accent)');
+      e.classList.add('lente');
+    });
+  };
+
+  document.addEventListener('pointermove', (e) => {
+    if (seleccionando) return;
+
+    const destino = e.target instanceof Element ? e.target.closest(TEXTOS) : null;
+    if (destino !== ancla) {
+      soltar();
+      tomar(destino);
+    }
+    if (!activos.length) return;
+
+    // El navegador ya agrupa los pointermove por fotograma. Cada elemento
+    // necesita su propio rect: el degradado es relativo a su caja, no a la
+    // del padre.
+    for (const el of activos) {
+      const r = el.getBoundingClientRect();
+      el.style.setProperty('--lente-x', `${e.clientX - r.left}px`);
+      el.style.setProperty('--lente-y', `${e.clientY - r.top}px`);
+    }
+  });
+
+  // Mientras se arrastra para seleccionar, fuera la lente: con el texto en
+  // color transparente, el recuadro de selección lo dejaría ilegible.
+  document.addEventListener('pointerdown', () => {
+    seleccionando = true;
+    soltar();
+  });
+  document.addEventListener('pointerup', () => {
+    seleccionando = false;
+  });
+
+  // Al salir de la ventana el texto no puede quedarse teñido.
+  document.addEventListener('mouseleave', soltar);
+}
+
 // ===== Cursor personalizado =====
 // Un punto que sigue al ratón exacto y un anillo que llega con retardo. Solo en
 // dispositivos con puntero fino: en táctil no hay cursor que reemplazar.
