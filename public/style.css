@@ -1074,10 +1074,10 @@ button {
   }
 
   .cursor__ring {
-    /* 56px de diámetro para que coincida con la lente de acento: así el azul
-       del texto queda justo dentro del anillo. Los estados de abajo conservan
-       la misma diferencia en píxeles que tenían con el anillo pequeño, para
-       que el crecer y el encoger se sientan igual. */
+    /* Los estados de abajo conservan la misma diferencia en píxeles que tenían
+       con el anillo de 32px, salvo el de pulsado, que va por proporción:
+       encoger 10px se nota mucho menos en un anillo grande y el gesto se
+       quedaba sin fuerza. */
     width: 56px;
     height: 56px;
     margin: -28px 0 0 -28px;
@@ -1166,28 +1166,5 @@ button {
   .process__step:hover,
   .project:hover {
     transform: translateY(-4px);
-  }
-}
-
-/* ===== Lente de acento bajo el cursor ===== */
-/* El texto se pinta con un degradado radial recortado a la forma de las letras:
-   dentro del círculo sale el azul de marca, fuera el color original. El centro
-   lo mueve el JS con la posición del cursor.
-   Solo con puntero real: sin cursor no hay círculo que seguir. */
-@media (hover: hover) and (pointer: fine) {
-  .lente {
-    /* El corte es seco a propósito (99% a 100%): un degradado suave aquí se
-       lee como un texto mal renderizado en vez de como una lente. */
-    background-image: radial-gradient(
-      circle var(--lente-r, 28px) at var(--lente-x, -999px) var(--lente-y, -999px),
-      var(--lente-dentro, var(--accent)) 99%,
-      var(--lente-base, var(--text)) 100%
-    );
-    -webkit-background-clip: text;
-    background-clip: text;
-    /* Obligatorio para que se vea el degradado a través de las letras. El JS
-       guarda antes el color real en --lente-base, así cada elemento conserva
-       el suyo: los párrafos apagados no se vuelven blancos al pasar por encima. */
-    color: transparent;
   }
 }
