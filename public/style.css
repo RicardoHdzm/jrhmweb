@@ -1074,22 +1074,18 @@ button {
   }
 
   .cursor__ring {
-    /* Los estados de abajo conservan la misma diferencia en píxeles que tenían
-       con el anillo de 32px, salvo el de pulsado, que va por proporción:
-       encoger 10px se nota mucho menos en un anillo grande y el gesto se
-       quedaba sin fuerza. */
-    width: 56px;
-    height: 56px;
-    margin: -28px 0 0 -28px;
+    width: 32px;
+    height: 32px;
+    margin: -16px 0 0 -16px;
     border: 1px solid var(--text-muted);
     transition: width 0.2s ease, height 0.2s ease, margin 0.2s ease,
                 background-color 0.2s ease, border-color 0.2s ease, opacity 0.25s ease;
   }
   /* Sobre algo pulsable: crece y se tiñe del color de marca. */
   .cursor__ring.is-active {
-    width: 76px;
-    height: 76px;
-    margin: -38px 0 0 -38px;
+    width: 52px;
+    height: 52px;
+    margin: -26px 0 0 -26px;
     border-color: var(--accent);
     background-color: color-mix(in srgb, var(--accent) 18%, transparent);
   }
@@ -1114,21 +1110,18 @@ button {
   /* Al pulsar, el anillo se encoge: el clic se siente en la mano. Más rápido
      que el resto de sus transiciones para que responda al instante. */
   .cursor__ring.is-pressed {
-    /* Aquí manda la proporción y no los píxeles: encoger siempre 10px se nota
-       mucho menos en un anillo de 56 que en uno de 32, y la pulsación se
-       quedaba sin fuerza. Esto conserva el ~30% de reducción original. */
-    width: 38px;
-    height: 38px;
-    margin: -19px 0 0 -19px;
+    width: 22px;
+    height: 22px;
+    margin: -11px 0 0 -11px;
     border-color: var(--accent);
     transition-duration: 0.12s;
   }
   /* Si ya estaba crecido sobre algo pulsable, encoge menos: el salto de 52 a
      22px se ve como un parpadeo. */
   .cursor__ring.is-active.is-pressed {
-    width: 58px;
-    height: 58px;
-    margin: -29px 0 0 -29px;
+    width: 40px;
+    height: 40px;
+    margin: -20px 0 0 -20px;
   }
 
   /* Onda que sale del punto exacto del clic. La crea y la destruye el JS. */
