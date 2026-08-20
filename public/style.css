@@ -516,10 +516,12 @@ button {
   border: 1px solid var(--border);
   border-radius: 14px;
   padding: 32px 28px;
-  /* Misma duración que el borde para que la elevación y el azul lleguen juntos. */
-  transition: border-color 0.2s, transform 0.2s ease;
+  /* Misma duración en ambas para que la elevación y el color lleguen juntos.
+     La curva del transform frena al final en vez de arrancar de golpe: con un
+     desplazamiento de solo 4px, "ease" se percibe como un tirón. */
+  transition: border-color 0.32s ease, transform 0.32s cubic-bezier(0.22, 0.61, 0.36, 1);
 }
-.service:hover { border-color: var(--accent); }
+.service:hover { border-color: var(--glass-border); }
 
 .service__icon {
   display: flex;
@@ -595,10 +597,12 @@ button {
   border: 1px solid var(--border);
   border-radius: 14px;
   padding: 32px 28px;
-  /* Misma duración que el borde para que la elevación y el azul lleguen juntos. */
-  transition: border-color 0.2s, transform 0.2s ease;
+  /* Misma duración en ambas para que la elevación y el color lleguen juntos.
+     La curva del transform frena al final en vez de arrancar de golpe: con un
+     desplazamiento de solo 4px, "ease" se percibe como un tirón. */
+  transition: border-color 0.32s ease, transform 0.32s cubic-bezier(0.22, 0.61, 0.36, 1);
 }
-.process__step:hover { border-color: var(--accent); }
+.process__step:hover { border-color: var(--glass-border); }
 
 .process__number {
   position: absolute;
@@ -658,11 +662,13 @@ button {
   border: 1px solid var(--border);
   border-radius: var(--radius);
   padding: 20px;
-  /* Misma duración que el borde para que la elevación y el azul lleguen juntos. */
-  transition: border-color 0.2s, transform 0.2s ease;
+  /* Misma duración en ambas para que la elevación y el color lleguen juntos.
+     La curva del transform frena al final en vez de arrancar de golpe: con un
+     desplazamiento de solo 4px, "ease" se percibe como un tirón. */
+  transition: border-color 0.32s ease, transform 0.32s cubic-bezier(0.22, 0.61, 0.36, 1);
 }
 .project:hover {
-  border-color: var(--accent);
+  border-color: var(--glass-border);
 }
 
 .project.project--extra {
@@ -1229,4 +1235,54 @@ button {
 
 .is-fundido .fundido {
   opacity: 1;
+}
+
+/* ===== Haz de luz recorriendo el borde ===== */
+/* Un degradado cónico girando, recortado a la franja del borde con dos
+   máscaras: una cubre toda la tarjeta y otra solo su interior, y al
+   excluirlas queda únicamente el anillo de 1px. */
+
+/* Sin registrar el tipo, el navegador trata --haz-angulo como texto y no sabe
+   interpolarlo: la animación no giraría. */
+@property --haz-angulo {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+
+.service::before,
+.project::before,
+.process__step::before {
+  content: '';
+  position: absolute;
+  /* -1px para montarse justo encima del borde de la tarjeta. */
+  inset: -1px;
+  border-radius: inherit;
+  padding: 1px;
+  background: conic-gradient(
+    from var(--haz-angulo),
+    transparent 0deg 250deg,
+    var(--accent) 305deg,
+    transparent 350deg
+  );
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.32s ease;
+  pointer-events: none;
+}
+
+@media (hover: hover) {
+  .service:hover::before,
+  .project:hover::before,
+  .process__step:hover::before {
+    opacity: 1;
+    animation: haz-girar 3s linear infinite;
+  }
+}
+
+@keyframes haz-girar {
+  to { --haz-angulo: 360deg; }
 }
