@@ -125,6 +125,20 @@ body {
 }
 
 a { color: inherit; text-decoration: none; }
+
+/* Iconos SVG en línea. height: 1em hace que hereden el font-size de su
+   contexto igual que hacía la fuente de iconos, así que las reglas que los
+   dimensionaban siguen valiendo sin tocar nada. currentColor los hace seguir
+   el color del texto, que es lo que mantiene vivo el cambio de tema.
+   Los viewBox no son cuadrados y varían entre iconos: se fija el alto y el
+   ancho se ajusta solo, como hacía la fuente. */
+.icon {
+  display: block;
+  height: 1em;
+  width: auto;
+  fill: currentColor;
+  flex: none;
+}
 ul { list-style: none; }
 button {
   font-family: inherit;
@@ -906,7 +920,7 @@ button {
   background: var(--accent);
   color: var(--accent-contrast);
 }
-.social__link i { font-size: 15px; }
+.social__link .icon { font-size: 15px; }
 
 /* Va aquí, después de las reglas base de .contact__social, y no más arriba:
    @media no añade especificidad, así que un override colocado antes lo pisaría
