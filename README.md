@@ -22,12 +22,11 @@ configuración y manda sobre lo que esté puesto en el dashboard.
 │   ├── assets/ · fontawesome/ · robots.txt · sitemap.xml · favicon.gif · logo.gif
 ├── src/
 │   └── worker.js        ← Worker: sirve public/ y expone POST /api/contact
-├── wrangler.jsonc       ← configuración del Worker
-└── backend/             ← LEGADO: servidor Express, ya no se usa
+└── wrangler.jsonc       ← configuración del Worker
 ```
 
 **Solo se publica lo que está dentro de `public/`.** Todo lo demás — el código del
-Worker, este README, `backend/` y sobre todo `.git` — queda fuera de la web. Antes la
+Worker, este README y sobre todo `.git` — queda fuera de la web. Antes la
 carpeta de assets era la raíz del repo y el historial de git completo era descargable
 desde el dominio.
 
@@ -92,6 +91,7 @@ Wrangler no recarga `.dev.vars` en caliente: si lo editás, reiniciá el server.
 | 200 | Enviado |
 | 400 | Falló la validación, o el JSON venía roto |
 | 405 | Method distinto de POST |
+| 429 | Más de 3 envíos por IP en un minuto |
 | 500 | Faltan variables de entorno |
 | 502 | Resend rechazó el envío (key inválida, dominio sin verificar) |
 
@@ -108,11 +108,6 @@ vez de recortar contenido — el scroll-snap se sigue enganchando al inicio de c
 
 ## Pendientes
 
-- No hay rate limiting en el formulario. El Express viejo tenía 5 envíos por IP cada 15
-  minutos; en Workers un contador en memoria no sirve porque cada request puede caer en
-  un isolate distinto. Lo equivalente es una regla de Rate Limiting en el WAF de
-  Cloudflare sobre `/api/contact` (el plan gratuito incluye una).
-- `backend/` quedó sin uso; se puede borrar cuando confirmes que el endpoint nuevo anda.
 - El repo tiene tres ramas (`gh-pages` con el sitio real, `main` prácticamente vacía y
   `master` vieja). Conviene consolidar en una sola.
 - `CNAME` es un remanente de GitHub Pages; ya no lo usa nadie.

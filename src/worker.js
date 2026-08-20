@@ -4,8 +4,8 @@
 // endpoint del formulario de contacto en POST /api/contact. Al vivir en el
 // mismo dominio que el sitio no hay CORS ni hosting aparte.
 //
-// Reemplaza al servidor Express de /backend. El runtime de Workers no puede
-// abrir conexiones SMTP, así que el correo sale por la API HTTP de Resend.
+// El runtime de Workers no puede abrir conexiones SMTP, así que el correo
+// sale por la API HTTP de Resend en vez de por nodemailer.
 //
 // Variables (dashboard → Worker jrhmweb → Settings → Variables and Secrets):
 //   RESEND_API_KEY  — Secret. API key de https://resend.com
@@ -28,6 +28,7 @@ const MESSAGES = {
     service: 'Selecciona un tipo de servicio.',
     message: 'El mensaje es demasiado corto.',
     sendFailed: 'No pudimos enviar tu mensaje. Intenta de nuevo en un momento.',
+    tooMany: 'Demasiados envíos seguidos. Espera un minuto y vuelve a intentarlo.',
   },
   en: {
     badRequest: 'Invalid request.',
@@ -39,6 +40,7 @@ const MESSAGES = {
     service: 'Select a type of service.',
     message: 'That message is too short.',
     sendFailed: "We couldn't send your message. Please try again in a moment.",
+    tooMany: 'Too many submissions in a row. Wait a minute and try again.',
   },
 };
 
@@ -76,10 +78,10 @@ function escapeHtml(str) {
     .replace(/'/g, '&#39;');
 }
 
-function json(body, status = 200) {
+function json(body, status = 200, headers = {}) {
   return new Response(JSON.stringify(body), {
     status,
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'application/json', ...headers },
   });
 }
 
@@ -110,6 +112,17 @@ async function handleContact(request, env) {
 
   // Decir cuáles faltan, no solo que falta algo: si no, un 500 aquí obliga a
   // adivinar. Solo los nombres — los valores no se registran nunca.
+  // El límite se comprueba después de validar, no antes: así alguien que
+  // corrige errores del formulario no gasta intentos. Al spam le da igual,
+  // porque manda payloads válidos.
+  if (env.CONTACT_LIMITER) {
+    const ip = request.headers.get('CF-Connecting-IP') || 'desconocida';
+    const { success } = await env.CONTACT_LIMITER.limit({ key: ip });
+    if (!success) {
+      return json({ error: m.tooMany }, 429, { 'Retry-After': '60' });
+    }
+  }
+
   const faltantes = ['RESEND_API_KEY', 'NOTIFY_EMAIL', 'FROM_EMAIL'].filter((v) => !env[v]);
   if (faltantes.length > 0) {
     console.error('Faltan variables de entorno en el Worker: ' + faltantes.join(', '));

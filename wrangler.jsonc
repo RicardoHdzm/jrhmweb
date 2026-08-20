@@ -6,10 +6,20 @@
   "compatibility_date": "2026-08-19",
   "assets": {
     // Solo se publica lo que esté en public/. Todo lo demás (código del Worker,
-    // README, backend legado y sobre todo .git) queda fuera de la web.
+    // README y sobre todo .git) queda fuera de la web.
     "directory": "./public",
     "binding": "ASSETS"
   },
+  "ratelimits": [
+    {
+      // Antispam del formulario. El binding solo admite periodos de 10 o 60
+      // segundos, asi que no se puede replicar el "5 cada 15 minutos" del
+      // Express viejo: esto frena rafagas, no un goteo lento.
+      "name": "CONTACT_LIMITER",
+      "namespace_id": "1001",
+      "simple": { "limit": 3, "period": 60 }
+    }
+  ],
   "vars": {
     // Estas dos viven aquí y no en el dashboard: son configuración, no
     // secretos, y así un despliegue no puede dejarlas vacías.
