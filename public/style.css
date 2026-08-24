@@ -113,12 +113,18 @@
   --accent-2: #913030;
   --dot-color: rgba(0, 0, 0, 0.045);
   --nav-bg: rgba(243, 243, 241, 0.85);
-  /* En claro la luz va al revés: el cristal se aclara hacia el blanco puro
-     sobre un fondo que es gris, y el filo lo marca el borde oscuro. */
-  --glass-alto: rgba(255, 255, 255, 0.85);
-  --glass-bajo: rgba(255, 255, 255, 0.45);
-  --glass-border: rgba(0, 0, 0, 0.09);
-  --glass-filo: rgba(255, 255, 255, 0.9);
+  /* En oscuro el truco es aclarar sobre un fondo casi negro: hay 245 niveles
+     de margen hacia el blanco. En claro casi no hay margen — el fondo ya está
+     a 12 niveles del blanco puro — así que aclarar más los dos extremos los
+     dejaba casi idénticos entre sí y con el fondo. Aquí se invierte: el
+     extremo "alto" apenas aclara, y es el "bajo" el que oscurece hacia un
+     gris real, que sí tiene margen de sobra. Y el filo pasa de brillo blanco
+     (invisible sobre blanco) a una costura oscura, que es como se lee
+     "borde definido" en superficies claras. */
+  --glass-alto: rgba(255, 255, 255, 0.6);
+  --glass-bajo: rgba(0, 0, 0, 0.05);
+  --glass-border: rgba(0, 0, 0, 0.12);
+  --glass-filo: rgba(0, 0, 0, 0.07);
 }
 
 ::selection{
@@ -527,21 +533,25 @@ button {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 48px;
-  height: 48px;
+  width: 58px;
+  height: 58px;
   margin-bottom: 22px;
-  border-radius: 12px;
+  border-radius: 14px;
   /* Translúcido y no --surface-2: con el degradado de la tarjeta detrás, un
      color fijo se igualaba con el fondo en la zona clara y el cuadro
      desaparecía. Así siempre queda por encima de lo que tenga debajo. */
   background: var(--glass-encima);
   color: var(--accent);
-  font-size: 24px;
+  font-size: 28px;
 }
 
 :root[data-theme="light"] .service__icon {
-  background: var(--accent);
-  color: var(--accent-contrast);
+  /* La versión original tenía cada tema con una lógica distinta: en oscuro el
+     acento vivía en el icono sobre caja neutra, en claro vivía en la caja
+     (sólida) con icono blanco. Aquí se iguala: caja neutra e icono en acento
+     en los dos temas. */
+  background: var(--surface-2);
+  color: var(--accent);
 }
 
 .service__mark {
@@ -1218,6 +1228,15 @@ button {
   /* Filo iluminado en el borde de arriba, como cuando la luz pega en el canto
      de una lámina. Es el detalle que más vende el cristal en fondo plano. */
   box-shadow: inset 0 1px 0 var(--glass-filo);
+}
+
+/* En claro, además, una sombra suave por debajo: sobre un fondo casi blanco
+   la transparencia por sí sola no basta para que la tarjeta "flote" — la
+   sombra es la señal de profundidad que en oscuro ya daba el propio degradado. */
+:root[data-theme="light"] .service,
+:root[data-theme="light"] .project,
+:root[data-theme="light"] .process__step {
+  box-shadow: inset 0 1px 0 var(--glass-filo), 0 6px 20px -6px rgba(17, 17, 16, 0.10);
 }
 
 
