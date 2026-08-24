@@ -717,6 +717,17 @@ button {
   width: 100%;
   height: auto;
   display: block;
+  transition: transform 0.5s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+/* Zoom al pasar el cursor por la tarjeta. .project__thumb ya tiene
+   overflow: hidden para las esquinas redondeadas, así que el recorte del
+   zoom queda contenido dentro del marco sin desbordar la tarjeta. Solo con
+   puntero real: en táctil el :hover se queda pegado tras tocar. */
+@media (hover: hover) {
+  .project:hover .project__thumb img {
+    transform: scale(1.06);
+  }
 }
 
 .project__tag {
