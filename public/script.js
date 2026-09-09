@@ -536,6 +536,29 @@ if ('IntersectionObserver' in window && !window.matchMedia('(prefers-reduced-mot
   }, 2500);
 }
 
+// ===== Toque breve en las tarjetas (móvil) =====
+// El borde en color, el haz que gira y el zoom de las miniaturas de proyecto
+// solo se activan con :hover dentro de @media (hover: hover): sin eso, en
+// táctil se quedarían encendidos después de tocar, porque no hay un evento de
+// "salida del cursor". En vez de eso, un toque real enciende el mismo efecto
+// un instante y se apaga solo.
+if (!window.matchMedia('(hover: hover)').matches) {
+  const temporizadores = new WeakMap();
+
+  document.querySelectorAll('.service, .project, .process__step').forEach((tarjeta) => {
+    tarjeta.addEventListener('click', () => {
+      tarjeta.classList.add('is-tocada');
+      // Un segundo toque mientras el primero sigue activo reinicia el
+      // conteo, en vez de apagarse a mitad del segundo toque.
+      clearTimeout(temporizadores.get(tarjeta));
+      temporizadores.set(
+        tarjeta,
+        setTimeout(() => tarjeta.classList.remove('is-tocada'), 600)
+      );
+    });
+  });
+}
+
 // ===== Cursor personalizado =====
 // Un punto que sigue al ratón exacto y un anillo que llega con retardo. Solo en
 // dispositivos con puntero fino: en táctil no hay cursor que reemplazar.

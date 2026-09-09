@@ -551,7 +551,9 @@ button {
      desplazamiento de solo 4px, "ease" se percibe como un tirón. */
   transition: border-color 0.32s ease, transform 0.32s cubic-bezier(0.22, 0.61, 0.36, 1);
 }
-.service:hover { border-color: var(--glass-border); }
+/* .is-tocada la pone el JS al tocar en pantallas táctiles: mismo efecto que
+   :hover, mientras dura el toque. */
+.service:hover, .service.is-tocada { border-color: var(--glass-border); }
 
 .service__icon {
   display: flex;
@@ -636,7 +638,7 @@ button {
      desplazamiento de solo 4px, "ease" se percibe como un tirón. */
   transition: border-color 0.32s ease, transform 0.32s cubic-bezier(0.22, 0.61, 0.36, 1);
 }
-.process__step:hover { border-color: var(--glass-border); }
+.process__step:hover, .process__step.is-tocada { border-color: var(--glass-border); }
 
 .process__number {
   position: absolute;
@@ -701,7 +703,7 @@ button {
      desplazamiento de solo 4px, "ease" se percibe como un tirón. */
   transition: border-color 0.32s ease, transform 0.32s cubic-bezier(0.22, 0.61, 0.36, 1);
 }
-.project:hover {
+.project:hover, .project.is-tocada {
   border-color: var(--glass-border);
 }
 
@@ -752,6 +754,9 @@ button {
   .project:hover .project__thumb img {
     transform: scale(1.06);
   }
+}
+.project.is-tocada .project__thumb img {
+  transform: scale(1.06);
 }
 
 .project__tag {
@@ -1326,6 +1331,12 @@ button {
     opacity: 1;
     animation: haz-girar 3s linear infinite;
   }
+}
+.service.is-tocada::before,
+.project.is-tocada::before,
+.process__step.is-tocada::before {
+  opacity: 1;
+  animation: haz-girar 3s linear infinite;
 }
 
 @keyframes haz-girar {
