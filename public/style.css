@@ -67,12 +67,17 @@
   --divider: #1A1A1A;
   --text: #FFFFFF;
   --text-muted: #9C9C9C;
-  --accent: #38B6FF;
-  --accent-hover: #1E90FF;
-  --accent-dim: rgba(41, 171, 226, 0.12);
+  /* Paleta monocroma: el acento deja de ser un color y pasa a ser el propio
+     blanco/negro de cada tema, con un resplandor/sombra aparte para que
+     siga leyéndose como "acento" y no como texto normal (ver .btn--primary
+     y .highlight, donde se usa color-mix con este mismo token). */
+  --accent: #FFFFFF;
+  --accent-hover: #C9C9C9;
+  --accent-dim: rgba(255, 255, 255, 0.12);
   --accent-contrast: #0A0A0A;
-  /* Segundo tono del degradado del titular: el mismo azul, más claro. */
-  --accent-2: #91D7FF;
+  /* Segundo tono del degradado del titular: blanco hacia un gris medio, en
+     vez de dos azules — el mismo gesto, sin color. */
+  --accent-2: #9A9A9A;
   --dot-color: rgba(255, 255, 255, 0.035);
   --nav-bg: rgba(10, 10, 10, 0.85);
   /* Cristal: un degradado en diagonal simula la luz sobre la superficie, que
@@ -104,13 +109,14 @@
   --divider: #E5E5E1;
   --text: #111110;
   --text-muted: #66665F;
-  --accent: #cf4444;
-  --accent-hover: #b53a3a;
-  --accent-dim: rgba(18, 115, 158, 0.10);
+  --accent: #0A0A0A;
+  --accent-hover: #2E2E2C;
+  --accent-dim: rgba(0, 0, 0, 0.10);
   --accent-contrast: #FFFFFF;
-  /* En claro el degradado va hacia el tono oscuro: aclarar sobre fondo claro
-     perdería contraste. */
-  --accent-2: #913030;
+  /* En claro el degradado sigue yendo hacia el tono oscuro: aclarar sobre
+     fondo claro perdería contraste. Negro hacia gris medio, mismo gesto que
+     en oscuro pero sin color. */
+  --accent-2: #55554F;
   --dot-color: rgba(0, 0, 0, 0.045);
   --nav-bg: rgba(243, 243, 241, 0.85);
   /* En oscuro el truco es aclarar sobre un fondo casi negro: hay 245 niveles
@@ -418,7 +424,13 @@ button {
 
 /* El color plano queda de respaldo: si el navegador no recorta el fondo a la
    forma del texto, se ve el titular en color de marca en vez de invisible. */
-.highlight { color: var(--accent); }
+.highlight {
+  color: var(--accent);
+  /* Mismo resplandor que el botón, aplicado al texto: sin él, el titular en
+     blanco/negro se lee casi igual que el resto del texto y se pierde el
+     énfasis que antes daba el azul/rojo. */
+  text-shadow: 0 0 18px color-mix(in srgb, var(--accent) 45%, transparent);
+}
 
 @supports ((-webkit-background-clip: text) or (background-clip: text)) {
   .highlight {
@@ -460,8 +472,20 @@ button {
 .btn--primary {
   background: var(--accent);
   color: var(--accent-contrast);
+  /* Sin color, el botón principal se confundiría con cualquier otro bloque
+     blanco/negro del sitio. El resplandor es lo que dice "este es el
+     importante": color-mix tiñe la sombra con el propio acento, así que sale
+     blanco y difuso en oscuro, y oscuro y difuso (más sombra que brillo,
+     que es como se lee "destacar" sobre fondo claro) en claro — sin escribir
+     una regla aparte por tema. */
+  box-shadow: 0 0 22px -4px color-mix(in srgb, var(--accent) 50%, transparent);
+  transition: transform 0.15s ease, background 0.2s, border-color 0.2s,
+    box-shadow 0.25s ease;
 }
-.btn--primary:hover { background: var(--accent-hover); }
+.btn--primary:hover {
+  background: var(--accent-hover);
+  box-shadow: 0 0 30px -2px color-mix(in srgb, var(--accent) 70%, transparent);
+}
 
 .btn--ghost {
   border: 1px solid var(--border);
@@ -1213,17 +1237,6 @@ button {
   to {
     transform: translate(var(--x), var(--y)) scale(3.4);
     opacity: 0;
-  }
-}
-
-/* Elevación al pasar por encima de las tarjetas. Solo con puntero real: en
-   táctil el :hover se queda pegado tras tocar y la tarjeta se quedaría
-   levantada hasta que tocaras otra cosa. */
-@media (hover: hover) {
-  .service:hover,
-  .process__step:hover,
-  .project:hover {
-    transform: translateY(-4px);
   }
 }
 
