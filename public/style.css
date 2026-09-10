@@ -1331,6 +1331,16 @@ button {
     opacity: 1;
     animation: haz-girar 3s linear infinite;
   }
+
+  /* Elevación al pasar el cursor. Solo con puntero real: en táctil el :hover
+     se queda pegado tras tocar. El toque en móvil enciende el haz un instante
+     (.is-tocada), pero no la elevación — un salto de la tarjeta al tocar se
+     siente raro. */
+  .service:hover,
+  .process__step:hover,
+  .project:hover {
+    transform: translateY(-4px);
+  }
 }
 .service.is-tocada::before,
 .project.is-tocada::before,
