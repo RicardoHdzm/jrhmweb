@@ -1078,9 +1078,9 @@ button {
 }
 
 :root[data-theme="light"] .whatsapp-float {
-  background: var(--surface);
-  border: 2px solid var(--accent);
-  color: var(--accent);
+  background: var(--accent);
+  border: 2px solid var(--accent-contrast);
+  color: var(--accent-contrast);
 }
 :root[data-theme="light"]  .whatsapp-float:hover{
   background: var(--accent);
