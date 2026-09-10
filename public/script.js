@@ -553,7 +553,9 @@ if (!window.matchMedia('(hover: hover)').matches) {
       clearTimeout(temporizadores.get(tarjeta));
       temporizadores.set(
         tarjeta,
-        setTimeout(() => tarjeta.classList.remove('is-tocada'), 600)
+        // 1500ms: la vuelta del haz dura 1.3s (ver .is-tocada::before en el
+        // CSS); el margen extra deja que termine antes de que se apague.
+        setTimeout(() => tarjeta.classList.remove('is-tocada'), 1500)
       );
     });
   });

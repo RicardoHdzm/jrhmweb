@@ -1346,7 +1346,11 @@ button {
 .project.is-tocada::before,
 .process__step.is-tocada::before {
   opacity: 1;
-  animation: haz-girar 3s linear infinite;
+  /* En hover el haz gira sin parar mientras el cursor esté encima. Al tocar en
+     móvil no hay "mientras", así que hace una vuelta completa (1.3s) y para —
+     un gesto con principio y fin, en vez de un trozo suelto de la rotación
+     infinita cortado a los 0.6s. */
+  animation: haz-girar 1.3s linear 1;
 }
 
 @keyframes haz-girar {
