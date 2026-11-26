@@ -462,6 +462,10 @@ button {
 }
 .proj__tags { font-weight: 500; }
 .proj__year { display: inline-flex; align-items: center; gap: 10px; color: var(--muted); }
+/* Proyecto aún sin enlace público: no es pulsable, así que no se subraya al pasar el
+   cursor ni muestra la etiqueta "[Ver proyecto]". */
+.proj--sin-enlace { cursor: default; }
+.proj.proj--sin-enlace:hover .proj__name { text-decoration: none; }
 .proj .arrow { transition: transform 0.2s ease; }
 .proj:hover .arrow { transform: translate(2px, -2px); }
 .proj:hover .proj__name { text-decoration: underline; text-underline-offset: 5px; }

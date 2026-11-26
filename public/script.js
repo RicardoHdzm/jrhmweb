@@ -718,7 +718,8 @@ if (stackEl && window.matchMedia('(hover: hover) and (pointer: fine)').matches) 
 
   stackEl.addEventListener('pointermove', (e) => {
     const sobreImagen = e.target instanceof Element && e.target.closest('.proj__media');
-    if (!sobreImagen) {
+    // Sin etiqueta sobre los proyectos que aún no tienen enlace.
+    if (!sobreImagen || sobreImagen.closest('.proj--sin-enlace')) {
       etiqueta.classList.remove('is-on');
       return;
     }
