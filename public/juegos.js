@@ -36,6 +36,8 @@
       ayudaMinas: 'Clic: descubrir · Clic derecho o mantener pulsado: bandera',
       ganasteMinas: '¡Despejaste el campo!',
       perdisteMinas: 'Pisaste una mina',
+      silenciar: 'Silenciar sonido',
+      activarSonido: 'Activar sonido',
     },
     en: {
       titulo: 'JRHM.STATION',
@@ -66,12 +68,89 @@
       ayudaMinas: 'Click: reveal · Right-click or long press: flag',
       ganasteMinas: 'You cleared the field!',
       perdisteMinas: 'You hit a mine',
+      silenciar: 'Mute sound',
+      activarSonido: 'Unmute sound',
     },
   };
   const idioma = () => (document.documentElement.lang === 'en' ? 'en' : 'es');
   const t = (clave, ...args) => {
     const v = TXT[idioma()][clave];
     return typeof v === 'function' ? v(...args) : v;
+  };
+
+  // ===== Sonido =====
+  // Todo se sintetiza con la Web Audio API (osciladores y ruido): no hay archivos de
+  // audio que descargar. El contexto se crea con el primer clic dentro del panel
+  // (los navegadores no dejan sonar nada antes de un gesto del usuario). La opción de
+  // silencio se recuerda en el navegador.
+  const CLAVE_MUDO = 'jrhm-juegos-mudo';
+  const audio = { ctx: null, mudo: false };
+  try { audio.mudo = localStorage.getItem(CLAVE_MUDO) === '1'; } catch (e) { /* sin almacenamiento */ }
+  const VOLUMEN = 0.05; // bajo a propósito
+
+  function contexto() {
+    if (audio.mudo) return null;
+    if (!audio.ctx) {
+      const AC = window.AudioContext || window.webkitAudioContext;
+      if (!AC) return null;
+      try { audio.ctx = new AC(); } catch (e) { return null; }
+    }
+    if (audio.ctx.state === 'suspended') audio.ctx.resume();
+    return audio.ctx;
+  }
+  // Un tono con ataque rápido y caída; `hasta` hace un barrido de frecuencia.
+  function tono(freq, dur, { tipo = 'square', vol = VOLUMEN, inicio = 0, hasta = null } = {}) {
+    const c = contexto();
+    if (!c) return;
+    const t0 = c.currentTime + inicio;
+    const osc = c.createOscillator();
+    const g = c.createGain();
+    osc.type = tipo;
+    osc.frequency.setValueAtTime(freq, t0);
+    if (hasta) osc.frequency.exponentialRampToValueAtTime(hasta, t0 + dur);
+    g.gain.setValueAtTime(0.0001, t0);
+    g.gain.exponentialRampToValueAtTime(vol, t0 + 0.008);
+    g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+    osc.connect(g);
+    g.connect(c.destination);
+    osc.start(t0);
+    osc.stop(t0 + dur + 0.02);
+  }
+  // Ráfaga de ruido filtrado (para el golpe de la ficha y la explosión).
+  function ruido(dur, { vol = VOLUMEN * 1.6, inicio = 0, filtro = 1800, hasta = 200 } = {}) {
+    const c = contexto();
+    if (!c) return;
+    const t0 = c.currentTime + inicio;
+    const n = Math.max(1, Math.floor(c.sampleRate * dur));
+    const buf = c.createBuffer(1, n, c.sampleRate);
+    const datos = buf.getChannelData(0);
+    for (let i = 0; i < n; i++) datos[i] = Math.random() * 2 - 1;
+    const fuente = c.createBufferSource();
+    fuente.buffer = buf;
+    const f = c.createBiquadFilter();
+    f.type = 'lowpass';
+    f.frequency.setValueAtTime(filtro, t0);
+    f.frequency.exponentialRampToValueAtTime(hasta, t0 + dur);
+    const g = c.createGain();
+    g.gain.setValueAtTime(vol, t0);
+    g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+    fuente.connect(f);
+    f.connect(g);
+    g.connect(c.destination);
+    fuente.start(t0);
+  }
+  const sonar = {
+    jugador: () => tono(660, 0.08),
+    cpu: () => tono(330, 0.09),
+    caer: () => { tono(420, 0.16, { tipo: 'triangle', hasta: 110, vol: VOLUMEN * 1.4 }); ruido(0.08, { inicio: 0.13, filtro: 700, hasta: 120 }); },
+    tick: () => tono(900, 0.035, { vol: VOLUMEN * 0.7 }),
+    bandera: () => { tono(520, 0.05); tono(780, 0.06, { inicio: 0.05 }); },
+    mina: () => { ruido(0.55, { filtro: 2200, hasta: 90 }); tono(110, 0.5, { tipo: 'sawtooth', hasta: 40, vol: VOLUMEN * 1.2 }); },
+    // Resultados: empiezan un instante después, para no pisar el sonido de la jugada.
+    gana: () => [523, 659, 784, 1047].forEach((f, i) => tono(f, 0.14, { inicio: 0.12 + i * 0.1 })),
+    pierde: () => [392, 330, 262, 196].forEach((f, i) => tono(f, 0.16, { tipo: 'triangle', inicio: 0.12 + i * 0.14, vol: VOLUMEN * 1.3 })),
+    empate: () => { tono(440, 0.12, { inicio: 0.12 }); tono(440, 0.12, { inicio: 0.28 }); },
+    resultado: (r) => (r === 'g' ? sonar.gana() : r === 'p' ? sonar.pierde() : sonar.empate()),
   };
 
   // Marcadores de la sesión (se conservan mientras no se recargue la página).
@@ -146,7 +225,7 @@
         fin = true;
         resultado = 'e';
       }
-      if (fin) { marcador[resultado]++; registrar('juego_terminado', { juego: 'gato', resultado }); }
+      if (fin) { marcador[resultado]++; registrar('juego_terminado', { juego: 'gato', resultado }); sonar.resultado(resultado); }
       return fin;
     }
     function turnoCpu() {
@@ -155,6 +234,7 @@
       temporizador = setTimeout(() => {
         pensando = false;
         b[jugadaCpu()] = 'O';
+        sonar.cpu();
         revisar();
         pintar();
       }, 450);
@@ -162,6 +242,7 @@
     function jugar(i) {
       if (fin || pensando || b[i]) return;
       b[i] = 'X';
+      sonar.jugador();
       if (!revisar()) turnoCpu(); else pintar();
     }
     function nueva(primera) {
@@ -296,6 +377,7 @@
       const r = filaLibre(b, c);
       b[r * C + c] = j;
       ultima = r * C + c;
+      sonar.caer();
       const g = ganadorDe(b);
       if (g) {
         fin = true;
@@ -305,7 +387,7 @@
         fin = true;
         resultado = 'e';
       }
-      if (fin) { marcador[resultado]++; registrar('juego_terminado', { juego: 'conecta4', resultado }); }
+      if (fin) { marcador[resultado]++; registrar('juego_terminado', { juego: 'conecta4', resultado }); sonar.resultado(resultado); }
       return fin;
     }
     function turnoCpu() {
@@ -434,6 +516,7 @@
       perdio = !gano;
       clearInterval(reloj);
       registrar('juego_terminado', { juego: 'buscaminas', resultado: gano ? 'g' : 'p', segundos });
+      if (gano) sonar.gana(); else sonar.mina();
       if (gano) {
         // Al ganar, todas las minas quedan marcadas (no puede haber banderas de más:
         // una casilla con bandera no se abre, y ganar exige abrir todas las demás).
@@ -459,7 +542,7 @@
         abrir(i);
         if (c.mina) { explotada = i; terminar(false); return pintar(); }
       }
-      if (abiertas === N * N - MINAS) terminar(true);
+      if (abiertas === N * N - MINAS) terminar(true); else sonar.tick();
       pintar();
     }
     function marcar(i) {
@@ -468,6 +551,7 @@
       if (c.abierta) return;
       c.bandera = !c.bandera;
       banderas += c.bandera ? 1 : -1;
+      sonar.bandera();
       pintar();
     }
 
@@ -607,9 +691,22 @@
     instancia = JUEGOS.find((j) => j.id === id).crear(cuerpoEl);
     dialogo.querySelectorAll('.juegos__tab').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.juego === id)));
   }
+  function pintarSonido() {
+    const b = dialogo.querySelector('.juegos__sonido');
+    b.setAttribute('aria-pressed', String(audio.mudo)); // pulsado = silenciado
+    b.setAttribute('aria-label', audio.mudo ? t('activarSonido') : t('silenciar'));
+  }
+  function alternarSonido() {
+    audio.mudo = !audio.mudo;
+    try { localStorage.setItem(CLAVE_MUDO, audio.mudo ? '1' : '0'); } catch (e) { /* sin almacenamiento */ }
+    pintarSonido();
+    if (!audio.mudo) sonar.jugador(); // confirma que ya suena
+    registrar('juegos_sonido', { activo: !audio.mudo });
+  }
   function traducirPanel() {
     dialogo.querySelector('.juegos__titulo').textContent = t('titulo');
     dialogo.querySelector('.juegos__cerrar').setAttribute('aria-label', t('cerrar'));
+    pintarSonido();
     dialogo.querySelectorAll('.juegos__tab').forEach((b) => { b.textContent = t(b.dataset.juego); });
     if (instancia) instancia.refrescar();
   }
@@ -621,7 +718,13 @@
       <div class="juegos__panel">
         <header class="juegos__cab">
           <h2 class="juegos__titulo" id="juegos-titulo"></h2>
-          <button type="button" class="juegos__cerrar">×</button>
+          <div class="juegos__acciones">
+            <button type="button" class="juegos__sonido" aria-pressed="false">
+              <svg class="juegos__ic juegos__ic--on" aria-hidden="true" viewBox="0 0 640 512"><path d="M533.6 32.5C598.5 85.2 640 165.8 640 256s-41.5 170.7-106.4 223.5c-10.3 8.4-25.4 6.8-33.8-3.5s-6.8-25.4 3.5-33.8C557.5 398.2 592 331.2 592 256s-34.5-142.2-88.7-186.3c-10.3-8.4-11.8-23.5-3.5-33.8s23.5-11.8 33.8-3.5zM473.1 107c43.2 35.2 70.9 88.9 70.9 149s-27.7 113.8-70.9 149c-10.3 8.4-25.4 6.8-33.8-3.5s-6.8-25.4 3.5-33.8C475.3 341.3 496 301.1 496 256s-20.7-85.3-53.2-111.8c-10.3-8.4-11.8-23.5-3.5-33.8s23.5-11.8 33.8-3.5zm-60.5 74.5C434.1 199.1 448 225.9 448 256s-13.9 56.9-35.4 74.5c-10.3 8.4-25.4 6.8-33.8-3.5s-6.8-25.4 3.5-33.8C393.1 284.4 400 271 400 256s-6.9-28.4-17.7-37.3c-10.3-8.4-11.8-23.5-3.5-33.8s23.5-11.8 33.8-3.5zM301.1 34.8C312.6 40 320 51.4 320 64V448c0 12.6-7.4 24-18.9 29.2s-25 3.1-34.4-5.3L131.8 352H64c-35.3 0-64-28.7-64-64V224c0-35.3 28.7-64 64-64h67.8L266.7 40.1c9.4-8.4 22.9-10.4 34.4-5.3z"/></svg>
+              <svg class="juegos__ic juegos__ic--off" aria-hidden="true" viewBox="0 0 576 512"><path d="M301.1 34.8C312.6 40 320 51.4 320 64V448c0 12.6-7.4 24-18.9 29.2s-25 3.1-34.4-5.3L131.8 352H64c-35.3 0-64-28.7-64-64V224c0-35.3 28.7-64 64-64h67.8L266.7 40.1c9.4-8.4 22.9-10.4 34.4-5.3zM425 167l55 55 55-55c9.4-9.4 24.6-9.4 33.9 0s9.4 24.6 0 33.9l-55 55 55 55c9.4 9.4 9.4 24.6 0 33.9s-24.6 9.4-33.9 0l-55-55-55 55c-9.4 9.4-24.6 9.4-33.9 0s-9.4-24.6 0-33.9l55-55-55-55c-9.4-9.4-9.4-24.6 0-33.9s24.6-9.4 33.9 0z"/></svg>
+            </button>
+            <button type="button" class="juegos__cerrar">×</button>
+          </div>
         </header>
         <div class="juegos__tabs">${JUEGOS.map((j) => `<button type="button" class="juegos__tab" data-juego="${j.id}" aria-pressed="false"></button>`).join('')}</div>
         <div class="juegos__cuerpo"></div>
@@ -630,6 +733,8 @@
     cuerpoEl = dialogo.querySelector('.juegos__cuerpo');
 
     dialogo.addEventListener('click', (e) => {
+      contexto(); // el primer clic dentro del panel habilita el audio
+      if (e.target.closest('.juegos__sonido')) return alternarSonido();
       if (e.target === dialogo || e.target.closest('.juegos__cerrar')) dialogo.close();
       const tab = e.target.closest('.juegos__tab');
       if (tab) elegir(tab.dataset.juego);

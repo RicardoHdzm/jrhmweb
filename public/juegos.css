@@ -41,6 +41,8 @@
   line-height: 1;
   letter-spacing: -0.045em;
 }
+.juegos__acciones { display: flex; align-items: center; gap: 8px; }
+.juegos__sonido,
 .juegos__cerrar {
   width: 40px;
   height: 40px;
@@ -49,7 +51,20 @@
   line-height: 1;
   transition: border-color 0.2s ease;
 }
+.juegos__sonido {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--muted);
+}
+.juegos__sonido:hover,
 .juegos__cerrar:hover { border-color: var(--text); }
+.juegos__sonido:hover { color: var(--text); }
+.juegos__ic { width: 18px; height: 16px; fill: currentColor; }
+/* Pulsado = silenciado: se muestra el altavoz tachado. */
+.juegos__ic--off { display: none; }
+.juegos__sonido[aria-pressed="true"] .juegos__ic--on { display: none; }
+.juegos__sonido[aria-pressed="true"] .juegos__ic--off { display: block; }
 
 .juegos__tabs {
   display: flex;

@@ -315,7 +315,9 @@ button {
   color: var(--muted);
   font-size: clamp(16px, 1.3vw, 19px);
 }
-.hero__links { display: flex; gap: 28px; margin-top: 28px; font-size: 15px; }
+/* "Escríbenos" es la acción principal (botón); "Ver proyectos" es la secundaria. */
+.hero__links { display: flex; align-items: center; flex-wrap: wrap; gap: 16px 28px; margin-top: 28px; font-size: 15px; }
+.hero__links .btn { padding: 12px 24px; }
 
 /* ===== Secciones: título grande arriba, contenido debajo ===== */
 /* Mismo tamaño de título que Proyectos, para que todas las secciones se lean como
