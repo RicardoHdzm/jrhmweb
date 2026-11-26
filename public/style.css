@@ -507,10 +507,11 @@ button {
 }
 .list__text { color: var(--muted); font-size: 15px; max-width: 54ch; }
 
-/* --- Servicios y Proceso: exactamente la misma estructura de filas altas, con la
-   división 58/42 de los proyectos. El nombre va grande a la izquierda y la
-   descripción a la derecha, con el número pequeño en gris al inicio. --- */
-:is(.list--services, .list--steps) .list__item {
+/* --- Proceso: filas altas con la división 58/42 de los proyectos. El nombre va grande
+   a la izquierda y la descripción a la derecha, con el número pequeño en gris al
+   inicio (es una secuencia, por eso va numerado). Servicios, en cambio, son tarjetas
+   independientes (más abajo). --- */
+.list--steps .list__item {
   grid-template-columns: var(--col-n, clamp(40px, 4vw, 56px)) minmax(0, 1fr) 42%;
   gap: 0;
   align-items: baseline;
@@ -518,7 +519,7 @@ button {
   position: relative;
   border-bottom: 0;
 }
-:is(.list--services, .list--steps) .list__item::after {
+.list--steps .list__item::after {
   content: "";
   position: absolute;
   left: 0;
@@ -527,10 +528,9 @@ button {
   height: 1px;
   background: var(--line);
 }
-.list--services .list__item:last-child::after { display: none; }
-:is(.list--services, .list--steps) .list__item:first-child { padding-top: 0; }
-:is(.list--services, .list--steps) .list__n { font-size: 13px; }
-:is(.list--services, .list--steps) .list__title {
+.list--steps .list__item:first-child { padding-top: 0; }
+.list--steps .list__n { font-size: 13px; }
+.list--steps .list__title {
   font-weight: 600;
   font-size: clamp(1.5rem, 3.1vw, 2.8rem);
   line-height: 1.05;
@@ -538,18 +538,18 @@ button {
   padding-right: 24px;
   transition: transform 0.35s cubic-bezier(0.22, 0.61, 0.36, 1);
 }
-:is(.list--services, .list--steps) .list__text {
+.list--steps .list__text {
   padding-left: clamp(14px, 1.6vw, 24px);
   font-size: clamp(14px, 1.15vw, 17px);
   line-height: 1.4;
   transition: color 0.2s ease;
 }
-:is(.list--services, .list--steps) .list__n { transition: color 0.2s ease; }
+.list--steps .list__n { transition: color 0.2s ease; }
 
 @media (hover: hover) {
-  :is(.list--services, .list--steps) .list__item:hover .list__text,
-  :is(.list--services, .list--steps) .list__item:hover .list__n { color: var(--text); }
-  :is(.list--services, .list--steps) .list__item:hover .list__title { transform: translateX(10px); }
+  .list--steps .list__item:hover .list__text,
+  .list--steps .list__item:hover .list__n { color: var(--text); }
+  .list--steps .list__item:hover .list__title { transform: translateX(10px); }
 
   /* En Proceso, con ratón, la línea de cada paso solo aparece al pasar el cursor y
      se traza de izquierda a derecha. En pantallas táctiles no hay "pasar el cursor",
@@ -562,6 +562,53 @@ button {
     transition: transform 0.7s cubic-bezier(0.22, 0.61, 0.36, 1);
   }
   .list--steps .list__item:hover::after { transform: scaleX(1); }
+}
+
+/* --- Servicios: tarjetas independientes, sin numerar. Son cosas que se ofrecen, no
+   pasos de un proceso, así que cada una es un recuadro propio en una cuadrícula. --- */
+.list--services {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(12px, 1.6vw, 20px);
+}
+.list--services .list__item,
+.list--services .list__item:first-child,
+.list--services .list__item:last-child {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-height: clamp(180px, 16vw, 240px);
+  padding: clamp(20px, 2.2vw, 32px);
+  border: 1px solid var(--line);
+  transition: border-color 0.25s ease, background-color 0.25s ease;
+}
+.list--services .list__title {
+  font-weight: 600;
+  font-size: clamp(1.3rem, 1.9vw, 1.75rem);
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+}
+.list--services .list__text {
+  max-width: none;
+  font-size: clamp(14px, 1.1vw, 16px);
+  line-height: 1.45;
+  transition: color 0.2s ease;
+}
+@media (hover: hover) {
+  .list--services .list__item:hover {
+    border-color: var(--text);
+    background: color-mix(in srgb, var(--text) 4%, transparent);
+  }
+  .list--services .list__item:hover .list__text { color: var(--text); }
+}
+@media (max-width: 1000px) {
+  .list--services { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 640px) {
+  .list--services { grid-template-columns: minmax(0, 1fr); }
+  .list--services .list__item,
+  .list--services .list__item:first-child,
+  .list--services .list__item:last-child { min-height: 0; }
 }
 
 /* ===== Contacto ===== */
@@ -760,10 +807,10 @@ button {
 }
 
 @media (max-width: 760px) {
-  :is(.list--services, .list--steps) { --col-n: 36px; }
-  :is(.list--services, .list--steps) .list__item { grid-template-columns: var(--col-n) minmax(0, 1fr); row-gap: 8px; }
-  :is(.list--services, .list--steps) .list__text { padding-left: 0; }
-  :is(.list--services, .list--steps) .list__title { padding-right: 0; }
+  .list--steps { --col-n: 36px; }
+  .list--steps .list__item { grid-template-columns: var(--col-n) minmax(0, 1fr); row-gap: 8px; }
+  .list--steps .list__text { padding-left: 0; }
+  .list--steps .list__title { padding-right: 0; }
 }
 
 @media (max-width: 640px) {
@@ -1006,7 +1053,7 @@ button {
 
   /* Más separación entre secciones y dentro de ellas. */
   .row { gap: 32px; padding-bottom: 72px; }
-  :is(.list--services, .list--steps) .list__item { padding-block: 28px; row-gap: 10px; }
+  .list--steps .list__item { padding-block: 28px; row-gap: 10px; }
   .contact__lead { margin-top: 16px; }
   /* WhatsApp y correo arriba, como botones: para muchos es más rápido que el formulario. */
   .contact__links { display: grid; gap: 12px; margin-top: 28px; }

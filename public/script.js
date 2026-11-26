@@ -752,8 +752,8 @@ if ('IntersectionObserver' in window && !window.matchMedia('(prefers-reduced-mot
   // Con ratón, las líneas de los pasos de Proceso van por hover (CSS) y no se trazan aquí.
   const hayHover = window.matchMedia('(hover: hover)').matches;
   const lineas = document.querySelectorAll(hayHover
-    ? '.row__label, .list--services .list__item'
-    : '.row__label, .list--services .list__item, .list--steps .list__item');
+    ? '.row__label'
+    : '.row__label, .list--steps .list__item');
   lineas.forEach((el) => {
     el.classList.add('anim');
     // Posición dentro del grupo: escalona el trazo de los cuatro pasos.
