@@ -31,7 +31,7 @@
   background: var(--bg);
   border: 1px solid var(--line);
 }
-.juegos button { font: inherit; color: inherit; }
+:where(.juegos button) { font: inherit; color: inherit; }
 
 .juegos__cab { display: flex; justify-content: space-between; align-items: center; gap: 16px; }
 .juegos__titulo {
@@ -111,7 +111,7 @@
   border: 1px solid var(--line);
   font-family: var(--font-display);
   font-weight: 600;
-  font-size: clamp(2.4rem, 14vw, 4rem);
+  font-size: clamp(2.6rem, 16vw, 4.75rem);
   line-height: 1;
   transition: border-color 0.2s ease, background-color 0.2s ease;
 }

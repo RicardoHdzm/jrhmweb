@@ -596,14 +596,23 @@ button {
 .list--steps .list__text { font-size: clamp(14px, 1.1vw, 16px); line-height: 1.45; }
 
 /* ===== Contacto ===== */
+/* Dos columnas en escritorio: intro y enlaces a la izquierda, formulario a la
+   derecha. "Contacto" ya es el título grande de la sección, así que este es solo un
+   texto de apoyo. */
+.contact {
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  gap: clamp(32px, 5vw, 80px);
+  align-items: start;
+}
 .contact__title {
   font-family: var(--font-display);
   font-weight: 500;
-  font-size: clamp(1.4rem, 2.6vw, 2.2rem);
-  line-height: 1.1;
-  letter-spacing: -0.03em;
+  font-size: clamp(1.3rem, 1.9vw, 1.7rem);
+  line-height: 1.15;
+  letter-spacing: -0.02em;
 }
-.contact__lead { margin-top: 20px; max-width: 54ch; color: var(--muted); }
+.contact__lead { margin-top: 14px; max-width: 46ch; color: var(--muted); }
 .contact__links {
   display: flex;
   flex-wrap: wrap;
@@ -614,7 +623,7 @@ button {
 }
 
 /* ===== Formulario: campos de solo línea inferior ===== */
-.form { display: grid; gap: 28px; max-width: 640px; margin-top: 56px; }
+.form { display: grid; gap: 24px; }
 .form__row { display: flex; flex-direction: column; gap: 6px; }
 .form__row-group { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; }
 .form__row label { font-size: 13px; color: var(--muted); }
@@ -631,7 +640,7 @@ button {
   font: inherit;
   transition: border-color 0.2s ease;
 }
-.form__row textarea { resize: vertical; min-height: 120px; }
+.form__row textarea { resize: vertical; min-height: 96px; }
 /* Sin opción elegida, el select se ve como un placeholder. */
 .form__row select:invalid { color: var(--muted); }
 .form__row select option { color: var(--text); background: var(--bg); }
@@ -970,8 +979,20 @@ button {
   .list--services .list__item { padding-block: 28px; row-gap: 10px; }
   .list--steps { row-gap: 52px; }
   .list--steps .list__item { gap: 16px; padding-top: 20px; }
-  .contact__lead { margin-top: 24px; }
-  .contact__links { margin-top: 36px; gap: 16px 32px; }
-  .form { gap: 36px; margin-top: 64px; }
+  .contact__lead { margin-top: 16px; }
+  /* WhatsApp y correo arriba, como botones: para muchos es más rápido que el formulario. */
+  .contact__links { display: grid; gap: 12px; margin-top: 28px; }
+  .contact__links .link {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 16px;
+    border: 1px solid var(--line);
+  }
+  .form { gap: 28px; }
   .footer__inner { gap: 14px; padding-block: 36px; }
+}
+
+@media (max-width: 880px) {
+  .contact { grid-template-columns: minmax(0, 1fr); gap: 40px; }
 }

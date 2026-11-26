@@ -357,51 +357,54 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <section class="row" id="contacto">
     <h2 class="row__label" data-i18n="contact.label">Contacto</h2>
     <div class="contact">
+     <div class="contact__intro">
       <h3 class="contact__title" data-i18n="contact.title">Hablemos de tu proyecto</h3>
       <p class="contact__lead" data-i18n="contact.sub">Cuéntanos qué necesitas, ya sea empezar de cero, renovar tu sitio actual, o sumarle algo que le falta, y te respondemos en menos de 24 horas. Sin compromisos: primero entendemos tu proyecto, después te decimos cómo lo resolvemos.</p>
       <p class="contact__links">
         <a class="link" href="mailto:hello@jrhm.studio">hello@jrhm.studio</a>
         <a class="link" href="https://wa.me/526673255323" target="_blank" rel="noopener"><span data-i18n="contact.whatsapp">WhatsApp</span> <svg class="arrow" aria-hidden="true"><use href="#i-arrow"/></svg></a>
       </p>
+     </div>
 
       <form class="form" id="contact-form" novalidate>
-        <div class="form__row">
-          <label for="name" data-i18n="form.name">Nombre</label>
-          <input type="text" id="name" name="name" required minlength="2">
-          <span class="form__error" data-for="name"></span>
-        </div>
-
         <div class="form__row-group">
+          <div class="form__row">
+            <label for="name" data-i18n="form.name">Nombre</label>
+            <input type="text" id="name" name="name" required minlength="2">
+            <span class="form__error" data-for="name"></span>
+          </div>
           <div class="form__row">
             <label for="email">Email</label>
             <input type="email" id="email" name="email">
             <span class="form__error" data-for="email"></span>
           </div>
+        </div>
+
+        <div class="form__row-group">
           <div class="form__row">
             <label for="phone" data-i18n="form.phone">Teléfono</label>
             <input type="tel" id="phone" name="phone">
             <span class="form__error" data-for="phone"></span>
           </div>
-        </div>
-
-        <div class="form__row">
-          <label for="service" data-i18n="form.help">¿En qué te podemos ayudar?</label>
-          <select id="service" name="service" required>
-            <option value="" disabled selected data-i18n="form.option">Selecciona una opción</option>
-            <option value="Diseño 100% Personalizado" data-i18n="form.option1">Necesito un sitio web</option>
-            <option value="Sitios Multi-página" data-i18n="form.option2">Rediseño de mi sitio actual</option>
-            <option value="E-commerce en Shopify" data-i18n="form.option3">E-commerce en Shopify</option>
-            <option value="Formularios & Integraciones" data-i18n="form.option4">Formularios &amp; Integraciones</option>
-            <option value="Optimización SEO" data-i18n="form.option5">Optimización SEO</option>
-            <option value="Mantenimiento & Soporte" data-i18n="form.option6">Mantenimiento &amp; Soporte</option>
-            <option value="Otro" data-i18n="form.option7">Otro</option>
-          </select>
-          <span class="form__error" data-for="service"></span>
+          <div class="form__row">
+            <label for="service" data-i18n="form.help">¿En qué te podemos ayudar?</label>
+            <select id="service" name="service" required>
+              <option value="" disabled selected data-i18n="form.option">Selecciona una opción</option>
+              <option value="Diseño 100% Personalizado" data-i18n="form.option1">Necesito un sitio web</option>
+              <option value="Sitios Multi-página" data-i18n="form.option2">Rediseño de mi sitio actual</option>
+              <option value="E-commerce en Shopify" data-i18n="form.option3">E-commerce en Shopify</option>
+              <option value="Formularios & Integraciones" data-i18n="form.option4">Formularios &amp; Integraciones</option>
+              <option value="Optimización SEO" data-i18n="form.option5">Optimización SEO</option>
+              <option value="Mantenimiento & Soporte" data-i18n="form.option6">Mantenimiento &amp; Soporte</option>
+              <option value="Otro" data-i18n="form.option7">Otro</option>
+            </select>
+            <span class="form__error" data-for="service"></span>
+          </div>
         </div>
 
         <div class="form__row">
           <label for="message" data-i18n="form.message">Mensaje</label>
-          <textarea id="message" name="message" rows="6" required minlength="10"></textarea>
+          <textarea id="message" name="message" rows="4" required minlength="10"></textarea>
           <span class="form__error" data-for="message"></span>
         </div>
 
