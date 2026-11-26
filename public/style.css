@@ -292,13 +292,17 @@ button {
   text-wrap: balance;
   margin-block: auto;
 }
-/* El punto final del titular parpadea. Es un pseudo-elemento con el mismo
-   carácter y tipografía que el resto, así que encaja como un punto real; el texto
-   del titular (y su traducción) no lo lleva. */
-.hero__title::after {
-  content: ".";
+/* El punto final del titular parpadea. Es un carácter más del titular (mismo tipo
+   y tamaño), fuera del texto traducible. Además es el acceso a los juegos
+   (easter egg): se hace clic en él. Va con aria-hidden porque es un detalle solo
+   para quien lo descubre con el cursor, no parte del contenido. El relleno
+   lateral agranda la zona de clic sin mover el texto. */
+.hero__punto {
+  padding-inline: 0.18em;
+  margin-inline: -0.18em;
   animation: parpadeo 1.1s steps(1, end) infinite;
 }
+.hero__punto:hover { animation: none; opacity: 1; }
 @keyframes parpadeo {
   0%, 55% { opacity: 1; }
   56%, 100% { opacity: 0; }
@@ -853,7 +857,7 @@ button {
 
 @media (prefers-reduced-motion: reduce) {
   .hero__dot,
-  .hero__title::after { animation: none; }
+  .hero__punto { animation: none; }
 }
 
 /* Al saltar a una sección con un enlace, queda justo bajo la barra. */
@@ -938,6 +942,36 @@ button {
 }
 .projects--h .proj__desc { max-width: 52ch; -webkit-line-clamp: 3; }
 
+/* ===== Móvil: más aire y proyectos en lista vertical ===== */
 @media (max-width: 760px) {
-  .projects--h { --card-w: 82vw; }
+  /* Sin apilado ni panel fijo: cada proyecto es una tarjeta normal. */
+  .projects__head { position: static; }
+  .proj {
+    position: static;
+    gap: 16px;
+    padding-block: 0;
+    margin-bottom: 48px;
+    background: none;
+    border-bottom: 0;
+  }
+  .stack > .proj:last-child { margin-bottom: 0; }
+  .projects { padding-bottom: 8px; }
+  .stack { padding-top: 28px; }
+}
+
+@media (max-width: 640px) {
+  /* Hero: el estado y la hora van en dos líneas en vez de pelearse por el ancho. */
+  .hero__meta { flex-direction: column; gap: 6px; }
+  .hero__foot { gap: 24px; }
+  .hero__links { margin-top: 32px; }
+
+  /* Más separación entre secciones y dentro de ellas. */
+  .row { gap: 32px; padding-bottom: 72px; }
+  .list--services .list__item { padding-block: 28px; row-gap: 10px; }
+  .list--steps { row-gap: 52px; }
+  .list--steps .list__item { gap: 16px; padding-top: 20px; }
+  .contact__lead { margin-top: 24px; }
+  .contact__links { margin-top: 36px; gap: 16px 32px; }
+  .form { gap: 36px; margin-top: 64px; }
+  .footer__inner { gap: 14px; padding-block: 36px; }
 }

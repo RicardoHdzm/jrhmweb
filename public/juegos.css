@@ -1,0 +1,186 @@
+/* Panel de juegos (easter egg). Se carga junto con juegos.js, al primer clic. Usa
+   los mismos tokens del sitio: --bg, --text, --muted, --line y las tres fuentes. */
+
+.juegos {
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  max-height: none;
+  padding: 12px;
+  border: 0;
+  background: transparent;
+  color: var(--text);
+  overflow: hidden;
+}
+.juegos[open] { display: grid; place-items: center; }
+.juegos::backdrop { background: rgba(0, 0, 0, 0.74); }
+
+/* El cursor personalizado del sitio queda por debajo de la capa superior del
+   diálogo y el del sistema está oculto en todo el documento: dentro del panel se
+   devuelve el del sistema. */
+.juegos,
+.juegos * { cursor: auto; }
+.juegos button { cursor: pointer; }
+
+.juegos__panel {
+  width: min(520px, 100%);
+  max-height: 100%;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: clamp(16px, 4vw, 24px);
+  background: var(--bg);
+  border: 1px solid var(--line);
+}
+.juegos button { font: inherit; color: inherit; }
+
+.juegos__cab { display: flex; justify-content: space-between; align-items: center; gap: 16px; }
+.juegos__titulo {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: clamp(2rem, 8vw, 3rem);
+  line-height: 1;
+  letter-spacing: -0.045em;
+}
+.juegos__cerrar {
+  width: 40px;
+  height: 40px;
+  border: 1px solid var(--line);
+  font-size: 22px;
+  line-height: 1;
+  transition: border-color 0.2s ease;
+}
+.juegos__cerrar:hover { border-color: var(--text); }
+
+.juegos__tabs {
+  display: flex;
+  gap: 4px;
+  margin-top: 18px;
+  border-bottom: 1px solid var(--line);
+}
+.juegos__tab {
+  padding: 8px 12px;
+  margin-bottom: -1px;
+  border-bottom: 1px solid transparent;
+  font-size: 14px;
+  color: var(--muted);
+  transition: color 0.2s ease;
+}
+.juegos__tab:hover { color: var(--text); }
+.juegos__tab { white-space: nowrap; }
+@media (max-width: 420px) {
+  .juegos__tabs { gap: 0; }
+  .juegos__tab { padding: 8px 8px; font-size: 13px; }
+}
+.juegos__tab[aria-pressed="true"] { color: var(--text); border-bottom-color: var(--text); }
+
+.juegos__cuerpo { margin-top: 18px; }
+.juegos__leyenda { font-family: var(--font-mono); font-size: 12px; color: var(--muted); }
+.juegos__estado {
+  min-height: 1.6em;
+  margin: 6px 0 12px;
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: 1.25rem;
+  letter-spacing: -0.02em;
+}
+.juegos__pie {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-top: 16px;
+}
+.juegos__marcador { font-family: var(--font-mono); font-size: 12px; color: var(--muted); }
+.juegos__btn {
+  padding: 8px 14px;
+  border: 1px solid var(--line);
+  font-size: 14px;
+  transition: border-color 0.2s ease, background-color 0.2s ease, color 0.2s ease;
+}
+.juegos__btn:hover { border-color: var(--text); }
+.juegos__btn--chico { padding: 4px 10px; font-size: 12px; }
+.juegos__btn[aria-pressed="true"] { background: var(--text); color: var(--bg); border-color: var(--text); }
+
+.juegos button:focus-visible { outline: 2px solid var(--text); outline-offset: 2px; }
+
+/* ----- Gato ----- */
+.gato { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+.gato__celda {
+  aspect-ratio: 1;
+  border: 1px solid var(--line);
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: clamp(2.4rem, 14vw, 4rem);
+  line-height: 1;
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+.gato__celda:hover { border-color: var(--text); }
+.gato__celda[aria-disabled="true"] { cursor: default; }
+.gato__celda[aria-disabled="true"]:hover { border-color: var(--line); }
+.gato__celda.es-ganadora { background: color-mix(in srgb, var(--text) 14%, transparent); border-color: var(--text); }
+
+/* ----- Conecta 4 ----- */
+.c4 { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
+.c4__col {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 5px;
+  border: 1px solid var(--line);
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+.c4__col:hover:not([aria-disabled="true"]) {
+  border-color: var(--text);
+  background: color-mix(in srgb, var(--text) 6%, transparent);
+}
+.c4__col[aria-disabled="true"] { cursor: default; }
+.c4__celda {
+  display: block;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  border: 1px solid var(--line);
+}
+.c4__celda.es-humano { background: var(--text); border-color: var(--text); }
+.c4__celda.es-cpu { border: 3px solid var(--text); }
+.c4__celda.es-ganadora { outline: 2px solid var(--text); outline-offset: 2px; }
+.c4__celda.cae { animation: c4-cae 0.38s cubic-bezier(0.55, 0, 0.9, 0.5); }
+@keyframes c4-cae {
+  from { transform: translateY(calc(-110% * (var(--fila) + 1))); }
+  to { transform: none; }
+}
+
+/* ----- Buscaminas ----- */
+.minas__barra { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 10px; }
+.minas__dato { font-family: var(--font-mono); font-size: 12px; color: var(--muted); }
+.minas__dato b { margin-left: 4px; color: var(--text); font-weight: 600; font-size: 14px; font-variant-numeric: tabular-nums; }
+.minas { display: grid; grid-template-columns: repeat(9, 1fr); gap: 3px; touch-action: manipulation; }
+.minas__celda {
+  aspect-ratio: 1;
+  border: 1px solid var(--line);
+  background: color-mix(in srgb, var(--text) 8%, transparent);
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-size: clamp(12px, 4vw, 18px);
+  line-height: 1;
+  user-select: none;
+  -webkit-user-select: none;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+.minas__celda:hover:not(.es-abierta) { border-color: var(--text); }
+.minas__celda.es-abierta { background: transparent; border-color: transparent; cursor: default; }
+.minas__celda.es-mina { background: color-mix(in srgb, var(--text) 18%, transparent); }
+.minas__celda.es-explotada { background: var(--text); color: var(--bg); }
+.minas__celda.es-error { text-decoration: line-through; color: var(--muted); }
+.minas__celda.n1 { color: var(--muted); }
+.minas__celda.n2 { color: color-mix(in srgb, var(--text) 78%, var(--muted)); }
+.minas__celda.n3,
+.minas__celda.n4,
+.minas__celda.n5,
+.minas__celda.n6,
+.minas__celda.n7,
+.minas__celda.n8 { color: var(--text); }
+
+@media (prefers-reduced-motion: reduce) {
+  .c4__celda.cae { animation: none; }
+}

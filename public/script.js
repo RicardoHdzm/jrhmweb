@@ -256,6 +256,8 @@ function applyLanguage(lang) {
   refreshFormMessages();
 
   localStorage.setItem('lang', lang);
+  // Los juegos (se cargan bajo demanda) repintan sus textos al oír esto.
+  document.dispatchEvent(new CustomEvent('jrhm:idioma', { detail: lang }));
 }
 
 langButtons.forEach((btn) => {
@@ -462,6 +464,7 @@ const pistaProy = document.querySelector('.projects .stack');
 const contadorProy = document.querySelector('.projects__count');
 const totalProy = document.querySelectorAll('.projects .stack > .proj').length;
 const sinMovimiento = window.matchMedia('(prefers-reduced-motion: reduce)');
+const pantallaMovil = window.matchMedia('(max-width: 760px)');
 let recorridoProy = 0;
 
 function medirHorizontal() {
@@ -494,7 +497,9 @@ function moverHorizontal() {
 
 function activarHorizontal() {
   if (!seccionProy || !pistaProy) return;
-  const activo = !sinMovimiento.matches;
+  // En móvil los proyectos van en lista vertical: deslizar el dedo hacia abajo y que
+  // la pantalla se mueva de lado confunde, y las tarjetas quedarían diminutas.
+  const activo = !sinMovimiento.matches && !pantallaMovil.matches;
   seccionProy.classList.toggle('projects--h', activo);
   if (activo) {
     // Las imágenes están fuera de pantalla a un lado: con carga diferida tardarían
@@ -518,7 +523,28 @@ window.addEventListener('scroll', () => {
 }, { passive: true });
 window.addEventListener('resize', () => { medirApilado(); medirHorizontal(); });
 sinMovimiento.addEventListener('change', activarHorizontal);
+pantallaMovil.addEventListener('change', activarHorizontal);
 if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { medirApilado(); medirHorizontal(); });
+
+// ===== Easter egg: juegos =====
+// El punto final del titular abre un panel con Gato, Conecta 4 y Buscaminas. El
+// código (juegos.js + juegos.css) no se descarga hasta el primer clic.
+const puntoJuegos = document.querySelector('.hero__punto');
+let cargaJuegos = null;
+function abrirJuegos() {
+  if (window.JRHM_JUEGOS) return window.JRHM_JUEGOS.abrir();
+  if (!cargaJuegos) {
+    cargaJuegos = new Promise((ok, fallo) => {
+      const s = document.createElement('script');
+      s.src = 'juegos.js';
+      s.onload = ok;
+      s.onerror = fallo;
+      document.head.appendChild(s);
+    });
+  }
+  return cargaJuegos.then(() => window.JRHM_JUEGOS.abrir()).catch(() => { cargaJuegos = null; });
+}
+if (puntoJuegos) puntoJuegos.addEventListener('click', abrirJuegos);
 
 // ===== Recorrido en video al pasar el cursor =====
 // Cada proyecto tiene un video corto (scroll por las secciones del sitio) encima de
@@ -647,7 +673,7 @@ if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
 
   if (dot && ring) {
     // Qué hace crecer el anillo, y qué lo aparta.
-    const PULSABLE = 'a, button, select, summary, [role="button"]';
+    const PULSABLE = 'a, button, select, summary, [role="button"], .hero__punto';
     const CAMPO_DE_TEXTO = 'input, textarea';
 
     // Quien pidió menos movimiento no recibe la inercia: el anillo va pegado.
