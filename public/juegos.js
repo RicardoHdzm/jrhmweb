@@ -8,7 +8,7 @@
   // ===== Textos =====
   const TXT = {
     es: {
-      titulo: 'JRHM 64',
+      titulo: 'JRHM.STATION',
       cerrar: 'Cerrar',
       gato: 'Gato',
       conecta: 'Conecta 4',
@@ -38,7 +38,7 @@
       perdisteMinas: 'Pisaste una mina',
     },
     en: {
-      titulo: 'JRHM 64',
+      titulo: 'JRHM.STATION',
       cerrar: 'Close',
       gato: 'Tic-tac-toe',
       conecta: 'Connect 4',

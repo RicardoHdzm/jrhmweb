@@ -574,9 +574,9 @@ pantallaMovil.addEventListener('change', activarHorizontal);
 if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { medirApilado(); medirHorizontal(); });
 
 // ===== Easter egg: juegos =====
-// El punto final del titular abre un panel con Gato, Conecta 4 y Buscaminas. El
+// El "#" del centro del pie abre un panel con Gato, Conecta 4 y Buscaminas. El
 // código (juegos.js + juegos.css) no se descarga hasta el primer clic.
-const puntoJuegos = document.querySelector('.hero__punto');
+const puntoJuegos = document.querySelector('.footer__hash');
 let cargaJuegos = null;
 function abrirJuegos() {
   if (window.JRHM_JUEGOS) return window.JRHM_JUEGOS.abrir();
@@ -724,7 +724,7 @@ if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
 
   if (dot && ring) {
     // Qué hace crecer el anillo, y qué lo aparta.
-    const PULSABLE = 'a, button, select, summary, [role="button"], .hero__punto';
+    const PULSABLE = 'a, button, select, summary, [role="button"]';
     const CAMPO_DE_TEXTO = 'input, textarea';
 
     // Quien pidió menos movimiento no recibe la inercia: el anillo va pegado.
