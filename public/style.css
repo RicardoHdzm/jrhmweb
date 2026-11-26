@@ -368,6 +368,10 @@ button {
   padding-block: clamp(8px, 1.4vw, 18px);
   transition: background-color 0.25s ease;
 }
+/* Prefijo "//" de los títulos de sección: decorativo, en gris (es un elemento aparte
+   porque los pseudo-elementos de .row__label ya los usan las líneas de la banda). */
+.titulo__pref { color: var(--muted); font-weight: 500; margin-right: 0.04em; }
+
 .projects__title {
   font-family: var(--font-display);
   font-weight: 600;
