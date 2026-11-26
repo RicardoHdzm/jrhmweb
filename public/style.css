@@ -947,11 +947,14 @@ button {
   font-variant-numeric: tabular-nums;
   padding-bottom: 0.4em;
 }
+/* Todas las tarjetas miden lo mismo (la más alta manda) y van pegadas arriba: así las
+   imágenes quedan alineadas aunque unas descripciones ocupen más líneas que otras. El
+   conjunto se centra en vertical con márgenes automáticos. */
 .projects--h .stack {
   display: flex;
-  align-items: center;
-  flex: 1;
-  min-height: 0;
+  align-items: stretch;
+  flex: none;
+  margin-block: auto;
   gap: clamp(16px, 2vw, 32px);
   width: max-content;
   padding-inline: var(--bleed, 0px);
@@ -969,7 +972,7 @@ button {
   background: none;
   border-bottom: 0;
 }
-.projects--h .proj__body { padding-left: 0; gap: 10px; }
+.projects--h .proj__body { flex: 1; padding-left: 0; gap: 10px; }
 .projects--h .proj__top { flex-direction: column-reverse; gap: 6px; }
 .projects--h .proj__name {
   max-width: none;
