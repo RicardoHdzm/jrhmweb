@@ -932,6 +932,30 @@ if ('IntersectionObserver' in window) {
   document.querySelectorAll('#proyectos, #servicios, #proceso, #contacto').forEach((s) => vistas.observe(s));
 }
 
+// ===== Servicios: de la tarjeta al formulario =====
+// Cada tarjeta de Servicios enlaza a Contacto (el navegador hace el desplazamiento) y
+// deja ese servicio elegido en el selector del formulario. El valor de data-servicio
+// es el mismo que el de la opción del selector (que va en español en las dos páginas).
+document.querySelectorAll('.list--services a[data-servicio]').forEach((enlace) => {
+  enlace.addEventListener('click', () => {
+    const valor = enlace.dataset.servicio;
+    evento('servicio_click', { servicio: valor });
+    const selector = document.getElementById('service');
+    if (!selector || !Array.from(selector.options).some((o) => o.value === valor)) return;
+    selector.value = valor;
+    selector.dispatchEvent(new Event('input', { bubbles: true }));
+    selector.dispatchEvent(new Event('change', { bubbles: true }));
+    clearError('service');
+    const fila = selector.closest('.form__row');
+    if (fila) {
+      fila.classList.remove('preseleccionado');
+      void fila.offsetWidth; // reinicia la animación si se vuelve a elegir
+      fila.classList.add('preseleccionado');
+      setTimeout(() => fila.classList.remove('preseleccionado'), 2000);
+    }
+  });
+});
+
 // Al final del todo: applyLanguage toca el formulario y el selector de tema,
 // que se definen más arriba pero se inicializan en este punto.
 applyLanguage(currentLang);

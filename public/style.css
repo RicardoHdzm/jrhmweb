@@ -565,7 +565,9 @@ button {
 }
 
 /* --- Servicios: tarjetas independientes, sin numerar. Son cosas que se ofrecen, no
-   pasos de un proceso, así que cada una es un recuadro propio en una cuadrícula. --- */
+   pasos de un proceso, así que cada una es un recuadro propio en una cuadrícula.
+   Cada tarjeta es un enlace a Contacto que deja ese servicio elegido en el formulario
+   (script.js). Lleva un icono pequeño arriba y una flecha abajo a la derecha. --- */
 .list--services {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -575,12 +577,26 @@ button {
 .list--services .list__item:first-child,
 .list--services .list__item:last-child {
   display: flex;
-  flex-direction: column;
-  gap: 14px;
-  min-height: clamp(180px, 16vw, 240px);
-  padding: clamp(20px, 2.2vw, 32px);
+  min-height: clamp(190px, 17vw, 250px);
+  padding: 0;
   border: 1px solid var(--line);
   transition: border-color 0.25s ease, background-color 0.25s ease;
+}
+.list__enlace {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 14px;
+  padding: clamp(20px, 2.2vw, 32px);
+}
+.list__icono {
+  align-self: flex-start;
+  width: auto;
+  height: 22px;
+  margin-bottom: 4px;
+  fill: currentColor;
+  color: var(--muted);
+  transition: color 0.25s ease;
 }
 .list--services .list__title {
   font-weight: 600;
@@ -594,13 +610,23 @@ button {
   line-height: 1.45;
   transition: color 0.2s ease;
 }
+.list__flecha {
+  align-self: flex-end;
+  margin-top: auto;
+  color: var(--muted);
+  transition: color 0.25s ease, transform 0.25s ease;
+}
 @media (hover: hover) {
   .list--services .list__item:hover {
     border-color: var(--text);
     background: color-mix(in srgb, var(--text) 4%, transparent);
   }
-  .list--services .list__item:hover .list__text { color: var(--text); }
+  .list--services .list__item:hover .list__text,
+  .list--services .list__item:hover .list__icono,
+  .list--services .list__item:hover .list__flecha { color: var(--text); }
+  .list--services .list__item:hover .list__flecha { transform: translate(2px, -2px); }
 }
+.list--services .list__item:focus-within { border-color: var(--text); }
 @media (max-width: 1000px) {
   .list--services { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
@@ -609,6 +635,16 @@ button {
   .list--services .list__item,
   .list--services .list__item:first-child,
   .list--services .list__item:last-child { min-height: 0; }
+}
+
+/* Al llegar desde una tarjeta, el selector del formulario se resalta un momento. */
+.form__row.preseleccionado select { animation: resaltar 1.8s ease; }
+@keyframes resaltar {
+  0%, 60% { border-bottom-color: var(--text); }
+  100% { border-bottom-color: var(--line); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .form__row.preseleccionado select { animation: none; }
 }
 
 /* ===== Contacto ===== */
