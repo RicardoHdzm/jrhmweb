@@ -598,18 +598,18 @@ button {
   line-height: 1.45;
   transition: color 0.2s ease;
 }
-/* Al pasar el cursor por un paso: el texto pasa a blanco (como en Servicios) y su
-   línea superior se vuelve a trazar de izquierda a derecha. */
-@keyframes trazo {
-  from { transform: scaleX(0); }
-  to { transform: scaleX(1); }
-}
+/* Con ratón, la línea de cada paso solo aparece al pasar el cursor: se traza de
+   izquierda a derecha y el texto pasa a blanco (como en Servicios). En pantallas
+   táctiles no hay "pasar el cursor", así que ahí las líneas se ven siempre (y se
+   dibujan al entrar en pantalla, ver script.js). */
 @media (hover: hover) {
-  .list--steps .list__item:hover .list__text { color: var(--text); }
-  .list--steps .list__item:hover::before {
+  .list--steps .list__item::before {
+    transform: scaleX(0);
     transform-origin: left;
-    animation: trazo 0.8s cubic-bezier(0.22, 0.61, 0.36, 1);
+    transition: transform 0.7s cubic-bezier(0.22, 0.61, 0.36, 1);
   }
+  .list--steps .list__item:hover::before { transform: scaleX(1); }
+  .list--steps .list__item:hover .list__text { color: var(--text); }
 }
 
 /* ===== Contacto ===== */
@@ -733,9 +733,53 @@ button {
   .hero__foot { grid-template-columns: minmax(0, 1fr); gap: 20px; }
 }
 
+/* Móvil: una sola fila (logo a la izquierda; tema, idioma y menú a la derecha). Las
+   secciones salen en un panel que baja de la barra al pulsar el botón del menú. */
+.nav__menu { display: none; }
 @media (max-width: 720px) {
-  .nav__inner { flex-wrap: wrap; gap: 4px 16px; padding-block: 10px; min-height: 0; }
-  .nav__links { order: 3; width: 100%; justify-content: space-between; gap: 0; padding-top: 6px; }
+  .nav__inner { flex-wrap: nowrap; gap: 12px; padding-block: 10px; min-height: 0; }
+  .nav__controls { gap: 10px; }
+  .nav__menu {
+    display: inline-flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    width: 36px;
+    height: 36px;
+    margin-right: -8px;
+  }
+  .nav__menu span {
+    display: block;
+    width: 20px;
+    height: 1.5px;
+    background: currentColor;
+    transition: transform 0.25s ease;
+  }
+  .nav.is-open .nav__menu span:nth-child(1) { transform: translateY(3.25px) rotate(45deg); }
+  .nav.is-open .nav__menu span:nth-child(2) { transform: translateY(-3.25px) rotate(-45deg); }
+  .nav__links {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    flex-direction: column;
+    gap: 0;
+    padding: 4px var(--pad) 16px;
+    background: var(--bg);
+    border-bottom: 1px solid var(--line);
+  }
+  .nav.is-open .nav__links { display: flex; }
+  .nav__links li + li a { border-top: 1px solid var(--line); }
+  .nav__links a {
+    display: block;
+    padding: 16px 0;
+    font-family: var(--font-display);
+    font-size: 1.35rem;
+    letter-spacing: -0.02em;
+  }
+  .nav__links a::after { display: none; }
 }
 
 @media (max-width: 760px) {
@@ -883,8 +927,7 @@ button {
 
 @media (prefers-reduced-motion: reduce) {
   .hero__dot,
-  .hero__punto,
-  .list--steps .list__item:hover::before { animation: none; }
+  .hero__punto { animation: none; }
 }
 
 /* Al saltar a una sección con un enlace, queda justo bajo la barra. */

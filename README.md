@@ -16,10 +16,14 @@ configuración y manda sobre lo que esté puesto en el dashboard.
 
 ```
 ├── public/              ← TODO lo que se publica en la web
-│   ├── index.html
+│   ├── index.html       ← español (fuente)
+│   ├── en/index.html    ← inglés (generado con scripts/generar-en.js)
+│   ├── juegos.js · juegos.css   ← easter egg (se cargan al primer clic)
 │   ├── style.css
 │   ├── script.js
 │   ├── assets/ · fontawesome/ · robots.txt · sitemap.xml · favicon.gif · logo.gif
+├── scripts/
+│   └── generar-en.js    ← genera public/en/index.html
 ├── src/
 │   └── worker.js        ← Worker: sirve public/ y expone POST /api/contact
 └── wrangler.jsonc       ← configuración del Worker
@@ -32,6 +36,42 @@ desde el dominio.
 
 Si agregás un archivo nuevo al sitio, va en `public/`. Si lo dejás en la raíz, no se
 publica.
+
+## Idiomas (español e inglés)
+
+El sitio tiene dos páginas reales para que Google indexe cada idioma por separado:
+
+- `/` → `public/index.html` (español). **Es la fuente**: aquí se editan los textos y la estructura.
+- `/en/` → `public/en/index.html` (inglés). **Se genera**, no se edita a mano.
+
+El inglés sale de copiar `public/index.html` sustituyendo cada texto marcado con
+`data-i18n` por su traducción del diccionario de `public/script.js`. Cada vez que se
+cambie el HTML de español o alguna traducción, hay que regenerarlo:
+
+```
+node scripts/generar-en.js
+```
+
+(No necesita instalar nada, solo Node.) El script avisa si falta alguna traducción.
+El selector ES/EN de la barra son enlaces a una u otra página, y la analítica y los
+juegos usan el idioma de la página.
+
+## Analítica (Google Tag Manager)
+
+El contenedor GTM ya está en la página; el sitio solo emite eventos al `dataLayer` y
+nunca envía datos personales. Para usarlos hay que crear en GTM disparadores de tipo
+"Evento personalizado" con estos nombres:
+
+| Evento | Cuándo | Datos |
+|---|---|---|
+| `contacto_click` | clic en WhatsApp o correo | `metodo`, `lugar` |
+| `formulario_enviado` / `formulario_error` | envío del formulario | `servicio`, `idioma` / `tipo` |
+| `proyecto_click` | clic en un proyecto | `proyecto`, `url` |
+| `proyecto_vista_previa` | primera vez que se pasa el cursor por un proyecto | `proyecto` |
+| `seccion_vista` | primera vez que se ve cada sección | `seccion` |
+| `menu_click` / `hero_click` | clic en el menú o en los botones del hero | `destino` |
+| `idioma_cambiado` / `tema_cambiado` | cambio de idioma o de tema | `idioma` / `tema` |
+| `juegos_abierto` / `juego_elegido` / `juego_terminado` | easter egg de los juegos | `juego`, `resultado` |
 
 ## Formulario de contacto
 

@@ -1,3 +1,13 @@
+// ===== Analítica =====
+// Todo evento va al dataLayer de Google Tag Manager (el contenedor ya está en el
+// <head>). Aquí solo se emiten los eventos; qué hace GTM con ellos (GA4, etc.) se
+// configura en GTM con disparadores de tipo "Evento personalizado" que usen estos
+// nombres. Nunca se envían datos personales: ni nombre, ni correo, ni mensaje.
+function evento(nombre, datos) {
+  (window.dataLayer = window.dataLayer || []).push(Object.assign({ event: nombre }, datos || {}));
+}
+window.jrhmEvento = evento; // también la usa juegos.js
+
 // ===== Año en footer =====
 document.getElementById('year').textContent = new Date().getFullYear();
 
@@ -33,6 +43,23 @@ if (navSections.length) {
   actualizarNavActivo();
 }
 
+// ===== Menú móvil =====
+// En pantallas estrechas las secciones van en un panel desplegable. Se cierra al
+// elegir una sección, con Escape, al pulsar fuera y al ensanchar la ventana.
+const navEl0 = document.querySelector('.nav');
+const botonMenu = document.querySelector('.nav__menu');
+if (navEl0 && botonMenu) {
+  const poner = (abierto) => {
+    navEl0.classList.toggle('is-open', abierto);
+    botonMenu.setAttribute('aria-expanded', String(abierto));
+  };
+  botonMenu.addEventListener('click', () => poner(!navEl0.classList.contains('is-open')));
+  navEl0.querySelectorAll('.nav__links a').forEach((a) => a.addEventListener('click', () => poner(false)));
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') poner(false); });
+  document.addEventListener('click', (e) => { if (!navEl0.contains(e.target)) poner(false); });
+  window.matchMedia('(min-width: 721px)').addEventListener('change', (e) => { if (e.matches) poner(false); });
+}
+
 // ===== Modo claro/oscuro =====
 const themeToggle = document.getElementById('theme-toggle');
 
@@ -56,6 +83,7 @@ if (themeToggle) {
     const current = document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark';
     applyTheme(current === 'light' ? 'dark' : 'light');
     updateThemeLabel();
+    evento('tema_cambiado', { tema: current === 'light' ? 'oscuro' : 'claro' });
   });
 }
 
@@ -63,6 +91,8 @@ if (themeToggle) {
 const translations = {
   es: {
     'nav.proyectos': 'Proyectos',
+    'nav.menu': 'Menú',
+    'whatsapp.aria': 'Escríbenos por WhatsApp',
     'nav.servicios': 'Servicios',
     'nav.proceso': 'Proceso',
     'nav.contacto': 'Contacto',
@@ -144,6 +174,8 @@ const translations = {
   },
   en: {
     'nav.proyectos': 'Projects',
+    'nav.menu': 'Menu',
+    'whatsapp.aria': 'Message us on WhatsApp',
     'nav.servicios': 'Services',
     'nav.proceso': 'Process',
     'nav.contacto': 'Contact',
@@ -227,7 +259,10 @@ const translations = {
 
 const langButtons = document.querySelectorAll('.lang-switch__btn');
 const i18nEls = document.querySelectorAll('[data-i18n]');
-let currentLang = localStorage.getItem('lang') || 'es';
+// El idioma lo fija la página: / es español y /en/ es inglés (cada una con su HTML
+// ya traducido, para que se indexen por separado). Aquí solo se usa para los textos
+// que genera el JS: mensajes del formulario, estado, juegos...
+let currentLang = document.documentElement.lang === 'en' ? 'en' : 'es';
 
 // Busca una traducción; si falta la clave en el idioma activo cae al español
 // antes que dejar la interfaz en blanco.
@@ -242,6 +277,11 @@ function applyLanguage(lang) {
   i18nEls.forEach((el) => {
     const value = translations[lang][el.dataset.i18n];
     if (value !== undefined) el.textContent = value;
+  });
+
+  document.querySelectorAll('[data-i18n-label]').forEach((el) => {
+    const v = translations[lang][el.dataset.i18nLabel];
+    if (v !== undefined) el.setAttribute('aria-label', v);
   });
 
   langButtons.forEach((btn) => {
@@ -260,8 +300,10 @@ function applyLanguage(lang) {
   document.dispatchEvent(new CustomEvent('jrhm:idioma', { detail: lang }));
 }
 
+// Los botones de idioma son enlaces a la otra página: navegan solos. Solo se avisa a
+// la analítica antes de salir.
 langButtons.forEach((btn) => {
-  btn.addEventListener('click', () => applyLanguage(btn.dataset.lang));
+  btn.addEventListener('click', () => evento('idioma_cambiado', { idioma: btn.dataset.lang }));
 });
 
 // ===== Formulario de contacto =====
@@ -416,10 +458,12 @@ form.addEventListener('submit', async (e) => {
       throw new Error(errData.error || '');
     }
 
+    evento('formulario_enviado', { servicio: payload.service, idioma: currentLang });
     setStatus('form.status.success', 'success');
     form.reset();
     Object.keys(fieldErrors).forEach(clearError);
   } catch (err) {
+    evento('formulario_error', { tipo: err instanceof TypeError ? 'red' : 'servidor' });
     if (err instanceof TypeError) {
       // fetch() solo lanza TypeError cuando la petición ni siquiera salió.
       setStatus('form.status.network', 'error');
@@ -504,7 +548,10 @@ function activarHorizontal() {
   if (activo) {
     // Las imágenes están fuera de pantalla a un lado: con carga diferida tardarían
     // en aparecer al hacer scroll rápido. Son 6 JPG de unos 70 KB.
-    document.querySelectorAll('.projects .proj__media > img').forEach((img) => { img.loading = 'eager'; });
+    // Se piden cuando la página ya cargó (no compiten con lo que se ve al abrir) y sin
+    // esperar a que asomen, para que no aparezcan en blanco con scroll rápido.
+    const adelantar = () => document.querySelectorAll('.projects .proj__media > img').forEach((img) => { img.loading = 'eager'; });
+    if (document.readyState === 'complete') adelantar(); else window.addEventListener('load', adelantar, { once: true });
     medirApilado();
     medirHorizontal();
   } else {
@@ -536,7 +583,7 @@ function abrirJuegos() {
   if (!cargaJuegos) {
     cargaJuegos = new Promise((ok, fallo) => {
       const s = document.createElement('script');
-      s.src = 'juegos.js';
+      s.src = '/juegos.js';
       s.onload = ok;
       s.onerror = fallo;
       document.head.appendChild(s);
@@ -544,7 +591,7 @@ function abrirJuegos() {
   }
   return cargaJuegos.then(() => window.JRHM_JUEGOS.abrir()).catch(() => { cargaJuegos = null; });
 }
-if (puntoJuegos) puntoJuegos.addEventListener('click', abrirJuegos);
+if (puntoJuegos) puntoJuegos.addEventListener('click', () => { evento('juegos_abierto'); abrirJuegos(); });
 
 // ===== Recorrido en video al pasar el cursor =====
 // Cada proyecto tiene un video corto (scroll por las secciones del sitio) encima de
@@ -639,7 +686,11 @@ if (horaEl) {
 // Solo se animan las líneas de las secciones; el contenido no se toca, así que
 // nada puede quedar invisible. La clase la añade el JS, nunca el HTML.
 if ('IntersectionObserver' in window && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-  const lineas = document.querySelectorAll('.row__label, .list--services .list__item, .list--steps .list__item');
+  // Con ratón, las líneas de los pasos de Proceso van por hover (CSS) y no se trazan aquí.
+  const hayHover = window.matchMedia('(hover: hover)').matches;
+  const lineas = document.querySelectorAll(hayHover
+    ? '.row__label, .list--services .list__item'
+    : '.row__label, .list--services .list__item, .list--steps .list__item');
   lineas.forEach((el) => {
     el.classList.add('anim');
     // Posición dentro del grupo: escalona el trazo de los cuatro pasos.
@@ -750,15 +801,72 @@ if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
     document.addEventListener('pointerup', () => ring.classList.remove('is-pressed'));
     document.addEventListener('pointercancel', () => ring.classList.remove('is-pressed'));
 
+    // El bucle solo corre mientras el anillo todavía alcanza al ratón: con el ratón
+    // quieto se detiene (antes giraba 60 veces por segundo sin parar, gastando CPU
+    // y batería sin que hubiera nada que mover) y el siguiente movimiento lo reanuda.
+    let animando = false;
     const frame = () => {
       anilloX += (ratonX - anilloX) * SEGUIMIENTO;
       anilloY += (ratonY - anilloY) * SEGUIMIENTO;
+      const llego = Math.abs(ratonX - anilloX) < 0.1 && Math.abs(ratonY - anilloY) < 0.1;
+      if (llego) { anilloX = ratonX; anilloY = ratonY; }
       dot.style.transform = `translate(${ratonX}px, ${ratonY}px)`;
       ring.style.transform = `translate(${anilloX}px, ${anilloY}px)`;
+      if (llego) animando = false; else requestAnimationFrame(frame);
+    };
+    const arrancar = () => {
+      if (animando) return;
+      animando = true;
       requestAnimationFrame(frame);
     };
-    requestAnimationFrame(frame);
+    document.addEventListener('pointermove', arrancar);
+    arrancar();
   }
+}
+
+// ===== Eventos de uso =====
+// Delegados en el documento: un solo oyente por tipo, sin tocar el HTML.
+const nombreProyecto = (tarjeta) => {
+  const n = tarjeta.querySelector('.proj__name');
+  return n ? n.textContent.trim() : '';
+};
+document.addEventListener('click', (e) => {
+  const el = e.target instanceof Element ? e.target : null;
+  if (!el) return;
+  const enlace = el.closest('a[href]');
+  if (!enlace) return;
+  const href = enlace.getAttribute('href') || '';
+  const tarjeta = enlace.closest('.proj');
+  if (tarjeta) {
+    evento('proyecto_click', { proyecto: nombreProyecto(tarjeta), url: href });
+  } else if (href.indexOf('https://wa.me') === 0) {
+    evento('contacto_click', { metodo: 'whatsapp', lugar: enlace.classList.contains('whatsapp-float') ? 'flotante' : 'seccion' });
+  } else if (href.indexOf('mailto:') === 0) {
+    evento('contacto_click', { metodo: 'email', lugar: 'seccion' });
+  } else if (enlace.closest('.nav__links') && href.charAt(0) === '#') {
+    evento('menu_click', { destino: href.slice(1) });
+  } else if (href.charAt(0) === '#' && enlace.closest('.hero')) {
+    evento('hero_click', { destino: href.slice(1) });
+  }
+});
+// Vista previa de un proyecto: la primera vez que se pasa el cursor por cada tarjeta.
+const vistasPrevias = new Set();
+document.addEventListener('pointerover', (e) => {
+  const tarjeta = e.target instanceof Element ? e.target.closest('.proj') : null;
+  if (!tarjeta || vistasPrevias.has(tarjeta) || (e.pointerType && e.pointerType !== 'mouse')) return;
+  vistasPrevias.add(tarjeta);
+  evento('proyecto_vista_previa', { proyecto: nombreProyecto(tarjeta) });
+});
+// Secciones vistas (una vez cada una): sirve para ver hasta dónde llega la gente.
+if ('IntersectionObserver' in window) {
+  const vistas = new IntersectionObserver((entradas) => {
+    entradas.forEach((entrada) => {
+      if (!entrada.isIntersecting) return;
+      evento('seccion_vista', { seccion: entrada.target.id });
+      vistas.unobserve(entrada.target);
+    });
+  }, { threshold: 0.25 });
+  document.querySelectorAll('#proyectos, #servicios, #proceso, #contacto').forEach((s) => vistas.observe(s));
 }
 
 // Al final del todo: applyLanguage toca el formulario y el selector de tema,

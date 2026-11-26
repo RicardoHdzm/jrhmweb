@@ -8,7 +8,7 @@
   // ===== Textos =====
   const TXT = {
     es: {
-      titulo: 'Juegos',
+      titulo: 'JRHM 64',
       cerrar: 'Cerrar',
       gato: 'Gato',
       conecta: 'Conecta 4',
@@ -38,7 +38,7 @@
       perdisteMinas: 'Pisaste una mina',
     },
     en: {
-      titulo: 'Games',
+      titulo: 'JRHM 64',
       cerrar: 'Close',
       gato: 'Tic-tac-toe',
       conecta: 'Connect 4',
@@ -146,7 +146,7 @@
         fin = true;
         resultado = 'e';
       }
-      if (fin) marcador[resultado]++;
+      if (fin) { marcador[resultado]++; registrar('juego_terminado', { juego: 'gato', resultado }); }
       return fin;
     }
     function turnoCpu() {
@@ -305,7 +305,7 @@
         fin = true;
         resultado = 'e';
       }
-      if (fin) marcador[resultado]++;
+      if (fin) { marcador[resultado]++; registrar('juego_terminado', { juego: 'conecta4', resultado }); }
       return fin;
     }
     function turnoCpu() {
@@ -433,6 +433,7 @@
       fin = true;
       perdio = !gano;
       clearInterval(reloj);
+      registrar('juego_terminado', { juego: 'buscaminas', resultado: gano ? 'g' : 'p', segundos });
       if (gano) {
         // Al ganar, todas las minas quedan marcadas (no puede haber banderas de más:
         // una casilla con bandera no se abre, y ganar exige abrir todas las demás).
@@ -589,7 +590,7 @@
       cssListo = new Promise((ok) => {
         const l = document.createElement('link');
         l.rel = 'stylesheet';
-        l.href = 'juegos.css';
+        l.href = '/juegos.css';
         l.onload = ok;
         l.onerror = ok; // sin estilos el panel sigue funcionando
         document.head.appendChild(l);
@@ -597,9 +598,11 @@
     }
     return cssListo;
   }
+  const registrar = (nombre, datos) => { if (window.jrhmEvento) window.jrhmEvento(nombre, datos); };
   function elegir(id) {
     if (instancia) instancia.destruir();
     actual = id;
+    registrar('juego_elegido', { juego: id });
     cuerpoEl.replaceChildren();
     instancia = JUEGOS.find((j) => j.id === id).crear(cuerpoEl);
     dialogo.querySelectorAll('.juegos__tab').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.juego === id)));
