@@ -98,7 +98,7 @@ const translations = {
     'nav.contacto': 'Contacto',
     'hero.tag': 'Estudio de diseño y desarrollo web',
     'hero.title': 'Sitios web a medida, diseñados y programados desde cero',
-    'hero.sub': 'Trabajamos con negocios en México y Estados Unidos: restaurantes, empresas de servicios y distribuidoras, desde una página sencilla hasta una tienda en línea.',
+    'hero.sub': 'Trabajamos con negocios de todo tipo y tamaño: desde una página sencilla hasta una tienda en línea completa.',
     'hero.btnWork': 'Ver proyectos',
     'hero.btnContact': 'Escríbenos',
     'projects.label': 'Proyectos',
@@ -170,7 +170,7 @@ const translations = {
     'projects.view': '[Ver proyecto]',
     'project.tags': 'Diseño + Desarrollo',
     'hero.status': 'Disponible para nuevos proyectos',
-    'hero.place': 'Culiacán, MX',
+    'hero.place': 'Sinaloa, MX',
   },
   en: {
     'nav.proyectos': 'Projects',
@@ -181,7 +181,7 @@ const translations = {
     'nav.contacto': 'Contact',
     'hero.tag': 'Web design & development studio',
     'hero.title': 'Custom websites, designed and programmed from scratch',
-    'hero.sub': 'We work with businesses in Mexico and the United States: restaurants, service companies and distributors, from a simple page to a full online store.',
+    'hero.sub': 'We work with businesses of every kind and size: from a simple page to a full online store.',
     'hero.btnWork': 'See projects',
     'hero.btnContact': 'Get in touch',
     'projects.label': 'Projects',
@@ -253,7 +253,7 @@ const translations = {
     'projects.view': '[View project]',
     'project.tags': 'Design + Development',
     'hero.status': 'Available for new projects',
-    'hero.place': 'Culiacán, MX',
+    'hero.place': 'Sinaloa, MX',
   },
 };
 
@@ -667,7 +667,7 @@ if (stackEl && window.matchMedia('(hover: hover) and (pointer: fine)').matches) 
 }
 
 // ===== Hora local =====
-// Culiacán está en la zona horaria de Mazatlán (UTC-7, sin horario de verano).
+// Sinaloa está en la zona horaria de Mazatlán (UTC-7, sin horario de verano).
 const horaEl = document.getElementById('hora');
 if (horaEl) {
   const formato = new Intl.DateTimeFormat('en-GB', {
