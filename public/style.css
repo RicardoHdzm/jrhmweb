@@ -59,1073 +59,686 @@
 }
 
 /* ===== Tokens ===== */
+/* Paleta blanco y negro, sin color de acento: la jerarquía la dan el tamaño,
+   el peso y las líneas finas, no el color. */
 :root {
-  --bg: #0A0A0A;
-  --surface: #151515;
-  --surface-2: #1E1E1E;
-  --border: #2C2C2C;
-  --divider: #1A1A1A;
-  --text: #FFFFFF;
-  --text-muted: #9C9C9C;
-  /* Paleta monocroma: el acento deja de ser un color y pasa a ser el propio
-     blanco/negro de cada tema, con un resplandor/sombra aparte para que
-     siga leyéndose como "acento" y no como texto normal (ver .btn--primary
-     y .highlight, donde se usa color-mix con este mismo token). */
-  --accent: #FFFFFF;
-  --accent-hover: #C9C9C9;
-  --accent-dim: rgba(255, 255, 255, 0.12);
-  --accent-contrast: #0A0A0A;
-  /* Segundo tono del degradado del titular: blanco hacia un gris medio, en
-     vez de dos azules — el mismo gesto, sin color. */
-  --accent-2: #9A9A9A;
-  --dot-color: rgba(255, 255, 255, 0.035);
-  --nav-bg: rgba(10, 10, 10, 0.85);
-  /* Cristal: un degradado en diagonal simula la luz sobre la superficie, que
-     es lo que hace que se lea. La transparencia sola, sobre un fondo plano,
-     compone justo el color opaco de antes y no se nota. */
-  --glass-alto: rgba(255, 255, 255, 0.10);
-  --glass-bajo: rgba(255, 255, 255, 0.025);
-  --glass-border: rgba(255, 255, 255, 0.12);
-  --glass-filo: rgba(255, 255, 255, 0.14);
-  /* Para lo que se apoya SOBRE el cristal, como el cuadro del icono: al ser
-     translúcido queda siempre más claro que lo que tenga debajo, en vez de
-     depender de un color fijo que el degradado puede alcanzar. */
-  --glass-encima: rgba(255, 255, 255, 0.08);
+  color-scheme: dark;
+  --bg: #0B0B0B;
+  --text: #F1F1EE;
+  --muted: #8C8C87;
+  --line: #262624;
+  --error: #E5484D;
 
   --font-display: "Space Grotesk", sans-serif;
   --font-body: "Inter", sans-serif;
   --font-mono: "JetBrains Mono", monospace;
 
-  --radius: 10px;
-  --max-width: 1120px;
-  --nav-height: 88px;
+  --pad: clamp(20px, 4vw, 56px);
+  --max: 1320px;
+  /* Alturas de la barra y del título de proyectos; las corrige script.js. */
+  --nav-h: 64px;
+  --head-h: 100px;
 }
 
 :root[data-theme="light"] {
-  --bg: #F3F3F1;
-  --surface: #FFFFFF;
-  --surface-2: #ECECE9;
-  --border: #DEDEDA;
-  --divider: #E5E5E1;
+  color-scheme: light;
+  --bg: #F3F3EF;
   --text: #111110;
-  --text-muted: #66665F;
-  --accent: #0A0A0A;
-  --accent-hover: #2E2E2C;
-  --accent-dim: rgba(0, 0, 0, 0.10);
-  --accent-contrast: #FFFFFF;
-  /* En claro el degradado sigue yendo hacia el tono oscuro: aclarar sobre
-     fondo claro perdería contraste. Negro hacia gris medio, mismo gesto que
-     en oscuro pero sin color. */
-  --accent-2: #55554F;
-  --dot-color: rgba(0, 0, 0, 0.045);
-  --nav-bg: rgba(243, 243, 241, 0.85);
-  /* En oscuro el truco es aclarar sobre un fondo casi negro: hay 245 niveles
-     de margen hacia el blanco. En claro casi no hay margen — el fondo ya está
-     a 12 niveles del blanco puro — así que aclarar más los dos extremos los
-     dejaba casi idénticos entre sí y con el fondo. Aquí se invierte: el
-     extremo "alto" apenas aclara, y es el "bajo" el que oscurece hacia un
-     gris real, que sí tiene margen de sobra. Y el filo pasa de brillo blanco
-     (invisible sobre blanco) a una costura oscura, que es como se lee
-     "borde definido" en superficies claras. */
-  --glass-alto: rgba(255, 255, 255, 0.6);
-  --glass-bajo: rgba(0, 0, 0, 0.05);
-  --glass-border: rgba(0, 0, 0, 0.12);
-  --glass-filo: rgba(0, 0, 0, 0.07);
+  --muted: #6B6B66;
+  --line: #D6D6D0;
+  --error: #C62828;
 }
 
-::selection{
-  background-color: var(--accent);
-  color: var(--accent-contrast);
-}
-
+/* ===== Base ===== */
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
-html { scroll-behavior: smooth; }
-
-html, body {
-  overflow-x: hidden;
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
 }
 
 body {
-  background-color: var(--bg);
-  background-image: radial-gradient(var(--dot-color) 1px, transparent 1px);
-  background-size: 24px 24px;
+  background: var(--bg);
   color: var(--text);
   font-family: var(--font-body);
-  line-height: 1.6;
+  font-size: 16px;
+  line-height: 1.55;
   -webkit-font-smoothing: antialiased;
-  padding-top: var(--nav-height);
   transition: background-color 0.25s ease, color 0.25s ease;
 }
 
 a { color: inherit; text-decoration: none; }
-
-/* Iconos SVG en línea. height: 1em hace que hereden el font-size de su
-   contexto igual que hacía la fuente de iconos, así que las reglas que los
-   dimensionaban siguen valiendo sin tocar nada. currentColor los hace seguir
-   el color del texto, que es lo que mantiene vivo el cambio de tema.
-   Los viewBox no son cuadrados y varían entre iconos: se fija el alto y el
-   ancho se ajusta solo, como hacía la fuente. */
-.icon {
-  display: block;
-  height: 1em;
-  width: auto;
-  fill: currentColor;
-  flex: none;
-}
-ul { list-style: none; }
+ul, ol { list-style: none; }
+img { display: block; max-width: 100%; }
 button {
-  font-family: inherit;
-  font-size: inherit;
-  border: none;
+  font: inherit;
+  color: inherit;
   background: none;
+  border: 0;
   cursor: pointer;
 }
 
-:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 3px;
-}
+::selection { background: var(--text); color: var(--bg); }
+:focus-visible { outline: 2px solid var(--text); outline-offset: 3px; }
 
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
-  }
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { transition-duration: 0.01ms !important; }
 }
 
-.hero,
-.section {
-  scroll-margin-top: calc(var(--nav-height) + 24px);
-}
-
-/* ===== Layout helpers ===== */
-.section {
-  position: relative;
-  max-width: var(--max-width);
+.wrap {
+  max-width: var(--max);
   margin: 0 auto;
-  padding: 100px 24px;
+  padding-inline: var(--pad);
 }
 
-/* Separador sutil de ancho completo entre secciones */
-.section::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: max(33vw, 140px);
-  height: 1px;
-  background: var(--divider);
-}
+/* La barra de arriba es sticky: sin esto, al saltar a una sección su título
+   quedaría tapado. */
+[id] { scroll-margin-top: calc(var(--nav-h) + 24px); }
+#proyectos { scroll-margin-top: var(--nav-h); }
 
-.section__eyebrow {
-  font-family: var(--font-mono);
-  font-size: 13px;
-  color: var(--accent);
-  letter-spacing: 0.04em;
-  margin-bottom: 12px;
-  text-align: center;
-}
+/* Icono SVG en línea (sol, luna, WhatsApp): alto = 1em, hereda tamaño y color. */
+.icon { height: 1em; width: auto; fill: currentColor; display: block; flex: none; }
+.arrow { width: 12px; height: 12px; flex: none; }
 
-.section__title {
-  font-family: var(--font-display);
-  font-size: clamp(28px, 4vw, 40px);
-  font-weight: 600;
-  margin: 0 auto 40px;
-  text-align: center;
-  max-width: 640px;
-}
-
-/* ===== Nav ===== */
-.nav {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  z-index: 50;
-  height: var(--nav-height);
-  display: grid;
-  grid-template-columns: 1fr auto 1fr;
+/* Enlace de texto subrayado: el único estilo de "botón" fuera del formulario. */
+.link {
+  display: inline-flex;
   align-items: center;
-  padding: 0 40px;
-  background: var(--nav-bg);
-  backdrop-filter: blur(10px);
-  border-bottom: 1px solid var(--border);
-  transition: background-color 0.25s ease, border-color 0.25s ease;
+  gap: 8px;
+  padding-bottom: 2px;
+  border-bottom: 1px solid currentColor;
+  transition: opacity 0.2s ease;
 }
+.link:hover { opacity: 0.6; }
 
-.nav__logo { justify-self: start; }
-.nav__links { justify-self: center; }
-.nav__controls {
-  justify-self: end;
+/* ===== Barra superior ===== */
+.nav {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: var(--bg);
+  border-bottom: 1px solid var(--line);
+  transition: background-color 0.25s ease;
+}
+.nav__inner {
   display: flex;
   align-items: center;
-  gap: 10px;
+  justify-content: space-between;
+  gap: 24px;
+  min-height: 64px;
 }
-
+/* El texto va debajo del logo y mide exactamente lo mismo que él. El logo tiene
+   20px de alto y proporción 1308:249, o sea 105.06px de ancho; el texto es un SVG
+   cuyo textLength fija ese mismo ancho (la separación entre letras se ajusta sola),
+   así que coinciden al píxel sin JavaScript. */
 .nav__logo {
+  --logo-w: calc(20px * 1308 / 249);
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 4px;
+  align-items: flex-start;
+  gap: 5px;
 }
-.nav__logo-img { height: 24px; width: auto; display: block; }
+.nav__logo-img { height: 20px; width: var(--logo-w); }
 :root[data-theme="light"] .nav__logo-img { filter: invert(1); }
 .nav__logo-caption {
+  display: block;
+  width: var(--logo-w);
+  height: 11px;
+  overflow: visible;
   font-family: var(--font-mono);
-  font-size: 10px;
-  letter-spacing: 0.5em;
-  text-transform: uppercase;
-  color: var(--accent);
+  font-size: 11px;
+  fill: currentColor;
 }
-
 .nav__links {
   display: flex;
-  gap: 32px;
-  font-family: var(--font-mono);
-  font-size: 12.5px;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--text-muted);
+  gap: 28px;
+  font-size: 14px;
+  color: var(--muted);
 }
-.nav__links li { position: relative; }
-.nav__links a {
-  display: inline-block;
-  padding-bottom: 4px;
-  position: relative;
-}
+.nav__links a { position: relative; padding-bottom: 4px; transition: color 0.2s ease; }
 .nav__links a::after {
   content: "";
   position: absolute;
   left: 0;
+  right: 0;
   bottom: 0;
-  width: 100%;
   height: 1px;
-  background: var(--accent);
+  background: currentColor;
   transform: scaleX(0);
-  transform-origin: right;
-  transition: transform 0.25s ease;
-}
-.nav__links a:hover { color: var(--text); }
-.nav__links a:hover::after {
-  transform: scaleX(1);
   transform-origin: left;
+  transition: transform 0.3s ease;
 }
-.nav__links a.is-active {
-  color: var(--text);
-}
-.nav__links a.is-active::after {
-  transform: scaleX(1);
-  transform-origin: left;
-  background: var(--accent);
-}
+.nav__links a:hover,
+.nav__links a.is-active { color: var(--text); }
+.nav__links a:hover::after,
+.nav__links a.is-active::after { transform: scaleX(1); }
 
-.nav__cta {
-  font-size: 14px;
-  font-weight: 500;
-  padding: 8px 18px;
-  border: 1px solid var(--border);
-  border-radius: 999px;
-  transition: border-color 0.2s, color 0.2s;
+.nav__controls { display: flex; align-items: center; gap: 14px; }
+
+.theme-toggle {
+  position: relative;
+  width: 28px;
+  height: 28px;
+  display: grid;
+  place-items: center;
+  font-size: 15px;
+  color: var(--muted);
+  transition: color 0.2s ease;
 }
-.nav__cta:hover {
-  border-color: var(--accent);
-  color: var(--accent);
-}
+.theme-toggle:hover { color: var(--text); }
+.theme-toggle__icon { position: absolute; transition: opacity 0.2s ease; }
+.theme-toggle__icon--light { opacity: 0; }
+.theme-toggle__icon--dark { opacity: 1; }
+:root[data-theme="light"] .theme-toggle__icon--light { opacity: 1; }
+:root[data-theme="light"] .theme-toggle__icon--dark { opacity: 0; }
 
 .lang-switch {
   display: flex;
   gap: 2px;
-  padding: 3px;
-  border: 1px solid var(--border);
-  border-radius: 999px;
   font-family: var(--font-mono);
+  font-size: 12px;
 }
-.lang-switch__btn {
-  padding: 5px 10px;
-  border-radius: 999px;
-  font-size: 11px;
-  letter-spacing: 0.04em;
-  color: var(--text-muted);
-  transition: background 0.2s, color 0.2s;
-}
-.lang-switch__btn:hover {
-  color: var(--text);
-}
-.lang-switch__btn.is-active {
-  background: var(--accent);
-  color: var(--accent-contrast);
-}
-.lang-switch__btn.is-active:hover {
-  color: var(--accent-contrast);
-}
-
-.theme-toggle {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-  border: 1px solid var(--border);
-  border-radius: 999px;
-  color: var(--accent);
-  transition: border-color 0.2s, color 0.2s;
-}
-.theme-toggle:hover {
-  border-color: var(--accent);
-  color: var(--accent);
-}
-.theme-toggle__icon {
-  position: absolute;
-  font-size: 13px;
-  transition: opacity 0.15s ease, transform 0.15s ease;
-}
-.theme-toggle__icon--light { opacity: 0; transform: scale(0.6); }
-.theme-toggle__icon--dark { opacity: 1; transform: scale(1); }
-:root[data-theme="light"] .theme-toggle__icon--light { opacity: 1; transform: scale(1); }
-:root[data-theme="light"] .theme-toggle__icon--dark { opacity: 0; transform: scale(0.6); }
-
-@media (max-width: 780px) {
-  .nav__links { display: none; }
-  .nav { grid-template-columns: 1fr 1fr; }
-  .nav__logo { justify-self: start; order: 1; }
-  .nav__controls { justify-self: end; order: 2; }
-}
+.lang-switch__btn { padding: 4px 6px; color: var(--muted); transition: color 0.2s ease; }
+.lang-switch__btn:hover,
+.lang-switch__btn.is-active { color: var(--text); }
+.lang-switch__btn.is-active { text-decoration: underline; text-underline-offset: 4px; }
 
 /* ===== Hero ===== */
+/* El hero se dimensiona también por la altura de la ventana (vh) para que quepa
+   entera sin hacer scroll, en español y en inglés. Además ocupa justo la altura
+   visible bajo la barra (--nav-h la mide script.js): la sección siguiente queda
+   por debajo del pliegue. El estado va arriba, el titular en el centro y el texto
+   abajo; el espacio sobrante se reparte entre ellos. */
 .hero {
-  position: relative;
-  overflow: hidden;
-  min-height: calc(100vh - var(--nav-height));
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 48px 24px;
-}
-
-.eyebrow {
-  font-family: var(--font-mono);
-  font-size: 13px;
-  color: var(--accent);
-  margin-bottom: 20px;
-}
-
-.hero h1 {
-  font-family: var(--font-display);
-  font-size: clamp(32px, 5.5vw, 56px);
-  font-weight: 700;
-  line-height: 1.15;
-  letter-spacing: -0.01em;
-}
-
-/* El color plano queda de respaldo: si el navegador no recorta el fondo a la
-   forma del texto, se ve el titular en color de marca en vez de invisible. */
-.highlight {
-  color: var(--accent);
-  /* Mismo resplandor que el botón, aplicado al texto: sin él, el titular en
-     blanco/negro se lee casi igual que el resto del texto y se pierde el
-     énfasis que antes daba el azul/rojo. */
-  text-shadow: 0 0 18px color-mix(in srgb, var(--accent) 45%, transparent);
-}
-
-@supports ((-webkit-background-clip: text) or (background-clip: text)) {
-  .highlight {
-    background-image: linear-gradient(100deg, var(--accent) 15%, var(--accent-2) 85%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-  }
-}
-
-.hero__sub {
-  margin: 22px auto 0;
-  color: var(--text-muted);
-  /* Escala con el ancho en vez de quedarse fijo en 17px: en móvil ese tamaño
-     hace que el párrafo ocupe media pantalla. Baja hasta 15,5px, el mismo que
-     el párrafo de contacto, y recupera los 17px a partir de unos 520px. */
-  font-size: clamp(15.5px, 1vw + 11.8px, 17px);
-  max-width: 50ch;
-}
-
-.hero__actions {
-  margin-top: 32px;
-  display: flex;
-  justify-content: center;
-  gap: 14px;
-}
-
-.btn {
-  display: inline-flex;
-  align-items: center;
-  padding: 13px 24px;
-  border-radius: var(--radius);
-  font-weight: 500;
-  font-size: 15px;
-  transition: transform 0.15s ease, background 0.2s, border-color 0.2s;
-}
-.btn:hover { transform: translateY(-2px); }
-
-.btn--primary {
-  background: var(--accent);
-  color: var(--accent-contrast);
-  /* Sin color, el botón principal se confundiría con cualquier otro bloque
-     blanco/negro del sitio. El resplandor es lo que dice "este es el
-     importante": color-mix tiñe la sombra con el propio acento, así que sale
-     blanco y difuso en oscuro, y oscuro y difuso (más sombra que brillo,
-     que es como se lee "destacar" sobre fondo claro) en claro — sin escribir
-     una regla aparte por tema. */
-  box-shadow: 0 0 22px -4px color-mix(in srgb, var(--accent) 50%, transparent);
-  transition: transform 0.15s ease, background 0.2s, border-color 0.2s,
-    box-shadow 0.25s ease;
-}
-.btn--primary:hover {
-  background: var(--accent-hover);
-  box-shadow: 0 0 30px -2px color-mix(in srgb, var(--accent) 70%, transparent);
-}
-
-.btn--ghost {
-  border: 1px solid var(--border);
-  color: var(--text);
-}
-.btn--ghost:hover { border-color: var(--accent); }
-
-/* Contenido del hero, por encima del fondo animado */
-.hero__text {
-  position: relative;
-  z-index: 1;
-  max-width: 760px;
-  margin: 0 auto;
-  text-align: center;
-}
-
-.hero__scroll {
-  position: absolute;
-  left: 50%;
-  bottom: 32px;
-  transform: translateX(-50%);
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 10px;
-  font-family: var(--font-mono);
-  font-size: 11px;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--text-muted);
+  min-height: calc(100vh - var(--nav-h));
+  min-height: calc(100svh - var(--nav-h));
+  padding-block: clamp(24px, 7vh, 96px) clamp(32px, 6vh, 80px);
 }
-.hero__scroll-line {
-  width: 1px;
-  height: 28px;
-  background: var(--accent);
-  animation: hero-scroll-line 1.8s ease-in-out infinite;
-}
-@keyframes hero-scroll-line {
-  0% { transform: scaleY(0); transform-origin: top; opacity: 0; }
-  40% { transform: scaleY(1); transform-origin: top; opacity: 1; }
-  60% { transform: scaleY(1); transform-origin: bottom; opacity: 1; }
-  100% { transform: scaleY(0); transform-origin: bottom; opacity: 0; }
-}
-
-/* ===== Servicios ===== */
-.services {
-  display: grid;
-  grid-template-columns: 1fr;
-}
-
-.services > * {
-  margin: 10px;
-}
-
-.service {
-  position: relative;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  padding: 32px 28px;
-  /* Misma duración en ambas para que la elevación y el color lleguen juntos.
-     La curva del transform frena al final en vez de arrancar de golpe: con un
-     desplazamiento de solo 4px, "ease" se percibe como un tirón. */
-  transition: border-color 0.32s ease, transform 0.32s cubic-bezier(0.22, 0.61, 0.36, 1);
-}
-/* .is-tocada la pone el JS al tocar en pantallas táctiles: mismo efecto que
-   :hover, mientras dura el toque. */
-.service:hover, .service.is-tocada { border-color: var(--glass-border); }
-
-.service__icon {
+/* Línea de estado sobre el titular: disponibilidad a la izquierda, ciudad y hora
+   a la derecha. */
+.hero__meta {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 58px;
-  height: 58px;
-  margin-bottom: 22px;
-  border-radius: 14px;
-  /* Translúcido y no --surface-2: con el degradado de la tarjeta detrás, un
-     color fijo se igualaba con el fondo en la zona clara y el cuadro
-     desaparecía. Así siempre queda por encima de lo que tenga debajo. */
-  background: var(--glass-encima);
-  color: var(--accent);
-  font-size: 28px;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: clamp(20px, 5vh, 56px);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--muted);
 }
-
-:root[data-theme="light"] .service__icon {
-  /* La versión original tenía cada tema con una lógica distinta: en oscuro el
-     acento vivía en el icono sobre caja neutra, en claro vivía en la caja
-     (sólida) con icono blanco. Aquí se iguala: caja neutra e icono en acento
-     en los dos temas. */
-  background: var(--surface-2);
-  color: var(--accent);
+.hero__status { display: inline-flex; align-items: center; gap: 10px; }
+.hero__dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--text);
+  animation: pulso 2.6s ease-in-out infinite;
 }
+@keyframes pulso {
+  0%, 100% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--text) 45%, transparent); }
+  50% { box-shadow: 0 0 0 6px transparent; }
+}
+.hero__meta time { font-variant-numeric: tabular-nums; }
 
-.service__mark {
-  display: inline-block;
+.hero__title {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(2.6rem, min(6.6vw, 11.5vh), 6rem);
+  line-height: 1;
+  letter-spacing: -0.04em;
+  max-width: 24ch;
+  text-wrap: balance;
+  margin-block: auto;
+}
+/* El punto final del titular parpadea. Es un pseudo-elemento con el mismo
+   carácter y tipografía que el resto, así que encaja como un punto real; el texto
+   del titular (y su traducción) no lo lleva. */
+.hero__title::after {
+  content: ".";
+  animation: parpadeo 1.1s steps(1, end) infinite;
+}
+@keyframes parpadeo {
+  0%, 55% { opacity: 1; }
+  56%, 100% { opacity: 0; }
+}
+/* Misma rejilla que las secciones (etiqueta a la izquierda, contenido a la
+   derecha): el texto del hero arranca en el mismo eje vertical que todo lo demás. */
+.hero__foot {
+  display: grid;
+  grid-template-columns: minmax(120px, 220px) minmax(0, 1fr);
+  gap: var(--pad);
+  margin-top: clamp(28px, 6vh, 80px);
+}
+.hero__tag { font-size: 14px; color: var(--muted); }
+.hero__sub {
+  max-width: 52ch;
+  color: var(--muted);
+  font-size: clamp(16px, 1.3vw, 19px);
+}
+.hero__links { display: flex; gap: 28px; margin-top: 28px; font-size: 15px; }
+
+/* ===== Secciones: título grande arriba, contenido debajo ===== */
+/* Mismo tamaño de título que Proyectos, para que todas las secciones se lean como
+   una sola familia. */
+/* El título lleva la misma banda (línea arriba y abajo) que el de Proyectos. */
+.row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: clamp(20px, 2.4vw, 32px);
+  padding-bottom: clamp(40px, 6vw, 96px);
+}
+#contacto { padding-bottom: clamp(48px, 8vw, 120px); }
+.row__label {
   font-family: var(--font-display);
   font-weight: 600;
-  font-size: 17px;
-  text-transform: uppercase;
-  letter-spacing: 0.02em;
-  padding-bottom: 10px;
-  margin-bottom: 12px;
+  font-size: clamp(2.4rem, 7vw, 6rem);
+  line-height: 1;
+  letter-spacing: -0.045em;
   position: relative;
+  padding-block: clamp(8px, 1.4vw, 18px);
 }
-.service__mark::after {
+.row__label::before,
+.row__label::after {
   content: "";
   position: absolute;
   left: 0;
-  bottom: 0;
-  width: 28px;
-  height: 2px;
-  background: var(--accent);
+  right: 0;
+  height: 1px;
+  background: var(--line);
 }
+.row__label::before { top: 0; }
+.row__label::after { bottom: 0; }
 
-.service p {
-  color: var(--text-muted);
-  font-size: 14px;
+/* ===== Proyectos apilados ===== */
+/* El título se queda fijo bajo la barra y cada proyecto se queda fijo justo debajo
+   del título; el siguiente sube y lo cubre. Es position: sticky, sin JavaScript de
+   animación: el navegador lo hace con el scroll. Los valores de --nav-h y --head-h
+   los mide script.js; aquí hay valores por defecto por si no llega a ejecutarse. */
+.projects { padding-bottom: clamp(40px, 6vw, 96px); }
+
+.projects__head {
+  position: sticky;
+  top: var(--nav-h);
+  z-index: 10;
+  background: var(--bg);
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  padding-block: clamp(8px, 1.4vw, 18px);
+  transition: background-color 0.25s ease;
 }
-
-/* ===== Proceso ===== */
-
-.process {
-  display: grid;
-  grid-template-columns: 1fr; /
-}
-
-.process > * {
-  margin: 10px;
-}
-
-@media (min-width: 768px) {
-  .process {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  .services{
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-.process__step {
-  position: relative;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  padding: 32px 28px;
-  /* Misma duración en ambas para que la elevación y el color lleguen juntos.
-     La curva del transform frena al final en vez de arrancar de golpe: con un
-     desplazamiento de solo 4px, "ease" se percibe como un tirón. */
-  transition: border-color 0.32s ease, transform 0.32s cubic-bezier(0.22, 0.61, 0.36, 1);
-}
-.process__step:hover, .process__step.is-tocada { border-color: var(--glass-border); }
-
-.process__number {
-  position: absolute;
-  top: 20px;
-  right: 24px;
-  font-family: var(--font-mono);
-  font-size: 13px;
-  color: var(--accent);
-}
-
-:root[data-theme="light"] .process__number{
-  color: var(--accent);
-}
-
-.process__step .service__icon {
-  margin-bottom: 22px;
-}
-
-.process__step p {
-  color: var(--text-muted);
-  font-size: 14px;
-}
-
-/* ===== About / Nosotros ===== */
-.about {
-  max-width: 720px;
-}
-.about__lead {
+.projects__title {
   font-family: var(--font-display);
-  font-size: 21px;
-  font-weight: 500;
-  margin-bottom: 18px;
-}
-.about p:not(.about__lead) {
-  color: var(--text-muted);
-  font-size: 15.5px;
+  font-weight: 600;
+  font-size: clamp(2.4rem, 7vw, 6rem);
+  line-height: 1;
+  letter-spacing: -0.045em;
 }
 
-/* ===== Projects grid ===== */
-.projects {
+.proj {
+  position: sticky;
+  top: calc(var(--nav-h) + var(--head-h));
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 20px;
+  grid-template-columns: minmax(0, 58fr) minmax(0, 42fr);
+  /* Fondo opaco: es lo que hace que el proyecto siguiente tape al anterior. */
+  background: var(--bg);
+  border-bottom: 1px solid var(--line);
+  padding-block: clamp(12px, 1.4vw, 18px);
+  transition: background-color 0.25s ease;
 }
 
-.projects-toggle-wrap {
-  display: flex;
-  justify-content: center;
-  margin-top: 32px;
-}
-
-.project {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 20px;
-  /* Misma duración en ambas para que la elevación y el color lleguen juntos.
-     La curva del transform frena al final en vez de arrancar de golpe: con un
-     desplazamiento de solo 4px, "ease" se percibe como un tirón. */
-  transition: border-color 0.32s ease, transform 0.32s cubic-bezier(0.22, 0.61, 0.36, 1);
-}
-.project:hover, .project.is-tocada {
-  border-color: var(--glass-border);
-}
-
-.project.project--extra {
-  display: none;
-}
-.project.project--extra.is-visible {
-  display: flex;
-}
-
-.project__thumb {
-  /* Sin alto fijo: la altura la marca la propia imagen, cada una con su
-     proporción real (rondan 800x453, pero no son idénticas). overflow:hidden
-     se conserva solo para que las esquinas redondeadas recorten la imagen,
-     no para recortar contenido que se salga. */
-  border-radius: 8px;
-  margin-bottom: 16px;
-  overflow: hidden;
-  border: 1px solid var(--border);
-}
-.project__thumb--placeholder {
-  background: var(--surface-2);
-  position: relative;
-}
-.project__thumb--placeholder::after {
-  content: attr(data-tag);
-  font-family: var(--font-mono);
-  font-size: 12px;
-  letter-spacing: 0.08em;
-  color: var(--text-muted);
-}
-.project__thumb img {
-  /* height: auto en vez de 100% + object-fit: cover: antes la imagen se
-     estiraba a rellenar una caja de alto fijo y se recortaba lo que sobraba.
-     Ahora escala a lo ancho de la tarjeta y su alto sale solo, según su
-     proporción real — se ve completa siempre. */
+.proj__media { position: relative; display: block; border: 1px solid var(--line); overflow: hidden; }
+/* Las capturas van en blanco y negro y recuperan el color al pasar el cursor. */
+.proj__media img {
   width: 100%;
   height: auto;
-  display: block;
-  transition: transform 0.5s cubic-bezier(0.22, 0.61, 0.36, 1);
+  filter: grayscale(1);
+  transition: transform 0.7s cubic-bezier(0.22, 0.61, 0.36, 1), filter 0.5s ease;
 }
-
-/* Zoom al pasar el cursor por la tarjeta. .project__thumb ya tiene
-   overflow: hidden para las esquinas redondeadas, así que el recorte del
-   zoom queda contenido dentro del marco sin desbordar la tarjeta. Solo con
-   puntero real: en táctil el :hover se queda pegado tras tocar. */
+/* Recorrido en video por el sitio, encima de la captura. Está invisible hasta que
+   se pasa el cursor; entonces se funde y se reproduce (script.js). La captura de
+   debajo hace de portada: el video arranca en esa misma imagen. */
+.proj__media .proj__video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  filter: grayscale(1);
+  pointer-events: none;
+  transition: opacity 0.45s ease, transform 0.7s cubic-bezier(0.22, 0.61, 0.36, 1), filter 0.5s ease;
+}
+.proj__media .proj__video.is-on { opacity: 1; }
+/* En pantallas táctiles no hay "pasar el cursor": se muestran a color. */
+@media (hover: none) {
+  .proj__media img { filter: none; }
+  .proj__media .proj__video { display: none; }
+}
 @media (hover: hover) {
-  .project:hover .project__thumb img {
-    transform: scale(1.06);
-  }
-}
-.project.is-tocada .project__thumb img {
-  transform: scale(1.06);
-}
-
-.project__tag {
-  display: inline-block;
-  font-family: var(--font-mono);
-  font-size: 11px;
-  letter-spacing: 0.06em;
-  color: var(--accent);
-  border: 1px solid var(--accent);
-  border-radius: 999px;
-  padding: 3px 10px;
-  width: fit-content;
-  margin: auto 0 12px;
+  .proj:hover .proj__media img,
+  .proj:hover .proj__media .proj__video,
+  .proj:focus-visible .proj__media img,
+  .proj:focus-visible .proj__media .proj__video { filter: none; }
+  .proj:hover .proj__media img,
+  .proj:hover .proj__media .proj__video { transform: scale(1.035); }
 }
 
-.project h3 {
-  font-family: var(--font-display);
-  font-size: 17px;
-  margin-bottom: 4px;
-}
-.project p.project__category {
-  font-family: var(--font-mono);
-  font-size: 12px;
-  color: var(--accent);
-  margin-bottom: 10px;
-}
-.project p {
-  color: var(--text-muted);
-  font-size: 14px;
-  margin-bottom: 14px;
-}
-
-.project__links {
-  display: flex;
-  gap: 18px;
-  font-size: 14px;
-  font-weight: 500;
-  margin-top: auto;
-  padding-top: 8px;
-}
-.project__links a { color: var(--accent); }
-.project__links a:hover { text-decoration: underline; }
-
-/* ===== Contact ===== */
-.section--contact { max-width: var(--max-width); }
-
-.contact__grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  column-gap: 64px;
-  align-items: center;
-}
-
-/* El formulario es bastante más alto que la columna de la izquierda. Esa columna
-   va en dos filas: el párrafo pegado al fondo de la primera y el contacto directo
-   pegado al techo de la segunda. Así los dos quedan juntos y el conjunto cae a
-   media altura del formulario, en vez de dejar un hueco muerto debajo. */
-.contact__intro {
-  grid-column: 1;
-  grid-row: 1;
-  align-self: end;
-}
-
-/* El encabezado vive dentro de la columna izquierda, no arriba abarcando la
-   sección como en el resto, así que solo le ajustamos el margen: el centrado
-   lo hereda de .section__eyebrow y .section__title. */
-.contact__intro .section__title {
-  margin: 0 0 16px;
-}
-.contact__social {
-  grid-column: 1;
-  grid-row: 2;
-  align-self: start;
-}
-.contact__form-wrap {
-  grid-column: 2;
-  grid-row: 1 / span 2;
-}
-
-.contact__sub {
-  color: var(--text-muted);
-  font-size: 15.5px;
-  text-align: center;
-}
-
-.form__row {
-  margin-bottom: 18px;
+.proj__body {
   display: flex;
   flex-direction: column;
-  gap: 7px;
+  justify-content: space-between;
+  gap: 24px;
+  padding-left: clamp(14px, 1.6vw, 24px);
 }
-.form__row-group {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
+.proj__top { display: flex; justify-content: space-between; align-items: flex-start; gap: 24px; }
+.proj__desc {
+  display: -webkit-box;
+  -webkit-line-clamp: 5;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  max-width: 34ch;
+  font-size: clamp(14px, 1.15vw, 17px);
+  font-weight: 500;
+  line-height: 1.3;
+}
+.proj__name {
+  flex: none;
+  max-width: 46%;
+  text-align: right;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: clamp(1.3rem, 2.3vw, 2.2rem);
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+}
+.proj__foot {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
   gap: 16px;
+  font-size: 14px;
+}
+.proj__tags { font-weight: 500; }
+.proj__year { display: inline-flex; align-items: center; gap: 10px; color: var(--muted); }
+.proj .arrow { transition: transform 0.2s ease; }
+.proj:hover .arrow { transform: translate(2px, -2px); }
+.proj:hover .proj__name { text-decoration: underline; text-underline-offset: 5px; }
+
+/* "[Ver proyecto]" siguiendo al cursor sobre las imágenes. Lo crea y mueve script.js. */
+.proj-label {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 100;
+  padding: 3px 7px;
+  background: var(--text);
+  color: var(--bg);
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.2;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+}
+.proj-label.is-on { opacity: 1; }
+
+/* ===== Listas (servicios y proceso) ===== */
+.list { counter-reset: fila; }
+.list__item {
+  counter-increment: fila;
+  display: grid;
+  grid-template-columns: 56px minmax(0, 1fr) minmax(0, 1.3fr);
+  gap: 8px 24px;
+  align-items: baseline;
+  padding-block: 24px;
+  border-bottom: 1px solid var(--line);
+}
+.list__item:first-child { padding-top: 0; }
+.list__item:last-child { border-bottom: 0; padding-bottom: 0; }
+.list__n { font-family: var(--font-mono); font-size: 12px; color: var(--muted); }
+.list__n::before { content: counter(fila, decimal-leading-zero); }
+.list__title {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(1.1rem, 1.8vw, 1.5rem);
+  letter-spacing: -0.01em;
+}
+.list__text { color: var(--muted); font-size: 15px; max-width: 54ch; }
+
+/* --- Servicios: filas altas con la misma división 58/42 que los proyectos. El
+   nombre va grande a la izquierda; la descripción, a la derecha. --- */
+.list--services .list__item {
+  grid-template-columns: clamp(40px, 4vw, 56px) minmax(0, 1fr) 42%;
+  gap: 0;
+  align-items: baseline;
+  padding-block: clamp(18px, 2.2vw, 30px);
+  position: relative;
+  border-bottom: 0;
+}
+.list--services .list__item::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 1px;
+  background: var(--line);
+}
+.list--services .list__item:last-child::after { display: none; }
+.list--services .list__item:first-child { padding-top: 0; }
+.list--services .list__n { font-size: 13px; }
+.list--services .list__title {
+  font-weight: 600;
+  font-size: clamp(1.5rem, 3.1vw, 2.8rem);
+  line-height: 1.05;
+  letter-spacing: -0.035em;
+  padding-right: 24px;
+}
+.list--services .list__text {
+  padding-left: clamp(14px, 1.6vw, 24px);
+  font-size: clamp(14px, 1.15vw, 17px);
+  line-height: 1.4;
+  transition: color 0.2s ease;
+}
+.list--services .list__title { transition: transform 0.35s cubic-bezier(0.22, 0.61, 0.36, 1); }
+.list--services .list__n { transition: color 0.2s ease; }
+@media (hover: hover) {
+  .list--services .list__item:hover .list__text,
+  .list--services .list__item:hover .list__n { color: var(--text); }
+  .list--services .list__item:hover .list__title { transform: translateX(10px); }
 }
 
-@media (max-width: 560px) {
-  .form__row-group { grid-template-columns: 1fr; }
+/* --- Proceso: cuatro pasos en horizontal, con el número grande. Se lee como una
+   secuencia, no como otra lista. --- */
+.list--steps {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  column-gap: clamp(16px, 2vw, 32px);
+}
+.list--steps .list__item {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: clamp(14px, 1.6vw, 22px) 0 0;
+  position: relative;
+  border-bottom: 0;
+}
+.list--steps .list__item::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: var(--text);
+}
+.list--steps .list__item:first-child { padding-top: clamp(14px, 1.6vw, 22px); }
+.list--steps .list__n {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(2.6rem, 5.2vw, 5rem);
+  line-height: 1;
+  letter-spacing: -0.04em;
+  color: var(--text);
+}
+.list--steps .list__title {
+  font-weight: 600;
+  font-size: clamp(1.2rem, 1.9vw, 1.7rem);
+  line-height: 1.1;
+  letter-spacing: -0.025em;
+}
+.list--steps .list__text { font-size: clamp(14px, 1.1vw, 16px); line-height: 1.45; }
+
+/* ===== Contacto ===== */
+.contact__title {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(1.4rem, 2.6vw, 2.2rem);
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+}
+.contact__lead { margin-top: 20px; max-width: 54ch; color: var(--muted); }
+.contact__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 32px;
+  margin-top: 32px;
+  font-family: var(--font-display);
+  font-size: clamp(1.1rem, 2vw, 1.5rem);
 }
 
-.form__row label {
-  font-size: 12.5px;
-  font-family: var(--font-mono);
-  color: var(--text-muted);
-}
+/* ===== Formulario: campos de solo línea inferior ===== */
+.form { display: grid; gap: 28px; max-width: 640px; margin-top: 56px; }
+.form__row { display: flex; flex-direction: column; gap: 6px; }
+.form__row-group { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; }
+.form__row label { font-size: 13px; color: var(--muted); }
 .form__row input,
 .form__row textarea,
 .form__row select {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 11px 14px;
+  width: 100%;
+  padding: 10px 0;
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid var(--line);
+  border-radius: 0;
   color: var(--text);
-  font-family: var(--font-body);
-  font-size: 14.5px;
-  resize: vertical;
-  transition: border-color 0.2s;
+  font: inherit;
+  transition: border-color 0.2s ease;
 }
+.form__row textarea { resize: vertical; min-height: 120px; }
+/* Sin opción elegida, el select se ve como un placeholder. */
+.form__row select:invalid { color: var(--muted); }
+.form__row select option { color: var(--text); background: var(--bg); }
 .form__row select {
   appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%239C9C9C'%3E%3Cpath d='M5.5 7.5l4.5 4.5 4.5-4.5' stroke='%239C9C9C' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  padding-right: 28px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M2 4.5l4 4 4-4' fill='none' stroke='%238C8C87' stroke-width='1.3'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
-  background-position: right 14px center;
-  padding-right: 40px;
+  background-position: right 2px center;
+  background-size: 12px;
 }
-/* El menú desplegado lo dibuja el navegador y casi no acepta CSS. Esto es lo
-   único que respetan Chrome y Edge en el modo clásico: que las opciones sigan
-   la paleta oscura en vez del gris del sistema. */
-.form__row select option {
-  background-color: var(--surface);
-  color: var(--text);
-}
-.form__row select option:disabled {
-  color: var(--text-muted);
-}
-
-/* Chrome 135+ permite estilar el desplegable de verdad. Donde no exista, se
-   queda con el bloque de arriba y el select clásico, sin romper nada. */
-@supports (appearance: base-select) {
-  .form__row select {
-    appearance: base-select;
-    /* La flecha ahora la pone ::picker-icon; sobra la del background-image. */
-    background-image: none;
-    padding-right: 14px;
-    /* base-select le mete un line-height propio que lo dejaba 6px más alto
-       que los inputs de al lado. */
-    line-height: normal;
-  }
-  .form__row select::picker-icon {
-    color: var(--text-muted);
-    transition: transform 0.2s ease;
-  }
-  .form__row select:open::picker-icon {
-    transform: rotate(180deg);
-  }
-
-  .form__row select::picker(select) {
-    appearance: base-select;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 6px;
-    margin-top: 6px;
-  }
-  .form__row select option {
-    padding: 9px 12px;
-    border-radius: 6px;
-  }
-  /* Resaltado al recorrer las opciones, con ratón o con teclado. */
-  .form__row select option:hover,
-  .form__row select option:focus {
-    background-color: var(--border);
-    color: var(--text);
-  }
-  .form__row select option:checked {
-    background-color: var(--accent);
-    color: var(--accent-contrast);
-  }
-  /* Va después de :checked a propósito: el placeholder está seleccionado de
-     inicio, y así se ve apagado como un placeholder en vez de resaltado. */
-  .form__row select option:disabled {
-    background-color: transparent;
-    color: var(--text-muted);
-  }
-  .form__row select option::checkmark {
-    display: none;
-  }
-}
-
 .form__row input:focus,
 .form__row textarea:focus,
-.form__row select:focus {
-  border-color: var(--accent);
-  outline: none;
-}
+.form__row select:focus { outline: none; border-bottom-color: var(--text); }
 .form__row.has-error input,
 .form__row.has-error textarea,
-.form__row.has-error select {
-  border-color: #F87171;
-}
-.form__error {
-  font-size: 12px;
-  color: #F87171;
-  min-height: 14px;
-}
+.form__row.has-error select { border-bottom-color: var(--error); }
+.form__error { min-height: 14px; font-size: 12px; color: var(--error); }
 
-/* Sin mensaje que mostrar no debe ocupar sitio: si no, deja 14px muertos bajo
-   el botón que separan de más el bloque de contacto directo. */
-.form__status:empty {
-  margin: 0;
-}
-.form__status {
-  margin-top: 14px;
-  font-size: 13.5px;
-  font-family: var(--font-mono);
-}
-.form__status[data-state="success"] { color: var(--accent); }
-.form__status[data-state="error"] { color: #F87171; }
-
-.btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
-
-/* ===== Social ===== */
-.contact__social {
-  margin-top: 36px;
-  padding-top: 28px;
-  border-top: 1px solid var(--border);
-  text-align: center;
-}
-.contact__social p {
-  color: var(--text-muted);
-  font-size: 13.5px;
-  margin-bottom: 14px;
-}
-.social {
-  display: grid;
-  grid-auto-flow: column;
-  /* Las dos columnas quedan del ancho de la mayor. En grid con width fit-content,
-     las pistas 1fr se igualan al contenido más ancho en vez de estirarse a toda
-     la columna. Se ajusta solo si cambia el texto: "Correo" mide menos que
-     "Email", y en inglés el botón sigue igualando a WhatsApp. */
-  grid-auto-columns: 1fr;
-  gap: 12px;
-  width: fit-content;
-  margin-inline: auto;
-}
-.social__link {
+.btn {
+  justify-self: start;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  padding: 9px 16px;
-  border: 1px solid var(--border);
-  border-radius: 999px;
-  font-size: 13.5px;
+  padding: 14px 28px;
+  background: var(--text);
+  color: var(--bg);
+  border: 1px solid var(--text);
+  font-size: 15px;
   font-weight: 500;
-  transition: border-color 0.2s, color 0.2s;
-  background: var(--accent);
-  color: var(--accent-contrast);
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
-.social__link .icon { font-size: 15px; }
+.btn:hover { background: transparent; color: var(--text); }
+.btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
-/* Va aquí, después de las reglas base de .contact__social, y no más arriba:
-   @media no añade especificidad, así que un override colocado antes lo pisaría
-   la regla base posterior. */
-@media (max-width: 900px) {
-  .contact__grid { grid-template-columns: 1fr; gap: 40px; }
-  /* Se apila siguiendo el orden del HTML: texto, formulario y al final el
-     contacto directo. */
-  .contact__intro,
-  .contact__form-wrap,
-  .contact__social {
-    grid-column: 1;
-    grid-row: auto;
-    align-self: auto;
-  }
-  /* La separación con el formulario ya la da el row-gap del grid. */
-  .contact__social {
-    margin-top: 0;
-    padding-top: 22px;
-  }
+.form__status { min-height: 20px; font-size: 14px; color: var(--muted); }
+.form__status[data-state="success"] { color: var(--text); }
+.form__status[data-state="error"] { color: var(--error); }
 
-  /* Apilado a una columna, el botón se ve mejor centrado bajo el formulario. */
-  #submit-btn {
-    display: flex;
-    width: fit-content;
-    margin-inline: auto;
-  }
+/* ===== Pie ===== */
+.footer { border-top: 1px solid var(--line); }
+.footer__inner {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding-block: 28px;
+  font-size: 13px;
+  color: var(--muted);
 }
-.social__link:hover {
-  border-color: var(--accent-hover);
-  background: var(--accent-hover);
-  color: var(--accent-contrast);
-}
+.footer a { transition: color 0.2s ease; }
+.footer a:hover { color: var(--text); }
 
 /* ===== WhatsApp flotante ===== */
 .whatsapp-float {
   position: fixed;
-  right: 24px;
-  bottom: 24px;
+  right: 20px;
+  bottom: 20px;
   z-index: 60;
-  width: 68px;
-  height: 68px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 999px;
-  background: var(--surface);
-  border: 2px solid var(--accent);
-  color: var(--accent);
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
-  transition: transform 0.2s ease, background 0.2s ease, color 0.2s ease;
-  font-size: 38px;
+  width: 52px;
+  height: 52px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--text);
+  color: var(--bg);
+  font-size: 24px;
+  transition: transform 0.2s ease;
 }
-.whatsapp-float:hover {
-  transform: scale(1.08);
-  background: var(--accent);
-  color: var(--accent-contrast);
+.whatsapp-float:hover { transform: translateY(-2px); }
+
+/* ===== Móvil ===== */
+@media (max-width: 880px) {
+  .hero__foot { grid-template-columns: minmax(0, 1fr); gap: 20px; }
 }
 
-:root[data-theme="light"] .whatsapp-float {
-  background: var(--accent);
-  border: 2px solid var(--accent-contrast);
-  color: var(--accent-contrast);
-}
-:root[data-theme="light"]  .whatsapp-float:hover{
-  background: var(--accent);
-  color: var(--accent-contrast);
+@media (max-width: 720px) {
+  .nav__inner { flex-wrap: wrap; gap: 4px 16px; padding-block: 10px; min-height: 0; }
+  .nav__links { order: 3; width: 100%; justify-content: space-between; gap: 0; padding-top: 6px; }
 }
 
-
-/* ===== Footer ===== */
-.footer {
-  text-align: center;
-  padding: 32px 24px;
-  color: var(--text-muted);
-  font-size: 13px;
-  font-family: var(--font-mono);
+@media (max-width: 760px) {
+  .proj { grid-template-columns: minmax(0, 1fr); gap: 14px; }
+  .proj__body { padding-left: 0; gap: 14px; }
+  .proj__top { flex-direction: column-reverse; gap: 8px; }
+  .proj__name { max-width: none; text-align: left; }
+  .proj__desc { max-width: none; -webkit-line-clamp: 4; }
 }
 
-/* ============================================================
-   SCROLL POR SECCIÓN (solo escritorio)
-   Cada scroll lleva directo al inicio de la siguiente sección,
-   con una animación suave (no un salto brusco).
-   ============================================================ */
-   @media (min-width: 901px) {
-    html {
-      scroll-snap-type: y mandatory;
-    }
+@media (max-width: 1000px) {
+  .list--steps { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 36px; }
+}
 
-    .hero,
-    .section {
-      min-height: calc(100vh - var(--nav-height));
-      scroll-snap-align: start;
-      scroll-snap-stop: always;
-    }
+@media (max-width: 760px) {
+  .list--services .list__item { grid-template-columns: 36px minmax(0, 1fr); row-gap: 8px; }
+  .list--services .list__text { padding-left: 0; }
+  .list--services .list__title { padding-right: 0; }
+}
 
-    .footer {
-      scroll-snap-align: end;
-    }
-  }
+@media (max-width: 640px) {
+  .list--steps { grid-template-columns: minmax(0, 1fr); }
+  .list__item { grid-template-columns: 40px minmax(0, 1fr); }
+  .list__text { grid-column: 2; }
+  .form__row-group { grid-template-columns: minmax(0, 1fr); }
+  .footer__inner { flex-direction: column; }
+}
 
 /* ===== Cursor personalizado ===== */
 /* Oculto por defecto: en táctil no hay cursor que reemplazar, y si el JS no
    llega a correr no queda un punto muerto flotando en la pantalla. */
 .cursor__dot,
-.cursor__ring {
-  display: none;
-}
+.cursor__ring { display: none; }
 
 @media (hover: hover) and (pointer: fine) {
   /* El cursor del sistema se esconde en todo el documento; el nuestro ocupa su
@@ -1133,13 +746,9 @@ button {
      empeora la escritura. */
   html,
   body,
-  body * {
-    cursor: none;
-  }
+  body * { cursor: none; }
   .form__row input,
-  .form__row textarea {
-    cursor: text;
-  }
+  .form__row textarea { cursor: text; }
 
   .cursor__dot,
   .cursor__ring {
@@ -1156,58 +765,42 @@ button {
     transition: opacity 0.25s ease;
   }
   .cursor__dot.is-ready,
-  .cursor__ring.is-ready {
-    opacity: 1;
-  }
+  .cursor__ring.is-ready { opacity: 1; }
 
+  /* Sin color de acento: el punto toma el color del texto de cada tema (blanco
+     en oscuro, negro en claro) y el anillo el gris apagado. */
   .cursor__dot {
     width: 6px;
     height: 6px;
     margin: -3px 0 0 -3px;
-    background: var(--accent);
+    background: var(--text);
   }
-
   .cursor__ring {
     width: 32px;
     height: 32px;
     margin: -16px 0 0 -16px;
-    border: 1px solid var(--text-muted);
+    border: 1px solid var(--muted);
     transition: width 0.2s ease, height 0.2s ease, margin 0.2s ease,
                 background-color 0.2s ease, border-color 0.2s ease, opacity 0.25s ease;
   }
-  /* Sobre algo pulsable: crece y se tiñe del color de marca. */
+  /* Sobre algo pulsable: crece y se rellena con un velo del color del texto. */
   .cursor__ring.is-active {
     width: 52px;
     height: 52px;
     margin: -26px 0 0 -26px;
-    border-color: var(--accent);
-    background-color: color-mix(in srgb, var(--accent) 18%, transparent);
+    border-color: var(--text);
+    background-color: color-mix(in srgb, var(--text) 12%, transparent);
   }
   /* Sobre un campo de texto o fuera de la ventana: se aparta. */
   .cursor__dot.is-hidden,
-  .cursor__ring.is-hidden {
-    opacity: 0;
-  }
+  .cursor__ring.is-hidden { opacity: 0; }
 
-  /* Con el desplegable abierto, el navegador lo pinta en la capa superior, por
-     encima de cualquier z-index nuestro: nuestro cursor queda tapado y parece
-     que desaparece. Mientras dure, devolvemos el cursor del sistema. */
-  body:has(select:open),
-  body:has(select:open) * {
-    cursor: auto;
-  }
-  body:has(select:open) .cursor__dot,
-  body:has(select:open) .cursor__ring {
-    opacity: 0;
-  }
-
-  /* Al pulsar, el anillo se encoge: el clic se siente en la mano. Más rápido
-     que el resto de sus transiciones para que responda al instante. */
+  /* Al pulsar, el anillo se encoge: el clic se siente en la mano. */
   .cursor__ring.is-pressed {
     width: 22px;
     height: 22px;
     margin: -11px 0 0 -11px;
-    border-color: var(--accent);
+    border-color: var(--text);
     transition-duration: 0.12s;
   }
   /* Si ya estaba crecido sobre algo pulsable, encoge menos: el salto de 52 a
@@ -1226,7 +819,7 @@ button {
     width: 20px;
     height: 20px;
     margin: -10px 0 0 -10px;
-    border: 1px solid var(--accent);
+    border: 1px solid var(--text);
     border-radius: 999px;
     pointer-events: none;
     z-index: 9998;
@@ -1235,124 +828,116 @@ button {
 }
 
 @keyframes cursor-ripple {
-  from {
-    transform: translate(var(--x), var(--y)) scale(1);
-    opacity: 0.9;
-  }
-  to {
-    transform: translate(var(--x), var(--y)) scale(3.4);
-    opacity: 0;
-  }
+  from { transform: translate(var(--x), var(--y)) scale(1); opacity: 0.9; }
+  to { transform: translate(var(--x), var(--y)) scale(3.4); opacity: 0; }
 }
 
-/* ===== Tarjetas de cristal ===== */
-/* Van al final a propósito: sobrescriben el fondo opaco de las reglas de
-   arriba sin tener que tocarlas. */
-.service,
-.project,
-.process__step {
-  /* El degradado en diagonal es lo que hace el efecto: sin él, el color
-     compuesto es idéntico al fondo opaco anterior. */
-  background-image: linear-gradient(150deg, var(--glass-alto), var(--glass-bajo));
-  background-color: transparent;
-  border-color: var(--glass-border);
-  /* Filo iluminado en el borde de arriba, como cuando la luz pega en el canto
-     de una lámina. Es el detalle que más vende el cristal en fondo plano. */
-  box-shadow: inset 0 1px 0 var(--glass-filo);
+/* ===== Líneas que se dibujan ===== */
+/* Las líneas de cada sección se trazan de izquierda a derecha al llegar a la
+   pantalla. Las clases .anim e .is-in las pone script.js: sin JavaScript (o con
+   movimiento reducido) las líneas se ven completas, sin más. */
+.anim.row__label::before,
+.anim.row__label::after,
+.anim.list__item::before,
+.anim.list__item::after {
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.9s cubic-bezier(0.22, 0.61, 0.36, 1);
+  transition-delay: calc(var(--d, 0) * 120ms);
+}
+.anim.is-in.row__label::before,
+.anim.is-in.row__label::after,
+.anim.is-in.list__item::before,
+.anim.is-in.list__item::after { transform: none; }
+.anim.row__label::after { transition-delay: 0.12s; }
+
+@media (prefers-reduced-motion: reduce) {
+  .hero__dot,
+  .hero__title::after { animation: none; }
 }
 
-/* En claro, además, una sombra suave por debajo: sobre un fondo casi blanco
-   la transparencia por sí sola no basta para que la tarjeta "flote" — la
-   sombra es la señal de profundidad que en oscuro ya daba el propio degradado. */
-:root[data-theme="light"] .service,
-:root[data-theme="light"] .project,
-:root[data-theme="light"] .process__step {
-  box-shadow: inset 0 1px 0 var(--glass-filo), 0 6px 20px -6px rgba(17, 17, 16, 0.10);
+/* Al saltar a una sección con un enlace, queda justo bajo la barra. */
+.hero,
+.projects,
+.row { scroll-margin-top: var(--nav-h); }
+
+/* ===== Proyectos en horizontal ===== */
+/* Al llegar a Proyectos la sección se queda fija en pantalla y el scroll vertical
+   mueve los proyectos de lado, de derecha a izquierda. script.js activa esto con la
+   clase .projects--h; sin JavaScript, o con movimiento reducido, no se activa y
+   queda la versión vertical de arriba. Alto de la sección = alto de la ventana +
+   lo que hay que recorrer de lado, así el scroll vertical equivale 1 a 1 al
+   desplazamiento horizontal. */
+.projects__count { display: none; }
+
+.projects--h {
+  position: relative;
+  padding-bottom: 0;
+  margin-bottom: clamp(40px, 6vw, 96px);
+  /* Ancho de las tarjetas: lo que deja libre la altura de la ventana (imagen 16:9
+     más el texto de debajo), sin pasar del 56% del ancho. */
+  --card-w: clamp(280px, calc((100svh - var(--nav-h) - var(--head-h) - 210px) * 1.78), 56vw);
 }
-
-
-/* ===== Aparición por desvanecido ===== */
-/* La clase la pone el JS, nunca el HTML: si el JS no llega a correr, el
-   contenido se ve con normalidad en vez de quedarse invisible.
-   Solo opacidad, sin desplazamiento: el contenido no se mueve de su sitio,
-   únicamente aparece. */
-.fundido {
-  opacity: 0;
-  /* --i lo pone el JS: la posición del elemento dentro de su sección. */
-  transition: opacity 0.9s ease;
-  transition-delay: calc(var(--i, 0) * 90ms);
+/* Panel fijo a todo el ancho de la ventana. --vw y --bleed (distancia al borde de
+   la ventana) los mide script.js. */
+.projects--h .projects__pin {
+  position: sticky;
+  top: var(--nav-h);
+  display: flex;
+  flex-direction: column;
+  width: var(--vw, 100%);
+  margin-left: calc(var(--bleed, 0px) * -1);
+  height: calc(100svh - var(--nav-h));
+  overflow: hidden;
 }
-
-.is-fundido .fundido {
-  opacity: 1;
+.projects--h .projects__head {
+  position: static;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  flex: none;
+  margin-left: var(--bleed, 0px);
+  width: calc(var(--vw, 100%) - 2 * var(--bleed, 0px));
 }
-
-/* ===== Haz de luz recorriendo el borde ===== */
-/* Un degradado cónico girando, recortado a la franja del borde con dos
-   máscaras: una cubre toda la tarjeta y otra solo su interior, y al
-   excluirlas queda únicamente el anillo de 1px. */
-
-/* Sin registrar el tipo, el navegador trata --haz-angulo como texto y no sabe
-   interpolarlo: la animación no giraría. */
-@property --haz-angulo {
-  syntax: '<angle>';
-  initial-value: 0deg;
-  inherits: false;
+.projects--h .projects__count {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+  padding-bottom: 0.4em;
 }
-
-.service::before,
-.project::before,
-.process__step::before {
-  content: '';
-  position: absolute;
-  /* -1px para montarse justo encima del borde de la tarjeta. */
-  inset: -1px;
-  border-radius: inherit;
-  padding: 1px;
-  background: conic-gradient(
-    from var(--haz-angulo),
-    transparent 0deg 250deg,
-    var(--accent) 305deg,
-    transparent 350deg
-  );
-  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-  -webkit-mask-composite: xor;
-  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-  mask-composite: exclude;
-  opacity: 0;
-  transition: opacity 0.32s ease;
-  pointer-events: none;
+.projects--h .stack {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  min-height: 0;
+  gap: clamp(16px, 2vw, 32px);
+  width: max-content;
+  padding-inline: var(--bleed, 0px);
+  will-change: transform;
 }
-
-@media (hover: hover) {
-  .service:hover::before,
-  .project:hover::before,
-  .process__step:hover::before {
-    opacity: 1;
-    animation: haz-girar 3s linear infinite;
-  }
-
-  /* Elevación al pasar el cursor. Solo con puntero real: en táctil el :hover
-     se queda pegado tras tocar. El toque en móvil enciende el haz un instante
-     (.is-tocada), pero no la elevación — un salto de la tarjeta al tocar se
-     siente raro. */
-  .service:hover,
-  .process__step:hover,
-  .project:hover {
-    transform: translateY(-4px);
-  }
+/* Tarjeta: imagen arriba y texto debajo (misma disposición que en móvil). */
+.projects--h .proj {
+  position: static;
+  display: flex;
+  flex-direction: column;
+  flex: none;
+  width: var(--card-w);
+  gap: 14px;
+  padding-block: 0;
+  background: none;
+  border-bottom: 0;
 }
-.service.is-tocada::before,
-.project.is-tocada::before,
-.process__step.is-tocada::before {
-  opacity: 1;
-  /* En hover el haz gira sin parar mientras el cursor esté encima. Al tocar en
-     móvil no hay "mientras", así que hace una vuelta completa (1.3s) y para —
-     un gesto con principio y fin, en vez de un trozo suelto de la rotación
-     infinita cortado a los 0.6s. */
-  animation: haz-girar 1.3s linear 1;
+.projects--h .proj__body { padding-left: 0; gap: 10px; }
+.projects--h .proj__top { flex-direction: column-reverse; gap: 6px; }
+.projects--h .proj__name {
+  max-width: none;
+  text-align: left;
+  font-size: clamp(1.4rem, 2.2vw, 2rem);
 }
+.projects--h .proj__desc { max-width: 52ch; -webkit-line-clamp: 3; }
 
-@keyframes haz-girar {
-  to { --haz-angulo: 360deg; }
+@media (max-width: 760px) {
+  .projects--h { --card-w: 82vw; }
 }

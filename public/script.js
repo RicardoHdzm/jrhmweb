@@ -2,26 +2,35 @@
 document.getElementById('year').textContent = new Date().getFullYear();
 
 // ===== Link activo del nav según la sección visible =====
+// Se toma la última sección, en orden del documento, cuyo borde superior ya pasó
+// la mitad de la ventana. El hero se incluye para apagar el enlace activo arriba
+// del todo.
 const navLinks = document.querySelectorAll('.nav__links a[href^="#"]');
 const navSections = Array.from(navLinks)
-.map((link) => document.querySelector(link.getAttribute('href')))
-.filter(Boolean);
+  .map((link) => document.querySelector(link.getAttribute('href')))
+  .filter(Boolean)
+  .concat(document.getElementById('home') || [])
+  .sort((a, b) => (a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING ? -1 : 1));
 
+let navPendiente = false;
+function actualizarNavActivo() {
+  navPendiente = false;
+  let activa = null;
+  navSections.forEach((s) => {
+    if (s.getBoundingClientRect().top <= window.innerHeight * 0.5) activa = s;
+  });
+  const href = activa ? '#' + activa.id : '';
+  navLinks.forEach((link) => link.classList.toggle('is-active', link.getAttribute('href') === href));
+}
+function pedirNavActivo() {
+  if (navPendiente) return;
+  navPendiente = true;
+  requestAnimationFrame(actualizarNavActivo);
+}
 if (navSections.length) {
-  const sectionObserver = new IntersectionObserver(
-    (entries) => {
-      entries.forEach((entry) => {
-        if (!entry.isIntersecting) return;
-        const activeHref = `#${entry.target.id}`;
-        navLinks.forEach((link) => {
-          link.classList.toggle('is-active', link.getAttribute('href') === activeHref);
-        });
-      });
-    },
-    { rootMargin: '-50% 0px -50% 0px' }
-    );
-
-  navSections.forEach((section) => sectionObserver.observe(section));
+  window.addEventListener('scroll', pedirNavActivo, { passive: true });
+  window.addEventListener('resize', pedirNavActivo);
+  actualizarNavActivo();
 }
 
 // ===== Modo claro/oscuro =====
@@ -53,71 +62,41 @@ if (themeToggle) {
 // ===== Idioma (ES/EN) =====
 const translations = {
   es: {
-    'nav.servicios': 'Servicios',
     'nav.proyectos': 'Proyectos',
+    'nav.servicios': 'Servicios',
     'nav.proceso': 'Proceso',
     'nav.contacto': 'Contacto',
-    'hero.eyebrow': '00 // estudio de diseño & desarrollo web',
-    'hero.titlePre': 'Diseñando sitios web que',
-    'hero.titleHighlight': 'hacen crecer tu negocio',
-    'hero.sub': 'En JRHM.STUDIO diseñamos y desarrollamos sitios web a la medida de tu marca. Creamos soluciones claras y funcionales, desde una página sencilla hasta sitios mas completos adaptados exactamente a lo que tu negocio necesita.',
-    'hero.btnProjects': 'Ver proyectos',
-    'hero.btnContact': 'Contactar',
-    'hero.scroll': 'Explorar',
-    'services.eyebrow': '01 // servicios',
-    'services.title': '¿En qué podemos ayudar?',
-    'service.design.mark': 'Diseño 100% Personalizado',
+    'hero.tag': 'Estudio de diseño y desarrollo web',
+    'hero.title': 'Sitios web a medida, diseñados y programados desde cero',
+    'hero.sub': 'JRHM.STUDIO es un estudio de diseño y desarrollo web. Trabajamos con negocios en México y Estados Unidos: restaurantes, empresas de servicios y distribuidoras, desde una página sencilla hasta una tienda en línea.',
+    'hero.btnWork': 'Ver proyectos',
+    'hero.btnContact': 'Escríbenos',
+    'projects.label': 'Proyectos',
+    'services.label': 'Servicios',
+    'service.design.title': 'Diseño 100% personalizado',
+    'service.multipage.title': 'Sitios multi-página',
+    'service.ecommerce.title': 'E-commerce en Shopify',
+    'service.forms.title': 'Formularios e integraciones',
+    'service.seo.title': 'Optimización SEO',
+    'service.maintenance.title': 'Mantenimiento y soporte',
     'service.design.desc': 'Cada sitio se diseña desde cero para tu marca, sin plantillas genéricas ni soluciones prefabricadas.',
-    'service.multipage.mark': 'Sitios Multi-página',
     'service.multipage.desc': 'Desde una landing de una sola sección hasta sitios con varias páginas conectadas entre sí.',
-    'service.ecommerce.mark': 'E-commerce en Shopify',
     'service.ecommerce.desc': 'Tiendas en línea completas (catálogo, pagos y envíos) para que empieces a vender sin complicaciones.',
-    'service.forms.mark': 'Formularios & Integraciones',
     'service.forms.desc': 'Formularios de contacto que llegan directo a tu email, más integración con WhatsApp.',
-    'service.seo.mark': 'Optimización SEO',
     'service.seo.desc': 'Buenas prácticas técnicas (velocidad, metadatos y estructura) para que te encuentren en Google.',
-    'service.maintenance.mark': 'Mantenimiento & Soporte',
     'service.maintenance.desc': 'Actualizaciones, mejoras continuas y acompañamiento después del lanzamiento.',
-    'projects.eyebrow': '02 // proyectos',
-    'projects.title': 'Clientes que confiaron en nosotros',
-    'project.link': 'Visitar sitio →',
-    'projects.showMore': 'Mostrar más',
-    'projects.showLess': 'Mostrar menos',
-    'project.altogroup.category': 'Grupo restaurantero en Minnesota',
-    'project.altogroup.desc': 'Grupo restaurantero dueño de las marcas Mito, Zoukmaya y Los Grandes.',
-    'project.mito.category': 'Restaurante de cocina latinoamericana',
-    'project.mito.desc': 'Restaurante dedicado a la tradición, el sabor y el entretenimiento, en tributo a la gastronomía latinoamericana.',
-    'project.zoukmaya.category': 'Restaurante latinoamericano en Forest Lake, MN',
-    'project.zoukmaya.desc': 'Restaurante latinoamericano en Forest Lake, Minnesota, con ambiente vibrante y sabores auténticos.',
-    'project.losgrandes.category': 'Restaurante & bar mexicano en Burnsville, MN',
-    'project.losgrandes.desc': 'Restaurante y bar que celebra la cocina mexicana con mariscos, música en vivo y gran ambiente en Burnsville, Minnesota.',
-    'project.limman.category': 'Servicios de limpieza comercial y residencial en Culiacán',
-    'project.limman.desc': 'Empresa de limpieza con más de 50 años de experiencia en Culiacán, Sinaloa, atendiendo clientes comerciales, gubernamentales y residenciales.',
-    'project.bionutrients.category': 'Distribuidora de ingredientes activos para suplementos',
-    'project.bionutrients.desc': 'Distribuidora de ingredientes activos y funcionales para la industria de suplementos.',
-    'project.patron.category': 'Comercialización y almacenamiento de granos desde 1989',
-    'project.patron.desc': 'Empresa líder en comercialización y almacenamiento de granos en México desde 1989.',
-    'project.mangos.category': 'Producción y distribución de mango, marca de Grupo Patrón',
-    'project.mangos.desc': 'Empresa dedicada al cultivo, empaque y distribución de mango en Sinaloa.',
-    'project.qabu.category': 'Desarrollo residencial boutique en Mazatlán',
-    'project.qabu.desc': 'Desarrollo residencial boutique en Mazatlán, con departamentos y planes de financiamiento a medida.',
-    'project.caeti.category': 'Soluciones de gestión de datos y transformación digital',
-    'project.caeti.desc': 'Empresa mexicana de tecnología especializada en gestión de datos, ciberseguridad e inteligencia analítica para clientes de gobierno y sector privado.',
-    'process.eyebrow': '03 // proceso',
-    'process.title': 'Cómo trabajamos',
+    'process.label': 'Proceso',
     'process.step1.title': 'Contacto',
-    'process.step1.desc': 'Nos escribes por WhatsApp o correo y nos cuentas qué necesita tu negocio: un sitio nuevo, un rediseño o algo puntual. Te respondemos en menos de 24 horas.',
     'process.step2.title': 'Propuesta',
+    'process.step3.title': 'Diseño y desarrollo',
+    'process.step4.title': 'Revisión y entrega',
+    'process.step1.desc': 'Nos escribes por WhatsApp o correo y nos cuentas qué necesita tu negocio: un sitio nuevo, un rediseño o algo puntual. Te respondemos en menos de 24 horas.',
     'process.step2.desc': 'Te armamos una propuesta clara acorde a tus necesidades, tiempo de entrega y costo del proyecto, para que sepas exactamente qué esperar antes de arrancar.',
-    'process.step3.title': 'Diseño & Desarrollo',
     'process.step3.desc': 'Diseñamos y desarrollamos tu sitio, lo probamos tanto en escritorio como en móvil, asegurando que la estructura y la experiencia queden impecables.',
-    'process.step4.title': 'Revisión & Entrega',
     'process.step4.desc': 'Te presentamos el resultado final para que lo pruebes, aplicamos los ajustes necesarios y lanzamos el sitio oficialmente para que empiece a funcionar.',
-    'contact.eyebrow': '04 // contacto',
+    'contact.label': 'Contacto',
     'contact.title': 'Hablemos de tu proyecto',
     'contact.sub': 'Cuéntanos qué necesitas, ya sea empezar de cero, renovar tu sitio actual, o sumarle algo que le falta, y te respondemos en menos de 24 horas. Sin compromisos: primero entendemos tu proyecto, después te decimos cómo lo resolvemos.',
-    'contact.writeUs': 'O escríbenos directo por:',
-    'contact.email': 'Correo',
     'contact.whatsapp': 'WhatsApp',
     'form.name': 'Nombre',
     'form.phone': 'Teléfono',
@@ -143,78 +122,62 @@ const translations = {
     'form.status.success': '¡Mensaje enviado! Te vamos a responder pronto.',
     'form.status.network': 'No pudimos conectarnos. Revisa tu conexión e intenta de nuevo.',
     'form.status.generic': 'Algo salió mal. Intenta de nuevo en un momento.',
+    'footer.top': 'Volver arriba',
     'theme.toLight': 'Cambiar a modo claro',
     'theme.toDark': 'Cambiar a modo oscuro',
     'meta.title': 'JRHM.STUDIO | Diseño & Desarrollo Web',
     'meta.description': 'Diseño y desarrollo de sitios web a medida: landing pages, sitios multi-página y e-commerce en Shopify. Creamos sitios web que hacen crecer tu negocio.',
-
+    'project.altogroup.desc': 'Grupo restaurantero dueño de las marcas Mito, Zoukmaya y Los Grandes.',
+    'project.mito.desc': 'Restaurante dedicado a la tradición, el sabor y el entretenimiento, en tributo a la gastronomía latinoamericana.',
+    'project.zoukmaya.desc': 'Restaurante latinoamericano en Forest Lake, Minnesota, con ambiente vibrante y sabores auténticos.',
+    'project.losgrandes.desc': 'Restaurante y bar que celebra la cocina mexicana con mariscos, música en vivo y gran ambiente en Burnsville, Minnesota.',
+    'project.limman.desc': 'Empresa de limpieza con más de 50 años de experiencia en Culiacán, Sinaloa, atendiendo clientes comerciales, gubernamentales y residenciales.',
+    'project.bionutrients.desc': 'Distribuidora de ingredientes activos y funcionales para la industria de suplementos.',
+    'project.patron.desc': 'Empresa líder en comercialización y almacenamiento de granos en México desde 1989.',
+    'project.mangos.desc': 'Empresa dedicada al cultivo, empaque y distribución de mango en Sinaloa.',
+    'project.qabu.desc': 'Desarrollo residencial boutique en Mazatlán, con departamentos y planes de financiamiento a medida.',
+    'project.caeti.desc': 'Empresa mexicana de tecnología especializada en gestión de datos, ciberseguridad e inteligencia analítica para clientes de gobierno y sector privado.',
+    'projects.view': '[Ver proyecto]',
+    'project.tags': 'Diseño + Desarrollo',
+    'hero.status': 'Disponible para nuevos proyectos',
+    'hero.place': 'Culiacán, MX',
   },
   en: {
-    'nav.servicios': 'Services',
     'nav.proyectos': 'Projects',
+    'nav.servicios': 'Services',
     'nav.proceso': 'Process',
     'nav.contacto': 'Contact',
-    'hero.eyebrow': '00 // design & web development studio',
-    'hero.titlePre': 'Designing websites that',
-    'hero.titleHighlight': 'grow your business',
-    'hero.sub': 'At JRHM.STUDIO we design and develop custom websites tailored to your brand. We create clear, functional solutions, ranging from a simple landing page to more comprehensive sites adapted precisely to what your business needs.',
-    'hero.btnProjects': 'View projects',
+    'hero.tag': 'Web design & development studio',
+    'hero.title': 'Custom websites, designed and programmed from scratch',
+    'hero.sub': 'JRHM.STUDIO is a web design and development studio. We work with businesses in Mexico and the United States: restaurants, service companies and distributors, from a simple page to a full online store.',
+    'hero.btnWork': 'See projects',
     'hero.btnContact': 'Get in touch',
-    'hero.scroll': 'Scroll',
-    'services.eyebrow': '01 // services',
-    'services.title': 'How can we help?',
-    'service.design.mark': '100% Custom Design',
+    'projects.label': 'Projects',
+    'services.label': 'Services',
+    'service.design.title': '100% custom design',
+    'service.multipage.title': 'Multi-page sites',
+    'service.ecommerce.title': 'Shopify e-commerce',
+    'service.forms.title': 'Forms & integrations',
+    'service.seo.title': 'SEO optimization',
+    'service.maintenance.title': 'Maintenance & support',
     'service.design.desc': 'Every site is designed from scratch for your brand, no generic templates or prefab solutions.',
-    'service.multipage.mark': 'Multi-page Sites',
     'service.multipage.desc': 'From a single-section landing page to sites with several pages linked together.',
-    'service.ecommerce.mark': 'Shopify E-commerce',
     'service.ecommerce.desc': 'Full online stores (catalog, payments, and shipping) so you can start selling without the hassle.',
-    'service.forms.mark': 'Forms & Integrations',
     'service.forms.desc': 'Contact forms that land straight in your inbox, plus WhatsApp integration.',
-    'service.seo.mark': 'SEO Optimization',
     'service.seo.desc': 'Solid technical practices (speed, metadata, and structure) so people can find you on Google.',
-    'service.maintenance.mark': 'Maintenance & Support',
     'service.maintenance.desc': 'Updates, ongoing improvements, and support after launch.',
-    'projects.eyebrow': '02 // projects',
-    'projects.title': 'Clients who trusted us',
-    'project.link': 'Visit site →',
-    'projects.showMore': 'Show more',
-    'projects.showLess': 'Show less',
-    'project.altogroup.category': 'Restaurant group in Minnesota',
-    'project.altogroup.desc': 'Restaurant group behind the Mito, Zoukmaya, and Los Grandes brands.',
-    'project.mito.category': 'Latin American restaurant',
-    'project.mito.desc': 'A restaurant dedicated to tradition, flavor, and entertainment, paying tribute to Latin American cuisine.',
-    'project.zoukmaya.category': 'Latin American restaurant in Forest Lake, MN',
-    'project.zoukmaya.desc': 'Latin American restaurant in Forest Lake, Minnesota, with a vibrant atmosphere and authentic flavors.',
-    'project.losgrandes.category': 'Mexican restaurant & bar in Burnsville, MN',
-    'project.losgrandes.desc': 'A restaurant and bar celebrating Mexican cuisine with seafood, live music, and a great atmosphere in Burnsville, Minnesota.',
-    'project.bionutrients.category': 'Active ingredient distributor for supplements',
-    'project.bionutrients.desc': 'Distributor of active and functional ingredients for the supplement industry.',
-    'project.limman.category': 'Commercial and residential cleaning services in Culiacán',
-    'project.limman.desc': 'A cleaning company with over 50 years of experience in Culiacán, Sinaloa, serving commercial, government, and residential clients.',
-    'project.patron.category': 'Grain trading and storage since 1989',
-    'project.patron.desc': 'A leading grain trading and storage company in Mexico since 1989.',
-    'project.mangos.category': 'Mango production and distribution, a Grupo Patrón brand',
-    'project.mangos.desc': 'A company dedicated to growing, packing, and distributing mangoes in Sinaloa.',
-    'project.qabu.category': 'Boutique residential development in Mazatlán',
-    'project.qabu.desc': 'A boutique residential development in Mazatlán, with units and financing plans tailored to fit.',
-    'project.caeti.category': 'Data management and digital transformation solutions',
-    'project.caeti.desc': 'A Mexican technology company specializing in data management, cybersecurity, and analytical intelligence for government and private-sector clients.',
-    'process.eyebrow': '03 // process',
-    'process.title': 'How we work',
+    'process.label': 'Process',
     'process.step1.title': 'Contact',
-    'process.step1.desc': "You reach out on WhatsApp or email and tell us what your business needs: a new site, a redesign, or something specific. We reply within 24 hours.",
     'process.step2.title': 'Proposal',
-    'process.step2.desc': "We put together a clear proposal based on your needs, delivery timeline, and project cost, so you know exactly what to expect before we start.",
-    'process.step3.title': 'Design & Development',
-    'process.step3.desc': "We design and develop your site, testing it on both desktop and mobile, ensuring the structure and experience turn out flawless.",
-    'process.step4.title': 'Review & Delivery',
-    'process.step4.desc': "We present the final result for you to test, apply any necessary adjustments, and officially launch the site so it can start working for you.",
-    'contact.eyebrow': '04 // contact',
-    'contact.title': "Let's talk about your project",
-    'contact.sub': "Tell us what you need, whether it's starting from scratch, refreshing your current site, or adding something it's missing, and we'll get back to you in under 24 hours. No strings attached: we start by understanding your project, then tell you how we'll solve it.",
-    'contact.writeUs': 'Or write to us directly at:',
-    'contact.email': 'Email',
+    'process.step3.title': 'Design & development',
+    'process.step4.title': 'Review & delivery',
+    'process.step1.desc': 'You reach out on WhatsApp or email and tell us what your business needs: a new site, a redesign, or something specific. We reply within 24 hours.',
+    'process.step2.desc': 'We put together a clear proposal based on your needs, delivery timeline, and project cost, so you know exactly what to expect before we start.',
+    'process.step3.desc': 'We design and develop your site, testing it on both desktop and mobile, ensuring the structure and experience turn out flawless.',
+    'process.step4.desc': 'We present the final result for you to test, apply any necessary adjustments, and officially launch the site so it can start working for you.',
+    'contact.label': 'Contact',
+    'contact.title': 'Let\'s talk about your project',
+    'contact.sub': 'Tell us what you need, whether it\'s starting from scratch, refreshing your current site, or adding something it\'s missing, and we\'ll get back to you in under 24 hours. No strings attached: we start by understanding your project, then tell you how we\'ll solve it.',
     'contact.whatsapp': 'WhatsApp',
     'form.name': 'Name',
     'form.phone': 'Phone',
@@ -237,13 +200,28 @@ const translations = {
     'form.err.service': 'Select an option',
     'form.err.message': 'Tell us a bit more (10 characters minimum)',
     'form.status.invalid': 'Check the fields marked in red.',
-    'form.status.success': "Message sent! We'll get back to you soon.",
-    'form.status.network': "We couldn't connect. Check your connection and try again.",
+    'form.status.success': 'Message sent! We\'ll get back to you soon.',
+    'form.status.network': 'We couldn\'t connect. Check your connection and try again.',
     'form.status.generic': 'Something went wrong. Please try again in a moment.',
+    'footer.top': 'Back to top',
     'theme.toLight': 'Switch to light mode',
     'theme.toDark': 'Switch to dark mode',
     'meta.title': 'JRHM.STUDIO | Web Design & Development',
     'meta.description': 'Custom web design and development: landing pages, multi-page sites, and Shopify e-commerce. We build websites that grow your business.',
+    'project.altogroup.desc': 'Restaurant group behind the Mito, Zoukmaya, and Los Grandes brands.',
+    'project.mito.desc': 'A restaurant dedicated to tradition, flavor, and entertainment, paying tribute to Latin American cuisine.',
+    'project.zoukmaya.desc': 'Latin American restaurant in Forest Lake, Minnesota, with a vibrant atmosphere and authentic flavors.',
+    'project.losgrandes.desc': 'A restaurant and bar celebrating Mexican cuisine with seafood, live music, and a great atmosphere in Burnsville, Minnesota.',
+    'project.bionutrients.desc': 'Distributor of active and functional ingredients for the supplement industry.',
+    'project.limman.desc': 'A cleaning company with over 50 years of experience in Culiacán, Sinaloa, serving commercial, government, and residential clients.',
+    'project.patron.desc': 'A leading grain trading and storage company in Mexico since 1989.',
+    'project.mangos.desc': 'A company dedicated to growing, packing, and distributing mangoes in Sinaloa.',
+    'project.qabu.desc': 'A boutique residential development in Mazatlán, with units and financing plans tailored to fit.',
+    'project.caeti.desc': 'A Mexican technology company specializing in data management, cybersecurity, and analytical intelligence for government and private-sector clients.',
+    'projects.view': '[View project]',
+    'project.tags': 'Design + Development',
+    'hero.status': 'Available for new projects',
+    'hero.place': 'Culiacán, MX',
   },
 };
 
@@ -270,13 +248,6 @@ function applyLanguage(lang) {
     btn.classList.toggle('is-active', btn.dataset.lang === lang);
   });
 
-  if (projectsToggle) {
-    const expanded = projectsToggle.getAttribute('aria-expanded') === 'true';
-    projectsToggle.querySelector('span').textContent = expanded
-    ? translations[lang]['projects.showLess']
-    : translations[lang]['projects.showMore'];
-  }
-
   document.title = t('meta.title');
   const metaDesc = document.querySelector('meta[name="description"]');
   if (metaDesc) metaDesc.setAttribute('content', t('meta.description'));
@@ -290,26 +261,6 @@ function applyLanguage(lang) {
 langButtons.forEach((btn) => {
   btn.addEventListener('click', () => applyLanguage(btn.dataset.lang));
 });
-
-// ===== Mostrar más proyectos =====
-const projectsToggle = document.getElementById('projects-toggle');
-const extraProjects = document.querySelectorAll('.project--extra');
-
-if (projectsToggle) {
-  projectsToggle.addEventListener('click', () => {
-    const expanded = projectsToggle.getAttribute('aria-expanded') === 'true';
-    extraProjects.forEach((project) => project.classList.toggle('is-visible', !expanded));
-    projectsToggle.setAttribute('aria-expanded', String(!expanded));
-    projectsToggle.querySelector('span').textContent = expanded
-    ? translations[currentLang]['projects.showMore']
-    : translations[currentLang]['projects.showLess'];
-
-    if (expanded) {
-      document.getElementById('proyectos').scrollIntoView({ behavior: 'smooth' });
-    }
-  });
-}
-
 
 // ===== Formulario de contacto =====
 const form = document.getElementById('contact-form');
@@ -482,82 +433,208 @@ form.addEventListener('submit', async (e) => {
   }
 });
 
-// ===== Aparición por desvanecido =====
-// Cada sección desvanece sus elementos, escalonados, al entrar en pantalla.
-// Solo opacidad: nada se desplaza ni se mueve por su cuenta.
-if ('IntersectionObserver' in window && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-  const ANIMABLES = [
-    '.eyebrow', 'h1', '.hero__sub', '.hero__actions',
-    '.section__eyebrow', '.section__title',
-    '.service', '.project', '.process__step',
-    '.contact__intro', '.contact__form-wrap', '.contact__social',
-  ].join(', ');
+// ===== Proyectos apilados =====
+// Cada proyecto se queda fijo bajo el título (position: sticky) y el siguiente
+// sube cubriéndolo. Para que quede justo debajo del título, el CSS necesita
+// saber cuánto miden la barra superior y el título; cambian con el ancho (en
+// móvil la barra tiene dos filas), así que se miden aquí.
+const rootEl = document.documentElement;
+const navEl = document.querySelector('.nav');
+const projectsHead = document.querySelector('.projects__head');
 
-  // Con muchas tarjetas el escalonado se haría eterno, así que se corta.
-  const RETARDO_MAXIMO = 6;
+function medirApilado() {
+  if (navEl) rootEl.style.setProperty('--nav-h', navEl.offsetHeight + 'px');
+  if (projectsHead) rootEl.style.setProperty('--head-h', projectsHead.offsetHeight + 'px');
+}
+medirApilado();
+window.addEventListener('resize', medirApilado);
+// Las fuentes cambian el alto del título al cargar.
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(medirApilado);
 
-  const secciones = document.querySelectorAll('.hero, .section');
+// ===== Proyectos en horizontal =====
+// La sección se fija en pantalla y el scroll vertical mueve los proyectos de lado.
+// Alto de la sección = alto visible + recorrido horizontal, así 1px de scroll son
+// 1px de desplazamiento. Con movimiento reducido (o sin este script) queda la
+// versión vertical que define el CSS.
+const seccionProy = document.querySelector('.projects');
+const pinProy = document.querySelector('.projects__pin');
+const pistaProy = document.querySelector('.projects .stack');
+const contadorProy = document.querySelector('.projects__count');
+const totalProy = document.querySelectorAll('.projects .stack > .proj').length;
+const sinMovimiento = window.matchMedia('(prefers-reduced-motion: reduce)');
+let recorridoProy = 0;
 
-  secciones.forEach((seccion) => {
-    seccion.querySelectorAll(ANIMABLES).forEach((el, i) => {
-      el.classList.add('fundido');
-      el.style.setProperty('--i', String(Math.min(i, RETARDO_MAXIMO)));
-    });
+function medirHorizontal() {
+  if (!seccionProy || !pistaProy || !seccionProy.classList.contains('projects--h')) return;
+  const ancho = rootEl.clientWidth; // sin la barra de scroll
+  rootEl.style.setProperty('--vw', ancho + 'px');
+  rootEl.style.setProperty('--bleed', seccionProy.getBoundingClientRect().left + 'px');
+  const barra = navEl ? navEl.offsetHeight : 0;
+  const altoPanel = window.innerHeight - barra;
+  pinProy.style.height = altoPanel + 'px';
+  recorridoProy = Math.max(0, pistaProy.offsetWidth - ancho);
+  // Un tramo extra al final: la última tarjeta se queda quieta un momento antes de
+  // que la sección siga hacia abajo.
+  seccionProy.style.height = altoPanel + recorridoProy + altoPanel * 0.25 + 'px';
+  moverHorizontal();
+}
+
+function moverHorizontal() {
+  if (!seccionProy.classList.contains('projects--h')) return;
+  const barra = navEl ? navEl.offsetHeight : 0;
+  const avance = recorridoProy > 0
+    ? Math.min(1, Math.max(0, (barra - seccionProy.getBoundingClientRect().top) / recorridoProy))
+    : 0;
+  pistaProy.style.transform = 'translate3d(' + (-avance * recorridoProy).toFixed(1) + 'px, 0, 0)';
+  if (contadorProy && totalProy) {
+    const actual = Math.round(avance * (totalProy - 1)) + 1;
+    contadorProy.textContent = String(actual).padStart(2, '0') + ' / ' + String(totalProy).padStart(2, '0');
+  }
+}
+
+function activarHorizontal() {
+  if (!seccionProy || !pistaProy) return;
+  const activo = !sinMovimiento.matches;
+  seccionProy.classList.toggle('projects--h', activo);
+  if (activo) {
+    // Las imágenes están fuera de pantalla a un lado: con carga diferida tardarían
+    // en aparecer al hacer scroll rápido. Son 6 JPG de unos 70 KB.
+    document.querySelectorAll('.projects .proj__media > img').forEach((img) => { img.loading = 'eager'; });
+    medirApilado();
+    medirHorizontal();
+  } else {
+    ['--vw', '--bleed'].forEach((v) => rootEl.style.removeProperty(v));
+    seccionProy.style.removeProperty('height');
+    pinProy.style.removeProperty('height');
+    pistaProy.style.removeProperty('transform');
+  }
+}
+activarHorizontal();
+let horizontalPendiente = false;
+window.addEventListener('scroll', () => {
+  if (horizontalPendiente) return;
+  horizontalPendiente = true;
+  requestAnimationFrame(() => { horizontalPendiente = false; moverHorizontal(); });
+}, { passive: true });
+window.addEventListener('resize', () => { medirApilado(); medirHorizontal(); });
+sinMovimiento.addEventListener('change', activarHorizontal);
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { medirApilado(); medirHorizontal(); });
+
+// ===== Recorrido en video al pasar el cursor =====
+// Cada proyecto tiene un video corto (scroll por las secciones del sitio) encima de
+// su captura. No se descarga hasta que la tarjeta asoma en pantalla (el panel
+// horizontal recorta lo que aún no ha entrado, así que no se adelanta más). Con el cursor
+// encima se funde y se reproduce desde el principio; al salir se funde de vuelta y
+// se rebobina. Sin hover (táctil) o con movimiento reducido no se reproduce.
+const puedeReproducir = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+if (puedeReproducir) {
+  const tarjetasVideo = Array.from(document.querySelectorAll('.proj')).filter((t) => t.querySelector('.proj__video'));
+  const cargar = (video) => {
+    if (video.dataset.src && !video.getAttribute('src')) {
+      video.setAttribute('src', video.dataset.src);
+      video.preload = 'auto';
+      video.load();
+    }
+  };
+  if ('IntersectionObserver' in window) {
+    const cercania = new IntersectionObserver((entradas) => {
+      entradas.forEach((entrada) => {
+        if (!entrada.isIntersecting) return;
+        cargar(entrada.target.querySelector('.proj__video'));
+        cercania.unobserve(entrada.target);
+      });
+    }, { rootMargin: '0px 100% 0px 100%' });
+    tarjetasVideo.forEach((t) => cercania.observe(t));
+  }
+  tarjetasVideo.forEach((tarjeta) => {
+    const video = tarjeta.querySelector('.proj__video');
+    let rebobinar = null;
+    const encender = () => {
+      if (sinMovimiento.matches) return;
+      clearTimeout(rebobinar);
+      cargar(video);
+      video.currentTime = 0;
+      video.classList.add('is-on');
+      const p = video.play();
+      if (p && p.catch) p.catch(() => {});
+    };
+    const apagar = () => {
+      video.classList.remove('is-on');
+      clearTimeout(rebobinar);
+      // Se pausa cuando ya terminó de fundirse, para no cortar el fundido.
+      rebobinar = setTimeout(() => { video.pause(); video.currentTime = 0; }, 500);
+    };
+    tarjeta.addEventListener('pointerenter', encender);
+    tarjeta.addEventListener('pointerleave', apagar);
+    tarjeta.addEventListener('focus', encender);
+    tarjeta.addEventListener('blur', apagar);
   });
+}
 
-  const observador = new IntersectionObserver(
+// Etiqueta "[Ver proyecto]" que sigue al cursor sobre las imágenes. Solo con
+// ratón: en táctil no hay cursor al que seguir, y ahí el texto del enlace basta.
+const stackEl = document.querySelector('.stack');
+if (stackEl && window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+  const etiqueta = document.createElement('div');
+  etiqueta.className = 'proj-label';
+  etiqueta.setAttribute('aria-hidden', 'true');
+  document.body.appendChild(etiqueta);
+
+  stackEl.addEventListener('pointermove', (e) => {
+    const sobreImagen = e.target instanceof Element && e.target.closest('.proj__media');
+    if (!sobreImagen) {
+      etiqueta.classList.remove('is-on');
+      return;
+    }
+    etiqueta.textContent = t('projects.view');
+    etiqueta.style.transform = `translate(${e.clientX + 34}px, ${e.clientY + 22}px)`;
+    etiqueta.classList.add('is-on');
+  });
+  stackEl.addEventListener('pointerleave', () => etiqueta.classList.remove('is-on'));
+}
+
+// ===== Hora local =====
+// Culiacán está en la zona horaria de Mazatlán (UTC-7, sin horario de verano).
+const horaEl = document.getElementById('hora');
+if (horaEl) {
+  const formato = new Intl.DateTimeFormat('en-GB', {
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: false,
+    timeZone: 'America/Mazatlan',
+  });
+  const pintarHora = () => { horaEl.textContent = formato.format(new Date()); };
+  pintarHora();
+  setInterval(pintarHora, 1000);
+}
+
+// ===== Líneas que se dibujan =====
+// Solo se animan las líneas de las secciones; el contenido no se toca, así que
+// nada puede quedar invisible. La clase la añade el JS, nunca el HTML.
+if ('IntersectionObserver' in window && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+  const lineas = document.querySelectorAll('.row__label, .list--services .list__item, .list--steps .list__item');
+  lineas.forEach((el) => {
+    el.classList.add('anim');
+    // Posición dentro del grupo: escalona el trazo de los cuatro pasos.
+    if (el.classList.contains('list__item') && el.parentElement.classList.contains('list--steps')) {
+      el.style.setProperty('--d', String(Array.prototype.indexOf.call(el.parentElement.children, el)));
+    }
+  });
+  const vigilante = new IntersectionObserver(
     (entradas) => {
       entradas.forEach((entrada) => {
         if (!entrada.isIntersecting) return;
-        entrada.target.classList.add('is-fundido');
-        // Ya apareció: no tiene sentido volver a montarla al subir.
-        observador.unobserve(entrada.target);
+        entrada.target.classList.add('is-in');
+        vigilante.unobserve(entrada.target);
       });
     },
-    { threshold: 0.15 }
+    { threshold: 0.2 }
   );
-
-  // Dos fotogramas antes de observar. El hero ya está en pantalla al cargar,
-  // así que el observador dispararía en el mismo fotograma en que se aplican
-  // las clases: el navegador no habría pintado el estado inicial y, sin punto
-  // de partida, no hay transición que interpolar.
+  // Dos fotogramas antes de observar: el navegador pinta primero el estado sin
+  // trazar y así hay desde dónde hacer la transición.
   requestAnimationFrame(() => {
-    requestAnimationFrame(() => {
-      secciones.forEach((seccion) => observador.observe(seccion));
-    });
-  });
-
-  // Red de seguridad. Si el observador no llegara a disparar, el contenido se
-  // quedaría invisible. Ante la duda, mejor sin efecto que sin sitio.
-  setTimeout(() => {
-    if (document.querySelector('.is-fundido')) return;
-    observador.disconnect();
-    document.querySelectorAll('.fundido').forEach((el) => el.classList.remove('fundido'));
-  }, 2500);
-}
-
-// ===== Toque breve en las tarjetas (móvil) =====
-// El borde en color, el haz que gira y el zoom de las miniaturas de proyecto
-// solo se activan con :hover dentro de @media (hover: hover): sin eso, en
-// táctil se quedarían encendidos después de tocar, porque no hay un evento de
-// "salida del cursor". En vez de eso, un toque real enciende el mismo efecto
-// un instante y se apaga solo.
-if (!window.matchMedia('(hover: hover)').matches) {
-  const temporizadores = new WeakMap();
-
-  document.querySelectorAll('.service, .project, .process__step').forEach((tarjeta) => {
-    tarjeta.addEventListener('click', () => {
-      tarjeta.classList.add('is-tocada');
-      // Un segundo toque mientras el primero sigue activo reinicia el
-      // conteo, en vez de apagarse a mitad del segundo toque.
-      clearTimeout(temporizadores.get(tarjeta));
-      temporizadores.set(
-        tarjeta,
-        // 1500ms: la vuelta del haz dura 1.3s (ver .is-tocada::before en el
-        // CSS); el margen extra deja que termine antes de que se apague.
-        setTimeout(() => tarjeta.classList.remove('is-tocada'), 1500)
-      );
-    });
+    requestAnimationFrame(() => lineas.forEach((el) => vigilante.observe(el)));
   });
 }
 

@@ -95,17 +95,6 @@ Wrangler no recarga `.dev.vars` en caliente: si lo editás, reiniciá el server.
 | 500 | Faltan variables de entorno |
 | 502 | Resend rechazó el envío (key inválida, dominio sin verificar) |
 
-## Sobre el scroll de pantalla completa
-
-En escritorio (ventanas de 901px de ancho o más), cada sección ocupa el alto disponible bajo
-el nav y el scroll "engancha" (scroll-snap) directo a la siguiente sección. En mobile esto se
-desactiva y el scroll vuelve a ser normal, porque el scroll-snap con alturas de pantalla completa
-suele dar problemas en navegadores móviles (la barra de direcciones cambia el alto disponible).
-
-Si en alguna pantalla el contenido de una sección es más alto que la ventana (por ejemplo, una
-laptop con poca altura de pantalla), esa sección simplemente crece un poco más allá del 100% en
-vez de recortar contenido — el scroll-snap se sigue enganchando al inicio de cada sección igual.
-
 ## Pendientes
 
 - El repo tiene tres ramas (`gh-pages` con el sitio real, `main` prácticamente vacía y
