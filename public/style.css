@@ -507,10 +507,9 @@ button {
 }
 .list__text { color: var(--muted); font-size: 15px; max-width: 54ch; }
 
-/* --- Servicios y Proceso: la misma estructura de filas altas, con la división 58/42
-   de los proyectos. El nombre va grande a la izquierda y la descripción a la derecha.
-   Solo cambia el número: pequeño en Servicios y grande en Proceso, para que Proceso
-   se siga leyendo como una secuencia (01 a 04). --- */
+/* --- Servicios y Proceso: exactamente la misma estructura de filas altas, con la
+   división 58/42 de los proyectos. El nombre va grande a la izquierda y la
+   descripción a la derecha, con el número pequeño en gris al inicio. --- */
 :is(.list--services, .list--steps) .list__item {
   grid-template-columns: var(--col-n, clamp(40px, 4vw, 56px)) minmax(0, 1fr) 42%;
   gap: 0;
@@ -530,7 +529,7 @@ button {
 }
 .list--services .list__item:last-child::after { display: none; }
 :is(.list--services, .list--steps) .list__item:first-child { padding-top: 0; }
-.list--services .list__n { font-size: 13px; }
+:is(.list--services, .list--steps) .list__n { font-size: 13px; }
 :is(.list--services, .list--steps) .list__title {
   font-weight: 600;
   font-size: clamp(1.5rem, 3.1vw, 2.8rem);
@@ -546,17 +545,6 @@ button {
   transition: color 0.2s ease;
 }
 :is(.list--services, .list--steps) .list__n { transition: color 0.2s ease; }
-
-/* El número grande de Proceso: más ancho de columna y tipografía de títulos. */
-.list--steps { --col-n: clamp(64px, 9vw, 128px); }
-.list--steps .list__n {
-  font-family: var(--font-display);
-  font-weight: 500;
-  font-size: clamp(2.2rem, 5vw, 4.2rem);
-  line-height: 1;
-  letter-spacing: -0.04em;
-  color: var(--text);
-}
 
 @media (hover: hover) {
   :is(.list--services, .list--steps) .list__item:hover .list__text,
@@ -772,8 +760,7 @@ button {
 }
 
 @media (max-width: 760px) {
-  .list--services { --col-n: 36px; }
-  .list--steps { --col-n: 56px; }
+  :is(.list--services, .list--steps) { --col-n: 36px; }
   :is(.list--services, .list--steps) .list__item { grid-template-columns: var(--col-n) minmax(0, 1fr); row-gap: 8px; }
   :is(.list--services, .list--steps) .list__text { padding-left: 0; }
   :is(.list--services, .list--steps) .list__title { padding-right: 0; }
