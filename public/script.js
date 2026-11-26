@@ -573,6 +573,69 @@ sinMovimiento.addEventListener('change', activarHorizontal);
 pantallaMovil.addEventListener('change', activarHorizontal);
 if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { medirApilado(); medirHorizontal(); });
 
+// ===== Proceso con pasos que avanzan =====
+// La sección se fija en pantalla y, con el scroll, se activa un paso tras otro
+// (contador "01 / 04"). Se activa solo en pantallas anchas, sin movimiento reducido y
+// si todo el contenido cabe en la ventana; si no, queda la lista normal.
+const seccionProceso = document.getElementById('proceso');
+const pinProceso = seccionProceso ? seccionProceso.querySelector('.proceso__pin') : null;
+const pasosProceso = seccionProceso ? Array.from(seccionProceso.querySelectorAll('.list--steps .list__item')) : [];
+const contadorProceso = seccionProceso ? seccionProceso.querySelector('.proceso__count') : null;
+let recorridoProceso = 0;
+
+function medirProceso() {
+  if (!seccionProceso || !pinProceso || !pasosProceso.length) return;
+  const barra = navEl ? navEl.offsetHeight : 0;
+  const altoPanel = window.innerHeight - barra;
+  // Se mide con la sección en su estado normal.
+  seccionProceso.classList.remove('proceso--pin', 'proceso--compacto');
+  seccionProceso.style.removeProperty('height');
+  pinProceso.style.removeProperty('height');
+  pasosProceso.forEach((p) => p.classList.remove('is-activo'));
+  if (sinMovimiento.matches || pantallaMovil.matches) return;
+  // Si no cabe, se prueba con las filas un poco más compactas antes de rendirse.
+  if (pinProceso.offsetHeight > altoPanel) {
+    seccionProceso.classList.add('proceso--compacto');
+    if (pinProceso.offsetHeight > altoPanel) {
+      seccionProceso.classList.remove('proceso--compacto');
+      return;
+    }
+  }
+
+  seccionProceso.classList.add('proceso--pin');
+  pinProceso.style.height = altoPanel + 'px';
+  recorridoProceso = altoPanel * 1.6;
+  const relleno = parseFloat(getComputedStyle(seccionProceso).paddingBottom) || 0;
+  // Alto de la sección = ventana + recorrido + un tramo final con el último paso quieto.
+  seccionProceso.style.height = altoPanel + recorridoProceso + altoPanel * 0.25 + relleno + 'px';
+  moverProceso();
+}
+
+function moverProceso() {
+  if (!seccionProceso || !seccionProceso.classList.contains('proceso--pin')) return;
+  const barra = navEl ? navEl.offsetHeight : 0;
+  const avance = Math.min(1, Math.max(0, (barra - seccionProceso.getBoundingClientRect().top) / recorridoProceso));
+  const activo = Math.min(pasosProceso.length - 1, Math.floor(avance * pasosProceso.length));
+  pasosProceso.forEach((p, i) => p.classList.toggle('is-activo', i === activo));
+  if (contadorProceso) {
+    contadorProceso.textContent = '0' + (activo + 1) + ' / 0' + pasosProceso.length;
+  }
+}
+
+if (seccionProceso) {
+  medirProceso();
+  let procesoPendiente = false;
+  window.addEventListener('scroll', () => {
+    if (procesoPendiente) return;
+    procesoPendiente = true;
+    requestAnimationFrame(() => { procesoPendiente = false; moverProceso(); });
+  }, { passive: true });
+  window.addEventListener('resize', medirProceso);
+  sinMovimiento.addEventListener('change', medirProceso);
+  pantallaMovil.addEventListener('change', medirProceso);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(medirProceso);
+}
+
 // ===== Easter egg: juegos =====
 // El icono de mando del centro del pie abre un panel con Gato, Conecta 4 y Buscaminas. El
 // código (juegos.js + juegos.css) no se descarga hasta el primer clic.
