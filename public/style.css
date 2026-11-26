@@ -368,21 +368,6 @@ button {
   padding-block: clamp(8px, 1.4vw, 18px);
   transition: background-color 0.25s ease;
 }
-/* Etiqueta "// 01" sobre cada título de sección: pequeña, en fuente de código y en
-   gris, como un comentario que numera las secciones. Es un elemento aparte (y
-   decorativo para lectores de pantalla) porque los pseudo-elementos de .row__label ya
-   los usan las líneas de la banda, y para que no entre en el texto traducible. */
-.titulo__pref {
-  display: block;
-  margin-bottom: clamp(6px, 0.9vw, 12px);
-  font-family: var(--font-mono);
-  font-size: 12px;
-  font-weight: 400;
-  line-height: 1.4;
-  letter-spacing: 0;
-  color: var(--muted);
-}
-
 .projects__title {
   font-family: var(--font-display);
   font-weight: 600;
