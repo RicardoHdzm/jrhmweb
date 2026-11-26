@@ -703,16 +703,17 @@ button {
   color: var(--muted);
 }
 .footer__inner > a { justify-self: end; }
-/* El "#" del centro es el acceso al easter egg (script.js): discreto a propósito. */
+/* El icono de mando del centro es el acceso al easter egg (script.js): discreto a
+   propósito. Icono de Font Awesome Free (CC BY 4.0), en línea y con el color del texto. */
 .footer__hash {
-  padding: 6px 14px;
-  font-family: var(--font-mono);
-  font-size: 15px;
+  display: inline-flex;
+  padding: 8px 14px;
   line-height: 1;
   color: var(--muted);
   opacity: 0.6;
   transition: opacity 0.2s ease, color 0.2s ease;
 }
+.footer__hash .icon { width: 22px; height: 18px; fill: currentColor; }
 .footer__hash:hover { opacity: 1; color: var(--text); }
 @media (pointer: coarse) {
   .footer__hash { padding: 14px 22px; }
@@ -1036,7 +1037,7 @@ button {
     border-bottom: 0;
   }
   .stack > .proj:last-child { margin-bottom: 0; }
-  .projects { padding-bottom: 8px; }
+  .projects { padding-bottom: 72px; }
   .stack { padding-top: 28px; }
 }
 

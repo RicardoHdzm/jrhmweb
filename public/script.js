@@ -574,7 +574,7 @@ pantallaMovil.addEventListener('change', activarHorizontal);
 if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { medirApilado(); medirHorizontal(); });
 
 // ===== Easter egg: juegos =====
-// El "#" del centro del pie abre un panel con Gato, Conecta 4 y Buscaminas. El
+// El icono de mando del centro del pie abre un panel con Gato, Conecta 4 y Buscaminas. El
 // código (juegos.js + juegos.css) no se descarga hasta el primer clic.
 const puntoJuegos = document.querySelector('.footer__hash');
 let cargaJuegos = null;
