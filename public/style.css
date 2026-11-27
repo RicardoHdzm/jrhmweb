@@ -1149,3 +1149,33 @@ button {
 .list--steps .list__item.is-activo .list__n { color: var(--text); }
 .list--steps .list__item.is-activo .list__title { transform: translateX(10px); }
 .list--steps .list__item.is-activo::after { display: block; transform: scaleX(1); }
+
+/* ===== Formulario en móvil: campos con caja ===== */
+/* En pantallas estrechas los campos de solo línea inferior (casi invisible sobre el
+   fondo) hacían que el formulario se perdiera: no se distinguía dónde escribir. Aquí
+   cada campo es una caja con borde y fondo propios, las etiquetas van más claras y
+   el botón ocupa todo el ancho. Escritorio no cambia. */
+@media (max-width: 760px) {
+  .form { gap: 20px; }
+  .form__row { gap: 8px; }
+  .form__row label { font-size: 14px; font-weight: 500; color: var(--text); }
+  .form__row input,
+  .form__row textarea,
+  .form__row select {
+    padding: 14px;
+    border: 1px solid color-mix(in srgb, var(--text) 24%, var(--bg));
+    background-color: color-mix(in srgb, var(--text) 5%, transparent);
+  }
+  .form__row select {
+    padding-right: 40px;
+    background-position: right 14px center;
+  }
+  .form__row textarea { min-height: 130px; }
+  .form__row input:focus,
+  .form__row textarea:focus,
+  .form__row select:focus { border-color: var(--text); }
+  .form__row.has-error input,
+  .form__row.has-error textarea,
+  .form__row.has-error select { border-color: var(--error); }
+  .form .btn { justify-self: stretch; width: 100%; padding-block: 16px; }
+}
