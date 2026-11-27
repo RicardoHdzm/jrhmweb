@@ -164,12 +164,81 @@ async function handleContact(request, env) {
   }
 }
 
+// Videos de los proyectos (public/assets/projects/*.mp4).
+//
+// El servicio de archivos estáticos de Cloudflare responde siempre con el archivo
+// entero y sin `Accept-Ranges`. Chrome lo tolera, pero Safari exige peticiones por
+// rangos (bytes=a-b) para reproducir un <video>, así que sin esto los videos podrían
+// no verse ahí. wrangler.jsonc hace que el Worker atienda solo estas rutas
+// (run_worker_first); aquí se leen del almacén de assets y se devuelve el trozo pedido.
+const CACHE_VIDEO = 'public, max-age=86400, stale-while-revalidate=604800';
+
+async function servirVideo(request, env) {
+  if (request.method !== 'GET' && request.method !== 'HEAD') return env.ASSETS.fetch(request);
+
+  // Se pide el archivo completo (sin Range) al almacén de assets.
+  const completo = await env.ASSETS.fetch(new Request(request.url, { method: 'GET' }));
+  if (!completo.ok) return completo;
+  const datos = await completo.arrayBuffer();
+  const total = datos.byteLength;
+  const etag = completo.headers.get('ETag');
+
+  const cabeceras = {
+    'Content-Type': 'video/mp4',
+    'Accept-Ranges': 'bytes',
+    'Cache-Control': CACHE_VIDEO,
+  };
+  if (etag) cabeceras.ETag = etag;
+  const cuerpo = (buf) => (request.method === 'HEAD' ? null : buf);
+
+  const rango = request.headers.get('Range');
+  const m = rango ? /^bytes=(\d*)-(\d*)$/.exec(rango.trim()) : null;
+
+  // Sin rango (o con uno que no sabemos leer): el archivo entero, que es lo que
+  // permite el estándar. Si el navegador ya lo tiene (ETag), 304.
+  if (!m || (m[1] === '' && m[2] === '')) {
+    if (etag && request.headers.get('If-None-Match') === etag) {
+      return new Response(null, { status: 304, headers: cabeceras });
+    }
+    return new Response(cuerpo(datos), {
+      status: 200,
+      headers: { ...cabeceras, 'Content-Length': String(total) },
+    });
+  }
+
+  let inicio;
+  let fin;
+  if (m[1] === '') {
+    // "bytes=-N": los últimos N bytes.
+    inicio = Math.max(0, total - parseInt(m[2], 10));
+    fin = total - 1;
+  } else {
+    inicio = parseInt(m[1], 10);
+    fin = m[2] === '' ? total - 1 : Math.min(parseInt(m[2], 10), total - 1);
+  }
+  if (inicio >= total || inicio > fin) {
+    return new Response(null, { status: 416, headers: { ...cabeceras, 'Content-Range': `bytes */${total}` } });
+  }
+  return new Response(cuerpo(datos.slice(inicio, fin + 1)), {
+    status: 206,
+    headers: {
+      ...cabeceras,
+      'Content-Range': `bytes ${inicio}-${fin}/${total}`,
+      'Content-Length': String(fin - inicio + 1),
+    },
+  });
+}
+
 export default {
   async fetch(request, env) {
     const { pathname } = new URL(request.url);
 
     if (pathname === '/api/contact') {
       return handleContact(request, env);
+    }
+
+    if (pathname.startsWith('/assets/projects/') && pathname.endsWith('.mp4')) {
+      return servirVideo(request, env);
     }
 
     // Todo lo demás lo resuelve el sitio estático.

@@ -1,0 +1,21 @@
+# Caché del navegador para los archivos estáticos. Cloudflare Workers Static Assets lee
+# este archivo (no se sirve como página). Sin él, todo iba con max-age=0 y el navegador
+# preguntaba al servidor en cada visita.
+#
+# Las fuentes no cambian nunca (si algún día cambian, se renombran): caché de un año.
+# Imágenes y videos pueden cambiar de contenido con el mismo nombre (por ejemplo, al
+# regrabar el video de un proyecto), así que un día y, pasado ese tiempo, se sirve la
+# copia vieja mientras se descarga la nueva en segundo plano durante una semana.
+# El HTML, el CSS y el JS siguen revalidándose en cada visita (son pequeños y cambian).
+
+/fonts/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/assets/*
+  Cache-Control: public, max-age=86400, stale-while-revalidate=604800
+
+/logo.gif
+  Cache-Control: public, max-age=86400, stale-while-revalidate=604800
+
+/favicon.gif
+  Cache-Control: public, max-age=86400, stale-while-revalidate=604800

@@ -37,6 +37,21 @@ desde el dominio.
 Si agregás un archivo nuevo al sitio, va en `public/`. Si lo dejás en la raíz, no se
 publica.
 
+## Videos y caché
+
+- **Videos de proyectos** (`public/assets/projects/*.mp4`): el servicio de archivos
+  estáticos de Cloudflare no admite peticiones por rangos (`Range: bytes=a-b`) y
+  Safari las exige para reproducir un `<video>`. Por eso esas rutas (y solo esas)
+  pasan por el Worker (`run_worker_first` en `wrangler.jsonc`), que las atiende en
+  `servirVideo` (`src/worker.js`) con `206 Partial Content`. El resto del sitio se
+  sigue sirviendo directo, sin invocar el Worker.
+- **Caché del navegador:** `public/_headers` (lo lee Cloudflare, no se publica como
+  página). Fuentes: un año (`immutable`). Imágenes y videos: un día, y una semana más
+  sirviendo la copia vieja mientras se descarga la nueva. HTML, CSS y JS se revalidan
+  en cada visita. Si se cambia un archivo con el mismo nombre (por ejemplo, regrabar
+  un video), tarda hasta un día en verse para quien ya lo tenía en caché; para
+  forzarlo, cambiar el nombre del archivo.
+
 ## Idiomas (español e inglés)
 
 El sitio tiene dos páginas reales para que Google indexe cada idioma por separado:

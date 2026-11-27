@@ -8,7 +8,12 @@
     // Solo se publica lo que esté en public/. Todo lo demás (código del Worker,
     // README y sobre todo .git) queda fuera de la web.
     "directory": "./public",
-    "binding": "ASSETS"
+    "binding": "ASSETS",
+    // Normalmente los archivos estáticos se sirven sin pasar por el Worker. Estas
+    // rutas sí pasan por él: los videos de proyectos, para poder responder
+    // peticiones por rangos (ver servirVideo en src/worker.js). El resto del sitio
+    // sigue sirviéndose directamente, sin invocar el Worker.
+    "run_worker_first": ["/assets/projects/*.mp4"]
   },
   "ratelimits": [
     {
